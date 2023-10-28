@@ -10,6 +10,7 @@
 /vscode projects/some bs/.vs/some bs/FileContentIndex/a62ef7bf-a76b-49c8-8946-82665872a094.vsidx
 /vscode projects/some bs/.vs/some bs/v17/ipch/AutoPCH/d947b4bd5b333abb/MAIN.ipch
 /vscode projects/some bs/.vs/some bs/v17/.suo
+<<<<<<< HEAD
 *.vsidx
 /vscode projects/some bs/some bs/x64/Debug/some bs.tlog/CL.read.1.tlog
 /vscode projects/some bs/some bs/x64/Debug/some bs.tlog/Cl.items.tlog
@@ -20,3 +21,8 @@
 /vscode projects/some bs/some bs/x64/Debug/some bs.tlog/link.write.1.tlog
 /vscode projects/some bs/some bs/x64/Debug/some bs.tlog/some bs.lastbuildstate
 *.log
+=======
+/vscode projects/some bs/.vs/some bs/FileContentIndex/fb331918-8195-4ea4-bd96-581636cb4a80.vsidx
+>>>>>>> f5b6a980ecbc2206bf4ed054d45d6e5545797503
+/vscode projects/some bs/.vs/some bs/v17/ipch/AutoPCH/2f599004210449c3/MAIN.ipch
+/vscode projects/some bs/.vs/some bs/v17/ipch/AutoPCH/4dabf37812226e70/VCTMP8676_822494.MAIN.00000000.HEAD.ipch
