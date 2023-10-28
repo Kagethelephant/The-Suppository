@@ -2,7 +2,6 @@
 #include <random>
 //link all necessary code from the included packages (mostly SFML)
 
-// change delete this
 
 int main(int argc, char** argv) {
 
