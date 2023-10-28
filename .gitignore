@@ -6,3 +6,7 @@
 *.db-shm
 *.db-wal
 *.opendb
+/.vs/The-Suppository/v17/.wsuo
+/vscode projects/some bs/.vs/some bs/FileContentIndex/a62ef7bf-a76b-49c8-8946-82665872a094.vsidx
+/vscode projects/some bs/.vs/some bs/v17/ipch/AutoPCH/d947b4bd5b333abb/MAIN.ipch
+/vscode projects/some bs/.vs/some bs/v17/.suo
