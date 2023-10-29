@@ -64,6 +64,7 @@ int main(int argc, char** argv) {
 
     sf::RenderTexture buffer; //create the main window texture to draw in the proper resolution (needs to be drawn to the buffer sprite and drawn to the window)
     buffer.create(bufferW, bufferH); //create the buffer texter with the proper resolution
+    buffer.setSmooth(false);
 
     sf::Sprite bufferSprite(buffer.getTexture()); //create the sprite that the buffer texture will be drawn to
 
@@ -76,7 +77,7 @@ int main(int argc, char** argv) {
     sf::Text text;
     text.setFont(font);
     text.setString("Hello world");
-    text.setCharacterSize((96 / 72) * 12);
+    text.setCharacterSize(14);
     text.setFillColor(sf::Color(col1.x, col1.y, col1.z));
     text.setStyle(sf::Text::Regular);
 
