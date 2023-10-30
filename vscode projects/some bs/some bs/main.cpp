@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
 
     float resRatio = resW / resH; //this is the aspect ratio
 
-    int bufferH = 400; //Width of the new view scaled down for a pixel look
+    int bufferH = 450; //Width of the new view scaled down for a pixel look
     int bufferW = abs(bufferH * resRatio); //the width will always be static and the height is determined with the aspect ratio
 
     int bufferX = bufferW / 2; //center of the buffer texture for positioning the game view
@@ -25,6 +25,10 @@ int main(int argc, char** argv) {
 
     int playerX = 150;
     int playerY = 150;
+
+    DiamSquare ds;
+    ds.newMap(5);
+
 
     std::string tileTypes[4] = { "Tree","Plain","Mntn","Hill" };
 
@@ -44,7 +48,7 @@ int main(int argc, char** argv) {
     {
         for (int z = 0; z < mapSize; z += 1)
         {
-            mapGrid[i][z].tileType = "3test";
+            mapGrid[i][z].tileType = "Test";
             mapGrid[i][z].moisture = 1;
             mapGrid[i][z].height = 1;
         }
@@ -71,13 +75,22 @@ int main(int argc, char** argv) {
     window.setFramerateLimit(60); //set the frame rate
 
 
+    
     sf::Font font;
+    sf::Font font1;
+    sf::Font font2;
+    sf::Font font3;
     if (!font.loadFromFile("../fonts/DisposableDroidBB.ttf")) return 1;
+    if (!font1.loadFromFile("../fonts/manaspc.ttf")) return 1;
+    if (!font2.loadFromFile("../fonts/novem___.ttf")) return 1;
+    if (!font3.loadFromFile("../fonts/small_pixel.ttf")) return 1;
 
+    
+    
     sf::Text text;
-    text.setFont(font);
+    text.setFont(font3);
     text.setString("Hello world");
-    text.setCharacterSize(14);
+    text.setCharacterSize(8);
     text.setFillColor(sf::Color(col1.x, col1.y, col1.z));
     text.setStyle(sf::Text::Regular);
 
