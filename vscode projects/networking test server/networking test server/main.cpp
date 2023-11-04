@@ -52,19 +52,23 @@ int main()
     d.d1 = 50;
 
     header h;
-    h.v1 = 4;
-    h.v2 = 164;
-    h.v3 = 40;
+    h.v1 = 4; // index 0, 1
+    h.v2 = 164; // index 2, 3
+    h.v3 = 40; // index 3, 4
 
-    char buffer[12];
+    char buffer[6];
     htonAll(h, d, buffer);
 
-    uint32_t int1 = buffer[7];
+    uint16_t int1 = buffer[6]>> 1;
+
+    typedef unsigned char u8;
+    int num = ((u8)buffer[4] << 8) | ((u8)buffer[5]);
+
 
     int int2 = ntohs(int1);
 
 
-    printf("%d", int2);
+    printf("%d", num);
     cout << "\n";
 
     while (true)
