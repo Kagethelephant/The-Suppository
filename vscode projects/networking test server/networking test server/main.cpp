@@ -1,5 +1,7 @@
 #include <iostream>
 #include <winsock2.h>
+#include <string>
+#include "main.hpp";
 using namespace std;
 
 #pragma comment(lib,"ws2_32.lib") // Winsock Library
@@ -45,6 +47,26 @@ int main()
     }
     puts("Bind done.");
 
+    
+    data1 d;
+    d.d1 = 50;
+
+    header h;
+    h.v1 = 4;
+    h.v2 = 164;
+    h.v3 = 40;
+
+    char buffer[12];
+    htonAll(h, d, buffer);
+
+    uint32_t int1 = buffer[7];
+
+    int int2 = ntohs(int1);
+
+
+    printf("%d", int2);
+    cout << "\n";
+
     while (true)
     {
         printf("Waiting for data...");
@@ -63,11 +85,12 @@ int main()
         // print details of the client/peer and the data received
         printf("Received packet from %s:%d\n", inet_ntoa(client.sin_addr), ntohs(client.sin_port));
         printf("Data: %s\n", message);
+     
 
         cin.getline(message, BUFLEN);
 
         // reply the client with 2the same data
-        if (sendto(server_socket, message, strlen(message), 0, (sockaddr*)&client, sizeof(sockaddr_in)) == SOCKET_ERROR)
+        if (sendto(server_socket, buffer, strlen(message), 0, (sockaddr*)&client, sizeof(sockaddr_in)) == SOCKET_ERROR)
         {
             printf("sendto() failed with error code: %d", WSAGetLastError());
             return 3;

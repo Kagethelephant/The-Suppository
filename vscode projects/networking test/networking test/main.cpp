@@ -6,7 +6,7 @@ using namespace std;
 #pragma comment(lib,"ws2_32.lib") 
 #pragma warning(disable:4996) 
 
-#define SERVER "127.0.0.1"  // or "localhost" - ip address of UDP server
+#define SERVER "192.168.0.30"  // or "localhost" - ip address of UDP server
 #define BUFLEN 512  // max length of answer
 #define PORT 8888  // the port on which to listen for incoming data
 
@@ -56,7 +56,7 @@ int main()
         // receive a reply and print it
         // clear the answer by filling null, it might have previously received data
         char answer[BUFLEN] = {};
-
+        
         // try to receive some data, this is a blocking call
         int slen = sizeof(sockaddr_in);
         int answer_length;
