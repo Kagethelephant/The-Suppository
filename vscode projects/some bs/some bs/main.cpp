@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
     int bufferX = bufferW / 2; //center of the buffer texture for positioning the game view
     int bufferY = bufferH / 2;
 
-    int gridSize = 2;
+    int gridSize = 4;
     int gridCountW = round(bufferW / gridSize) + 1;
     int gridCountH = round(bufferH / gridSize) + 1;
 
@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
     int playerY = 150;
 
     DiamSquare ds;
-    ds.newMap(5);
+    ds.newMap(8);
 
 
     std::string tileTypes[4] = { "Tree","Plain","Mntn","Hill" };
@@ -71,7 +71,7 @@ int main(int argc, char** argv) {
 
     sf::Sprite bufferSprite(buffer.getTexture()); //create the sprite that the buffer texture will be drawn to
 
-    window.setFramerateLimit(60); //set the frame rate
+    window.setFramerateLimit(10); //set the frame rate
 
 
 
@@ -90,8 +90,9 @@ int main(int argc, char** argv) {
     text.setFont(font3);
     text.setString("Hello world");
     text.setCharacterSize(8);
-    text.setFillColor(sf::Color(col1.x, col1.y, col1.z));
+    text.setFillColor(sf::Color(c_black.x, c_black.y, c_black.z));
     text.setStyle(sf::Text::Regular);
+    text.setPosition(20, 20);
 
     sf::CircleShape hex(10, 6);
     hex.setFillColor(sf::Color::Transparent);
@@ -126,9 +127,8 @@ int main(int argc, char** argv) {
         //UPDATE SHIT
         //create a vector with the mouse position in the window (mapPixelToCoords converts the screen location to the location in the view)
         sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-        hex.setPosition(mousePos.x, mousePos.y); //update the hex to the mouse vector position created above
 
-        // Rotate the hex
+        hex.setPosition(mousePos.x+gridSize, mousePos.y+gridSize); //update the hex to the mouse vector position created above
         hex.setRotation(timer.getElapsedTime().asMilliseconds() / 10);
 
         //DRAW SHIT
@@ -160,8 +160,9 @@ int main(int argc, char** argv) {
         }
 
         buffer.draw(hex);
-        //float val = ds.map[playerX][playerY];
-        text.setString("(" + std::to_string(playerX) + ", " + std::to_string(playerY) + ") : " );
+        float val = 0;
+        if(playerX >= 0 && playerX <= 65 && playerY >= 0 && playerY <= 65) val = ds.map[playerX][playerY];
+        text.setString("(" + std::to_string(playerX) + ", " + std::to_string(playerY) + ") : " + std::to_string(val));
         buffer.draw(text);
         buffer.display(); //send the texture from the back buffer to the screen
         window.draw(bufferSprite);// Draw the render texture's contents

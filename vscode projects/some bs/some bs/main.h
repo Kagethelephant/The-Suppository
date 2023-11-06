@@ -42,7 +42,7 @@ class DiamSquare
 public:
 
 	static const int arraySize = 100;
-	float map[arraySize][arraySize] = {};
+	float map[arraySize][arraySize] = {-1000.0f};
 
 	void newMap(int s, int high = 20, float roughness = 20, float change = 1.6)
 	{
@@ -55,7 +55,11 @@ public:
 		float empty = -1000.0f;
 		//DIAMOND SQUARE ALGORITH this is where the magic happens
 
-		for (int z = 0; z < size; z += chunk) { for (int i = 0; i < size; i += chunk) { map[i][z] = empty; } }
+		for (int z = 0; z < size; z += 1) { for (int i = 0; i < size; i += 1) { map[i][z] = empty; } }
+		map[0][0] = 20;
+		map[0][size] = 20;
+		map[size][0] = 20;
+		map[size][size] = 20;
 
 		//SQUARE
 		while (chunk > 1) //this is toggled so we can see each iteration
