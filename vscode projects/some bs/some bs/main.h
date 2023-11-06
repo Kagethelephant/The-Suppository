@@ -57,9 +57,9 @@ public:
 
 		for (int z = 0; z < size; z += 1) { for (int i = 0; i < size; i += 1) { map[i][z] = empty; } }
 		map[0][0] = 20;
-		map[0][size] = 20;
-		map[size][0] = 20;
-		map[size][size] = 20;
+		map[0][size-1] = 20;
+		map[size-1][0] = 20;
+		map[size-1][size-1] = 20;
 
 		//SQUARE
 		while (chunk > 1) //this is toggled so we can see each iteration
@@ -81,9 +81,9 @@ public:
 			}
 
 			//DIAMOND
-			for (int z = 0; z < size + 1; z += half)
+			for (int z = 0; z <= size + 1; z += half)
 			{
-				for (int i = (z + half) % chunk; i < size + 1; i += chunk)
+				for (int i = (z + half) % chunk; i <= size + 1; i += chunk)
 				{
 
 
