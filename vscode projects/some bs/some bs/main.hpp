@@ -43,6 +43,8 @@ public:
 
 	static const int arraySize = 101;
 	float map[arraySize][arraySize] = {-1000.0f};
+	int cntDiam = 0;
+	int cntSqr = 0;
 
 	void newMap(int s, int high = 20, float roughness = 20, float change = 1.6)
 	{
@@ -67,7 +69,7 @@ public:
 			{
 				for (int i = 0; i < size-1; i += chunk)
 				{
-
+					
 					// 0 - - - 0	This is the square portion of the code the "X" represents
 					// - - - - -	points that have already been populated. these points are 
 					// - - - - -	averaged and a random value is added "roughness" to generate
@@ -92,13 +94,14 @@ public:
 					if (map[i + half][z + half] == empty) map[i + half][z + half] = avg + rand.randRange(-roughness, roughness);
 				}
 			}
-
+			cntSqr += 1;
 			//DIAMOND
 			for (int z = 0; z < size; z += half)
 			{
 				for (int i = ((z + half) % chunk); i < size; i += chunk)
 				{
 
+					
 					// X - - - X	This is the diamond portion of the code the "X" represents
 					// - - - - -	points that have already been populated. these points are 
 					// - - 0 - -	averaged and a random value is added "roughness" to generate
@@ -128,6 +131,7 @@ public:
 					if (map[i][z] == empty) map[i][z] = avg + rand.randRange(-roughness, roughness);
 				}
 			}
+			cntDiam += 1;
 			chunk /= 2; //this is how we itterate through smaller and smaller chunks
 			half /= 2;
 			roughness /= change; //reduce the amount of change each iteration (higher value is smoother because its reducing the change faster)

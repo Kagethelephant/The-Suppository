@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
     int playerY = 150;
 
     DiamSquare ds;
-    ds.newMap(8);
+    ds.newMap(9);
 
 
     std::string tileTypes[4] = { "Tree","Plain","Mntn","Hill" };
@@ -56,6 +56,7 @@ int main(int argc, char** argv) {
 
     sf::Clock timer; //timer to rotate the hex
     sf::Vector3i col1(50, 104, 240); //we can use a vector to define a color for the background!
+    sf::Vector3i c_col2(70, 180, 240); //we can use a vector to define a color for the background!
 
 
 
@@ -138,11 +139,12 @@ int main(int argc, char** argv) {
         playerX = round(mousePos.x / gridSize);
         playerY = round(mousePos.y / gridSize);
 
-        for (int i = 0; i < 100; i += 1)
+        for (int i = 0; i < 101; i += 1)
         {
-            for (int z = 0; z < 100; z += 1)
+            for (int z = 0; z < 101; z += 1)
             {
-                if (ds.map[i][z] < -10) { rect.setFillColor(sf::Color(c_dkblue.x, c_dkblue.y, c_dkblue.z)); }
+                if (ds.map[i][z] == -1000.0f) { rect.setFillColor(sf::Color(c_col2.x, c_col2.y, c_col2.z)); }
+                else if (ds.map[i][z] < -10) { rect.setFillColor(sf::Color(c_dkblue.x, c_dkblue.y, c_dkblue.z)); }
                 else if (ds.map[i][z] < -5) { rect.setFillColor(sf::Color(c_blue.x, c_blue.y, c_blue.z)); }
                 else if (ds.map[i][z] < 0) { rect.setFillColor(sf::Color(c_ltblue.x, c_ltblue.y, c_ltblue.z)); }
                 else if (ds.map[i][z] < 5) { rect.setFillColor(sf::Color(c_tan.x, c_tan.y, c_tan.z)); }
@@ -161,7 +163,7 @@ int main(int argc, char** argv) {
 
         buffer.draw(hex);
         float val = 0;
-        if(playerX >= 0 && playerX <= 65 && playerY >= 0 && playerY <= 65) val = ds.map[playerX][playerY];
+        if(playerX >= 0 && playerX <= 101 && playerY >= 0 && playerY <= 101) val = ds.map[playerX][playerY];
         text.setString("(" + std::to_string(playerX) + ", " + std::to_string(playerY) + ") : " + std::to_string(val));
         buffer.draw(text);
         buffer.display(); //send the texture from the back buffer to the screen
@@ -172,6 +174,8 @@ int main(int argc, char** argv) {
     std::cout << "Monitor Resolution: " << resH << " X " << resW << std::endl;
     std::cout << "Window Resolution:  " << bufferH << " X " << bufferW << std::endl;
     std::cout << "Aspect Ratio: " << resRatio << std::endl;
+    std::cout << "Square Count: " << ds.cntSqr << std::endl;
+    std::cout << "Diamond Count: " << ds.cntDiam << std::endl;
     std::cout << std::endl;
 
     return 0;
