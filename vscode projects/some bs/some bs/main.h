@@ -17,6 +17,17 @@ class game
 {
 public:
 
+	sf::Vector3i c_black;
+	sf::Vector3i c_dkblue;
+	sf::Vector3i c_blue;
+	sf::Vector3i c_ltblue;
+	sf::Vector3i c_tan;
+	sf::Vector3i c_green;
+	sf::Vector3i c_dkgreen;
+	sf::Vector3i c_dkpurple;
+	sf::Vector3i c_purple;
+	sf::Vector3i c_snow;
+
 	int GetResW()
 	{
 		return GetSystemMetrics(SM_CXSCREEN);
@@ -28,7 +39,37 @@ public:
 	void colorInit()
 	{
 		sf::Vector3i c_black(13, 14, 26);
-		sf::Vector3i c_dkblue(33, 47, 106);
+		c_dkblue.x = 33;
+		c_dkblue.y = 47;
+		c_dkblue.z = 106;
+
+		c_blue.x = 33;
+		c_blue.y = 47;
+		c_blue.z = 106;
+
+		c_ltblue.x = 33;
+		c_ltblue.y = 47;
+		c_dkblue.z = 106;
+
+		c_dkblue.x = 33;
+		c_dkblue.y = 47;
+		c_dkblue.z = 106;
+
+		c_dkblue.x = 33;
+		c_dkblue.y = 47;
+		c_dkblue.z = 106;
+
+		c_dkblue.x = 33;
+		c_dkblue.y = 47;
+		c_dkblue.z = 106;
+
+		c_dkblue.x = 33;
+		c_dkblue.y = 47;
+		c_dkblue.z = 106;
+
+		c_dkblue.x = 33;
+		c_dkblue.y = 47;
+		c_dkblue.z = 106;
 		sf::Vector3i c_blue(47, 80, 118);
 		sf::Vector3i c_ltblue(70, 113, 128);
 		sf::Vector3i c_tan(116, 113, 89);

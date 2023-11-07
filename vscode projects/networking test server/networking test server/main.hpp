@@ -1,9 +1,4 @@
 
-
-
-
-
-
 struct header {
     uint16_t v1;
     uint16_t v2;

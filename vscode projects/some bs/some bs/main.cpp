@@ -6,6 +6,7 @@
 int main(int argc, char** argv) {
 
     game res; //this is defined in the header file
+    res.colorInit();
     float resW = res.GetResW();
     float resH = res.GetResH();
 
@@ -91,7 +92,7 @@ int main(int argc, char** argv) {
     text.setFont(font3);
     text.setString("Hello world");
     text.setCharacterSize(8);
-    text.setFillColor(sf::Color(col1.x, col1.y, col1.z));
+    text.setFillColor(sf::Color(res.c_dkblue.x, res.c_dkblue.y, res.c_dkblue.z));
     text.setStyle(sf::Text::Regular);
 
     sf::CircleShape hex(20, 6);
@@ -153,6 +154,7 @@ int main(int argc, char** argv) {
     std::cout << "Monitor Resolution: " << resH << " X " << resW << std::endl;
     std::cout << "Window Resolution:  " << bufferH << " X " << bufferW << std::endl;
     std::cout << "Aspect Ratio: " << resRatio << std::endl;
+    std::cout << res.c_blue.z << resRatio << std::endl;
     std::cout << std::endl;
 
     return 0;
