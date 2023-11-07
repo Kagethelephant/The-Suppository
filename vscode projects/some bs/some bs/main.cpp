@@ -1,4 +1,4 @@
-#include "main.h"
+#include "main.hpp"
 #include <random>
 //link all necessary code from the included packages (mostly SFML)
 
@@ -59,7 +59,7 @@ int main(int argc, char** argv) {
 
 
 
-    sf::RenderWindow window(sf::VideoMode(bufferW, bufferH), "Scaling"); //create the winow at default resolution and make fullscreen
+    sf::RenderWindow window(sf::VideoMode(bufferW, bufferH), "Scaling", sf::Style::Fullscreen); //create the winow at default resolution and make fullscreen
 
     sf::View view(sf::Vector2f(bufferX, bufferY), sf::Vector2f(bufferW, bufferH));// create a view and give it the scaled resolution
     window.setMouseCursorVisible(false);
