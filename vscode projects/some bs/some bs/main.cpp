@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
     int playerY = 150;
 
     DiamSquare ds;
-    ds.newMap(9);
+    ds.newMap(50);
 
 
     std::string tileTypes[4] = { "Tree","Plain","Mntn","Hill" };
@@ -93,7 +93,7 @@ int main(int argc, char** argv) {
     text.setCharacterSize(8);
     text.setFillColor(sf::Color(c_black.x, c_black.y, c_black.z));
     text.setStyle(sf::Text::Regular);
-    text.setPosition(20, 20);
+    text.setPosition(400, 20);
 
     sf::CircleShape hex(10, 6);
     hex.setFillColor(sf::Color::Transparent);
@@ -143,8 +143,8 @@ int main(int argc, char** argv) {
         {
             for (int z = 0; z < 101; z += 1)
             {
-                if (ds.map[i][z] == -1000.0f) { rect.setFillColor(sf::Color(c_col2.x, c_col2.y, c_col2.z)); }
-                else if (ds.map[i][z] < -10) { rect.setFillColor(sf::Color(c_dkblue.x, c_dkblue.y, c_dkblue.z)); }
+                //if (ds.map[i][z] == -1000.0f) { rect.setFillColor(sf::Color(c_col2.x, c_col2.y, c_col2.z)); }
+                if (ds.map[i][z] < -10) { rect.setFillColor(sf::Color(c_dkblue.x, c_dkblue.y, c_dkblue.z)); }
                 else if (ds.map[i][z] < -5) { rect.setFillColor(sf::Color(c_blue.x, c_blue.y, c_blue.z)); }
                 else if (ds.map[i][z] < 0) { rect.setFillColor(sf::Color(c_ltblue.x, c_ltblue.y, c_ltblue.z)); }
                 else if (ds.map[i][z] < 5) { rect.setFillColor(sf::Color(c_tan.x, c_tan.y, c_tan.z)); }
@@ -170,12 +170,22 @@ int main(int argc, char** argv) {
         window.draw(bufferSprite);// Draw the render texture's contents
         window.display();// Display the results
     }
+
+
     //some outputs to the console after the while loop closes for debugging
     std::cout << "Monitor Resolution: " << resH << " X " << resW << std::endl;
     std::cout << "Window Resolution:  " << bufferH << " X " << bufferW << std::endl;
     std::cout << "Aspect Ratio: " << resRatio << std::endl;
     std::cout << "Square Count: " << ds.cntSqr << std::endl;
     std::cout << "Diamond Count: " << ds.cntDiam << std::endl;
+    std::cout << "floor(20.00000001) " << std::floor(20.000000000000001) << std::endl;
+    for (int i = 0; i < 6; i += 1)
+    {
+        std::cout << "Square: " <<  ds.itr[i][0] << std::endl;
+        std::cout << "Diamond: " << ds.itr[i][1] << std::endl;
+        std::cout << "chunkRnd: " << ds.itr[i][2] << std::endl;
+        std::cout << "halfRnd: " << ds.itr[i][3] << std::endl << std::endl;
+    }
     std::cout << std::endl;
 
     return 0;
