@@ -135,13 +135,6 @@ public:
 					if (map[(int)round(i)][(int)round(z)] == empty) map[(int)round(i)][(int)round(z)] = avg + rand.randRange(-roughness, roughness);
 				}
 			}
-
-			/*itr[run][0] = cntSqr;
-			itr[run][1] = cntDiam;
-			itr[run][2] = chunk;
-			itr[run][3] = half;
-			run += 1;*/
-
 			chunk /= 2; //this is how we itterate through smaller and smaller chunks
 			half /= 2;
 			roughness /= change; //reduce the amount of change each iteration (higher value is smoother because its reducing the change faster)

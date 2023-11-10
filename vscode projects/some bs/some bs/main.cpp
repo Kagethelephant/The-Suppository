@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
     int playerY = 150;
 
     DiamSquare ds;
-    ds.newMap(50);
+    ds.newMap(100);
 
 
     std::string tileTypes[4] = { "Tree","Plain","Mntn","Hill" };
@@ -178,14 +178,6 @@ int main(int argc, char** argv) {
     std::cout << "Aspect Ratio: " << resRatio << std::endl;
     std::cout << "Square Count: " << ds.cntSqr << std::endl;
     std::cout << "Diamond Count: " << ds.cntDiam << std::endl;
-    std::cout << "floor(20.00000001) " << std::floor(20.000000000000001) << std::endl;
-    for (int i = 0; i < 6; i += 1)
-    {
-        std::cout << "Square: " <<  ds.itr[i][0] << std::endl;
-        std::cout << "Diamond: " << ds.itr[i][1] << std::endl;
-        std::cout << "chunkRnd: " << ds.itr[i][2] << std::endl;
-        std::cout << "halfRnd: " << ds.itr[i][3] << std::endl << std::endl;
-    }
     std::cout << std::endl;
 
     return 0;
