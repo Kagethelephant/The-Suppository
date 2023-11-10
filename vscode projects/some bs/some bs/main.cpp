@@ -18,8 +18,8 @@ int main(int argc, char** argv) {
     sf::Vector3i c_snow(182, 182, 182);
 
     game res; //this is defined in the header file
-    float resW = res.GetResW();
-    float resH = res.GetResH();
+    float resW = GetSystemMetrics(SM_CXSCREEN);
+    float resH = GetSystemMetrics(SM_CYSCREEN);
 
     float resRatio = resW / resH; //this is the aspect ratio
 
@@ -35,30 +35,11 @@ int main(int argc, char** argv) {
 
     const int mapSize = 100;
 
-    int playerX = 150;
-    int playerY = 150;
+    int mouseX = 150;
+    int mouseY = 150;
 
     DiamSquare ds;
     ds.newMap(50);
-
-
-    std::string tileTypes[4] = { "Tree","Plain","Mntn","Hill" };
-
-    std::random_device rd; // obtain a random number from hardware
-    std::mt19937 gen(rd()); // seed the generator
-    std::uniform_int_distribution<> distr(0, 3); // define the range
-
-    struct tile {
-        std::string tileType;
-        float moisture;
-        float height;
-    };
-
-    sf::Clock timer; //timer to rotate the hex
-    sf::Vector3i col1(50, 104, 240); //we can use a vector to define a color for the background!
-    sf::Vector3i c_col2(70, 180, 240); //we can use a vector to define a color for the background!
-
-
 
     sf::RenderWindow window(sf::VideoMode(bufferW, bufferH), "Scaling", sf::Style::Fullscreen); //create the winow at default resolution and make fullscreen
 
@@ -72,23 +53,15 @@ int main(int argc, char** argv) {
 
     sf::Sprite bufferSprite(buffer.getTexture()); //create the sprite that the buffer texture will be drawn to
 
-    window.setFramerateLimit(10); //set the frame rate
+    window.setFramerateLimit(30); //set the frame rate
 
 
 
     sf::Font font;
-    sf::Font font1;
-    sf::Font font2;
-    sf::Font font3;
-    if (!font.loadFromFile("../fonts/DisposableDroidBB.ttf")) return 1;
-    if (!font1.loadFromFile("../fonts/manaspc.ttf")) return 1;
-    if (!font2.loadFromFile("../fonts/novem___.ttf")) return 1;
-    if (!font3.loadFromFile("../fonts/small_pixel.ttf")) return 1;
-
-
+    if (!font.loadFromFile("../fonts/small_pixel.ttf")) return 1;
 
     sf::Text text;
-    text.setFont(font3);
+    text.setFont(font);
     text.setString("Hello world");
     text.setCharacterSize(8);
     text.setFillColor(sf::Color(c_black.x, c_black.y, c_black.z));
@@ -97,7 +70,7 @@ int main(int argc, char** argv) {
 
     sf::CircleShape hex(10, 6);
     hex.setFillColor(sf::Color::Transparent);
-    hex.setOutlineColor(sf::Color(col1.x, col1.y, col1.z));
+    hex.setOutlineColor(sf::Color(c_black.x, c_black.y, c_black.z));
     hex.setOutlineThickness(2);
     hex.setOrigin(10, 10);
 
@@ -119,26 +92,13 @@ int main(int argc, char** argv) {
             }
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) { playerX += 1; } //this does the same thing as above
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) { playerX -= 1; }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) { playerY += 1; }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) { playerY -= 1; }
-
-
         //UPDATE SHIT
-        //create a vector with the mouse position in the window (mapPixelToCoords converts the screen location to the location in the view)
-        sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-
-        hex.setPosition(mousePos.x+gridSize, mousePos.y+gridSize); //update the hex to the mouse vector position created above
-        hex.setRotation(timer.getElapsedTime().asMilliseconds() / 10);
 
         //DRAW SHIT
         // Clear the buffer texture to create a background
-        buffer.clear(sf::Color(col1.x, col1.y, col1.z));
+        buffer.clear(sf::Color(c_black.x, c_black.y, c_black.z));
 
-        playerX = round(mousePos.x / gridSize);
-        playerY = round(mousePos.y / gridSize);
-
+        
         for (int i = 0; i < 101; i += 1)
         {
             for (int z = 0; z < 101; z += 1)
@@ -153,7 +113,7 @@ int main(int argc, char** argv) {
                 else if (ds.map[i][z] < 20) { rect.setFillColor(sf::Color(c_purple.x, c_purple.y, c_purple.z)); }
                 else { rect.setFillColor(sf::Color(c_dkpurple.x, c_dkpurple.y, c_dkpurple.z)); }
 
-                if (playerX == i && playerY == z) { rect.setFillColor(sf::Color(c_black.x, c_black.y, c_black.z)); }
+                if (mouseX == i && mouseY == z) { rect.setFillColor(sf::Color(c_black.x, c_black.y, c_black.z)); }
 
                 rect.setPosition((1) + (i * gridSize), (1) + (z * gridSize));
                 buffer.draw(rect);
@@ -161,32 +121,28 @@ int main(int argc, char** argv) {
             }
         }
 
+        sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+        hex.setPosition(mousePos.x + gridSize, mousePos.y + gridSize); //update the hex to the mouse vector position created above
         buffer.draw(hex);
+
+        mouseX = round(mousePos.x / gridSize);
+        mouseY = round(mousePos.y / gridSize);
         float val = 0;
-        if(playerX >= 0 && playerX <= 101 && playerY >= 0 && playerY <= 101) val = ds.map[playerX][playerY];
-        text.setString("(" + std::to_string(playerX) + ", " + std::to_string(playerY) + ") : " + std::to_string(val));
+        if(mouseX >= 0 && mouseX <= 101 && mouseY >= 0 && mouseY <= 101) val = ds.map[mouseX][mouseY];
+        text.setString("(" + std::to_string(mouseX) + ", " + std::to_string(mouseY) + ") : " + std::to_string(val));
+
+
         buffer.draw(text);
         buffer.display(); //send the texture from the back buffer to the screen
         window.draw(bufferSprite);// Draw the render texture's contents
         window.display();// Display the results
     }
 
-
     //some outputs to the console after the while loop closes for debugging
     std::cout << "Monitor Resolution: " << resH << " X " << resW << std::endl;
     std::cout << "Window Resolution:  " << bufferH << " X " << bufferW << std::endl;
     std::cout << "Aspect Ratio: " << resRatio << std::endl;
-    std::cout << "Square Count: " << ds.cntSqr << std::endl;
-    std::cout << "Diamond Count: " << ds.cntDiam << std::endl;
-    std::cout << "floor(20.00000001) " << std::floor(20.000000000000001) << std::endl;
-    for (int i = 0; i < 6; i += 1)
-    {
-        std::cout << "Square: " <<  ds.itr[i][0] << std::endl;
-        std::cout << "Diamond: " << ds.itr[i][1] << std::endl;
-        std::cout << "chunkRnd: " << ds.itr[i][2] << std::endl;
-        std::cout << "halfRnd: " << ds.itr[i][3] << std::endl << std::endl;
-    }
-    std::cout << std::endl;
+
 
     return 0;
 }
