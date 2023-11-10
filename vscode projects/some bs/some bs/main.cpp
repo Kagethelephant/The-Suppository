@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
     int playerY = 150;
 
     DiamSquare ds;
-    ds.newMap(8);
+    ds.newMap(50);
 
 
     std::string tileTypes[4] = { "Tree","Plain","Mntn","Hill" };
@@ -56,6 +56,7 @@ int main(int argc, char** argv) {
 
     sf::Clock timer; //timer to rotate the hex
     sf::Vector3i col1(50, 104, 240); //we can use a vector to define a color for the background!
+    sf::Vector3i c_col2(70, 180, 240); //we can use a vector to define a color for the background!
 
 
 
@@ -92,7 +93,7 @@ int main(int argc, char** argv) {
     text.setCharacterSize(8);
     text.setFillColor(sf::Color(c_black.x, c_black.y, c_black.z));
     text.setStyle(sf::Text::Regular);
-    text.setPosition(20, 20);
+    text.setPosition(400, 20);
 
     sf::CircleShape hex(10, 6);
     hex.setFillColor(sf::Color::Transparent);
@@ -138,10 +139,11 @@ int main(int argc, char** argv) {
         playerX = round(mousePos.x / gridSize);
         playerY = round(mousePos.y / gridSize);
 
-        for (int i = 0; i < 100; i += 1)
+        for (int i = 0; i < 101; i += 1)
         {
-            for (int z = 0; z < 100; z += 1)
+            for (int z = 0; z < 101; z += 1)
             {
+                //if (ds.map[i][z] == -1000.0f) { rect.setFillColor(sf::Color(c_col2.x, c_col2.y, c_col2.z)); }
                 if (ds.map[i][z] < -10) { rect.setFillColor(sf::Color(c_dkblue.x, c_dkblue.y, c_dkblue.z)); }
                 else if (ds.map[i][z] < -5) { rect.setFillColor(sf::Color(c_blue.x, c_blue.y, c_blue.z)); }
                 else if (ds.map[i][z] < 0) { rect.setFillColor(sf::Color(c_ltblue.x, c_ltblue.y, c_ltblue.z)); }
@@ -161,17 +163,29 @@ int main(int argc, char** argv) {
 
         buffer.draw(hex);
         float val = 0;
-        if(playerX >= 0 && playerX <= 65 && playerY >= 0 && playerY <= 65) val = ds.map[playerX][playerY];
+        if(playerX >= 0 && playerX <= 101 && playerY >= 0 && playerY <= 101) val = ds.map[playerX][playerY];
         text.setString("(" + std::to_string(playerX) + ", " + std::to_string(playerY) + ") : " + std::to_string(val));
         buffer.draw(text);
         buffer.display(); //send the texture from the back buffer to the screen
         window.draw(bufferSprite);// Draw the render texture's contents
         window.display();// Display the results
     }
+
+
     //some outputs to the console after the while loop closes for debugging
     std::cout << "Monitor Resolution: " << resH << " X " << resW << std::endl;
     std::cout << "Window Resolution:  " << bufferH << " X " << bufferW << std::endl;
     std::cout << "Aspect Ratio: " << resRatio << std::endl;
+    std::cout << "Square Count: " << ds.cntSqr << std::endl;
+    std::cout << "Diamond Count: " << ds.cntDiam << std::endl;
+    std::cout << "floor(20.00000001) " << std::floor(20.000000000000001) << std::endl;
+    for (int i = 0; i < 6; i += 1)
+    {
+        std::cout << "Square: " <<  ds.itr[i][0] << std::endl;
+        std::cout << "Diamond: " << ds.itr[i][1] << std::endl;
+        std::cout << "chunkRnd: " << ds.itr[i][2] << std::endl;
+        std::cout << "halfRnd: " << ds.itr[i][3] << std::endl << std::endl;
+    }
     std::cout << std::endl;
 
     return 0;

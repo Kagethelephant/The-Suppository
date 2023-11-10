@@ -34,40 +34,6 @@ public:
 		
 		return distr(gen);
 	}
-};
-
-class DiamSquare
-{
-
-public:
-
-	static const int arraySize = 101;
-	float map[arraySize][arraySize] = {-1000.0f};
-
-	void newMap(int s, int high = 20, float roughness = 20, float change = 1.6)
-	{
-		game rand;
-		int size = pow(s,2) + 1;
-		int chunk = (size-1); //size of the piece you are working with
-		int half = chunk / 2; // this helps get the center value
-		float empty = -1000.0f;
-		//DIAMOND SQUARE ALGORITH this is where the magic happens
-
-		for (int z = 0; z < size; z += 1) { for (int i = 0; i < size; i += 1) { map[i][z] = empty; } }
-
-		map[0][0] = 20;
-		map[0][chunk] = 20;
-		map[chunk][0] = 20;
-		map[chunk][chunk] = 20;
-
-		//SQUARE
-		while (chunk > 1)
-		{
-			for (int z = 0; z < size-1; z += chunk)
-			{
-				for (int i = 0; i < size-1; i += chunk)
-				{
-
 					// 0 - - - 0	This is the square portion of the code the "X" represents
 					// - - - - -	points that have already been populated. these points are 
 					// - - - - -	averaged and a random value is added "roughness" to generate
@@ -80,25 +46,6 @@ public:
 					// - - - - -	
 					// X - 0 - X
 
-					float x1y1 = map[i][z]; //grab the "X" values shown above
-					float x2y1 = map[i + chunk][z];
-					float x1y2 = map[i][z + chunk];
-					float x2y2 = map[i + chunk][z + chunk];
-
-					float avg = (x1y1 + x2y1 + x1y2 + x2y2) / 4;
-
-					//set the value "0" with the average + a random value and make sure we are not overwriting other values
-					//
-					if (map[i + half][z + half] == empty) map[i + half][z + half] = avg + rand.randRange(-roughness, roughness);
-				}
-			}
-
-			//DIAMOND
-			for (int z = 0; z < size; z += half)
-			{
-				for (int i = ((z + half) % chunk); i < size; i += chunk)
-				{
-
 					// X - - - X	This is the diamond portion of the code the "X" represents
 					// - - - - -	points that have already been populated. these points are 
 					// - - 0 - -	averaged and a random value is added "roughness" to generate
@@ -110,24 +57,91 @@ public:
 					// X - X - X	
 					// - 0 - 0 -	
 					// X - X - X
+};
+
+class DiamSquare
+{
+
+public:
+
+	static const int arraySize = 101;
+	float map[arraySize][arraySize] = {-1000.0f};
+	int cntDiam = 0;
+	int cntSqr = 0;
+	int itr[6][4];
+	int run = 0;
+
+	void newMap(int s, int high = 20, float roughness = 20, float change = 1.6)
+	{
+		game rand;
+		int size = s;
+		float chunk = size; //size of the piece you are working with
+		float half = size/2; // this helps get the center value
+		float empty = -1000.0f;
+		//DIAMOND SQUARE ALGORITH this is where the magic happens
+
+		for (int z = 0; z < size+1; z += 1) { for (int i = 0; i < size+1; i += 1) { map[i][z] = empty; } }
+
+		map[0][0] = rand.randRange(-roughness, roughness);
+		map[0][size] = rand.randRange(-roughness, roughness);
+		map[size][0] = rand.randRange(-roughness, roughness);
+		map[size][size] = rand.randRange(-roughness, roughness);
+
+		//SQUARE
+		while (chunk > 1)
+		{		
+			//cntSqr = 0;
+			for (float z = 0; z < size; z += chunk)
+			{
+				for (float i = 0; i < size; i += chunk)
+				{
+					
+					//cntSqr += 1;
+					float x1y1 = map[(int)round(i)][(int)round(z)]; //grab the "X" values shown above
+					float x2y1 = map[(int)round(i + chunk)][(int)round(z)];
+					float x1y2 = map[(int)round(i)][(int)round(z + chunk)];
+					float x2y2 = map[(int)round(i + chunk)][(int)round(z + chunk)];
+
+					float avg = (x1y1 + x2y1 + x1y2 + x2y2) / 4;
+
+					//set the value "0" with the average + a random value and make sure we are not overwriting other values
+					//+ rand.randRange(-roughness, roughness)
+					if (map[(int)round(i + half)][(int)round(z + half)] == empty) map[(int)round(i + half)][(int)round(z + half)] = avg + rand.randRange(-roughness, roughness);
+				}
+			}
+			
+			//cntDiam = 0;
+			//DIAMOND
+			for (float z = 0; z < size+1; z += half)
+			{
+				for (float i = fmodf((z+ half),chunk); i < size+1; i += chunk)
+				{
+					//cntDiam += 1;
 
 					float x1y = 0;
 					float x2y = 0;
 					float xy1 = 0;
 					float xy2 = 0;
-
-					if(i-half >=0) x1y = map[i - half][z];  //grab the "X" values shown above
-					if (i + half < size) x2y = map[i + half][z];
-					if (z + half < size) xy1 = map[i][z + half];
-					if (z - half >= 0) xy2 = map[i][z - half];
+					
+					if(i-half >=0) x1y = map[(int)round(i - half)][(int)round(z)];  //grab the "X" values shown above
+					if (i + half < size+1) x2y = map[(int)round(i + half)][(int)round(z)];
+					if (z + half < size+1) xy1 = map[(int)round(i)][(int)round(z + half)];
+					if (z - half >= 0) xy2 = map[(int)round(i)][(int)round(z - half)];
 
 					float avg = (x1y + x2y + xy1 + xy2) / 4;
 
 					//set the value "0" (from the diagram above) with the average + a random value and make sure we are not overwriting other values
-					//
-					if (map[i][z] == empty) map[i][z] = avg + rand.randRange(-roughness, roughness);
+					//+ rand.randRange(-roughness, roughness)
+					if (map[(int)round(i)][(int)round(z)] == empty) map[(int)round(i)][(int)round(z)] = avg + rand.randRange(-roughness, roughness);
 				}
 			}
+
+			/*itr[run][0] = cntSqr;
+			itr[run][1] = cntDiam;
+			itr[run][2] = chunk;
+			itr[run][3] = half;
+			run += 1;*/
+
 			chunk /= 2; //this is how we itterate through smaller and smaller chunks
 			half /= 2;
 			roughness /= change; //reduce the amount of change each iteration (higher value is smoother because its reducing the change faster)
