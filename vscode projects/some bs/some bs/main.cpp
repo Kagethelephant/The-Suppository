@@ -30,8 +30,6 @@ int main(int argc, char** argv) {
     int bufferY = bufferH / 2;
 
     int gridSize = 4;
-    int gridCountW = round(bufferW / gridSize) + 1;
-    int gridCountH = round(bufferH / gridSize) + 1;
 
     const int mapSize = 100;
 
@@ -50,10 +48,9 @@ int main(int argc, char** argv) {
     sf::RenderTexture buffer; //create the main window texture to draw in the proper resolution (needs to be drawn to the buffer sprite and drawn to the window)
     buffer.create(bufferW, bufferH); //create the buffer texter with the proper resolution
     buffer.setSmooth(false);
-
     sf::Sprite bufferSprite(buffer.getTexture()); //create the sprite that the buffer texture will be drawn to
+    window.setFramerateLimit(30);
 
-    window.setFramerateLimit(30); //set the frame rate
 
 
 

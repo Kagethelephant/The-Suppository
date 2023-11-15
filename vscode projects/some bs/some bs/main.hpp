@@ -13,11 +13,12 @@
 #include <string>
 #include <random>
 
-class game
+class game  
 {
+
 public:
 
-	int randRange(int min, int max)
+	int RandRange(int min, int max)
 	{
 		std::random_device rd; // obtain a random number from hardware
 		std::mt19937 gen(rd()); // seed the generator
@@ -25,6 +26,7 @@ public:
 		
 		return distr(gen);
 	}
+
 };
 
 class DiamSquare
@@ -49,10 +51,10 @@ public:
 
 		for (int z = 0; z < size+1; z += 1) { for (int i = 0; i < size+1; i += 1) { map[i][z] = empty; } }
 
-		map[0][0] = rand.randRange(-roughness, roughness);
-		map[0][size] = rand.randRange(-roughness, roughness);
-		map[size][0] = rand.randRange(-roughness, roughness);
-		map[size][size] = rand.randRange(-roughness, roughness);
+		map[0][0] = rand.RandRange(-roughness, roughness);
+		map[0][size] = rand.RandRange(-roughness, roughness);
+		map[size][0] = rand.RandRange(-roughness, roughness);
+		map[size][size] = rand.RandRange(-roughness, roughness);
 
 		float x1y1; //grab the "X" values shown above
 		float x2y1;
@@ -95,7 +97,7 @@ public:
 					avg = (x1y1 + x2y1 + x1y2 + x2y2) / 4;
 
 					//set the value "0" with the average + a random value and make sure we are not overwriting other values
-					if (map[(int)round(i + half)][(int)round(z + half)] == empty) map[(int)round(i + half)][(int)round(z + half)] = avg + rand.randRange(-roughness, roughness);
+					if (map[(int)round(i + half)][(int)round(z + half)] == empty) map[(int)round(i + half)][(int)round(z + half)] = avg + rand.RandRange(-roughness, roughness);
 				}
 			}
 			
@@ -130,7 +132,7 @@ public:
 					avg = (x1y + x2y + xy1 + xy2) / 4;
 
 					//set the value "0" (from the diagram above) with the average + a random value and make sure we are not overwriting other values
-					if (map[(int)round(i)][(int)round(z)] == empty) map[(int)round(i)][(int)round(z)] = avg + rand.randRange(-roughness, roughness);
+					if (map[(int)round(i)][(int)round(z)] == empty) map[(int)round(i)][(int)round(z)] = avg + rand.RandRange(-roughness, roughness);
 				}
 			}
 			chunk /= 2; //this is how we itterate through smaller and smaller chunks
