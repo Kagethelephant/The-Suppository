@@ -1,20 +1,15 @@
 #include "main.hpp"
 
+//alocate space for the grid
+static const int arraySize = 200;
+//create the grid here so it stays in the heap
+float map[arraySize][arraySize] = { -1000.0f };
+
 int main(int argc, char** argv) {
 
     //----GENERAL VARIABLES----
     
-    //define some colors cause the default ones are ugly
-    sf::Vector3i c_black(13, 14, 26);
-    sf::Vector3i c_dkblue(33, 47, 106);
-    sf::Vector3i c_blue(47, 80, 118);
-    sf::Vector3i c_ltblue(70, 113, 128);
-    sf::Vector3i c_tan(116, 113, 89);
-    sf::Vector3i c_green(49, 83, 76);
-    sf::Vector3i c_dkgreen(34, 53, 59);
-    sf::Vector3i c_dkpurple(43, 37, 49);
-    sf::Vector3i c_purple(77, 61, 85);
-    sf::Vector3i c_snow(182, 182, 182);
+
 
 
     //----GRID STUFF----
@@ -22,14 +17,17 @@ int main(int argc, char** argv) {
     //size in pixels of the grids to draw to the window
     int gridSize = 4;
     //size of diamond square map *MUST BE EVEN*
-    int dsSize = 100;
+    int dsSize = 200;
 
     int mouseX = 150;
     int mouseY = 150;
 
+    int viewPosX = 100;
+    int viewPosY = 125;
+
     //Create the diamond square object and run function to generate map
     DiamSquare ds;
-    ds.newMap(dsSize);
+    ds.newMap(map, dsSize);
 
 
     //----VIEW SETUP/SFML----
@@ -105,20 +103,30 @@ int main(int argc, char** argv) {
     //clear viewwith a background color
     buffer.clear(sf::Color(c_black.x, c_black.y, c_black.z));
 
+
+    //how many grids can fit on the screen
+    int viewGridW = floor(bufferW / gridSize);
+    int viewGridH = floor(bufferH / gridSize);
+    int viewGridX = viewPosX - floor((viewGridW)/2);
+    int viewGridY = viewPosY - floor((viewGridH)/2);
+
     //iterate throught the diamond square grid and draw squares at different colors
     //for different heights
-    for (int i = 0; i < 101; i += 1)
+    for (int i = 0; i < dsSize+1; i += 1)
     {
-        for (int z = 0; z < 101; z += 1)
+        for (int z = 0; z < dsSize+1; z += 1)
         {
+            int tx = floor(viewGridX + i);
+            int ty = floor(viewGridY + z);
+
             //Check the number from the grid and set a corisponding color
-            if (ds.map[i][z] < -10) { rect.setFillColor(sf::Color(c_dkblue.x, c_dkblue.y, c_dkblue.z)); }
-            else if (ds.map[i][z] < -5) { rect.setFillColor(sf::Color(c_blue.x, c_blue.y, c_blue.z)); }
-            else if (ds.map[i][z] < 0) { rect.setFillColor(sf::Color(c_ltblue.x, c_ltblue.y, c_ltblue.z)); }
-            else if (ds.map[i][z] < 5) { rect.setFillColor(sf::Color(c_tan.x, c_tan.y, c_tan.z)); }
-            else if (ds.map[i][z] < 10) { rect.setFillColor(sf::Color(c_green.x, c_green.y, c_green.z)); }
-            else if (ds.map[i][z] < 15) { rect.setFillColor(sf::Color(c_dkgreen.x, c_dkgreen.y, c_dkgreen.z)); }
-            else if (ds.map[i][z] < 20) { rect.setFillColor(sf::Color(c_purple.x, c_purple.y, c_purple.z)); }
+            if (map[tx][ty] < -10) { rect.setFillColor(sf::Color(c_dkblue.x, c_dkblue.y, c_dkblue.z)); }
+            else if (map[tx][ty] < -5) { rect.setFillColor(sf::Color(c_blue.x, c_blue.y, c_blue.z)); }
+            else if (map[tx][ty] < 0) { rect.setFillColor(sf::Color(c_ltblue.x, c_ltblue.y, c_ltblue.z)); }
+            else if (map[tx][ty] < 5) { rect.setFillColor(sf::Color(c_tan.x, c_tan.y, c_tan.z)); }
+            else if (map[tx][ty] < 10) { rect.setFillColor(sf::Color(c_green.x, c_green.y, c_green.z)); }
+            else if (map[tx][ty] < 15) { rect.setFillColor(sf::Color(c_dkgreen.x, c_dkgreen.y, c_dkgreen.z)); }
+            else if (map[tx][ty] < 20) { rect.setFillColor(sf::Color(c_purple.x, c_purple.y, c_purple.z)); }
             else { rect.setFillColor(sf::Color(c_dkpurple.x, c_dkpurple.y, c_dkpurple.z)); }
 
             //Move the rectangle to the correct position before drawing
@@ -127,6 +135,7 @@ int main(int argc, char** argv) {
         }
     }
 
+    //change the rectangle so it can be used as the mouse position
     rect.setFillColor(sf::Color(0,0,0,0));
     rect.setOutlineColor(sf::Color::Black);
 
@@ -135,7 +144,8 @@ int main(int argc, char** argv) {
 
     while (window.isOpen()) {
 
-        //WINDOW EVENTS
+        //----WINDOW EVENTS----
+
         //event handler
         sf::Event event; 
         while (window.pollEvent(event)) {
@@ -159,15 +169,71 @@ int main(int argc, char** argv) {
 
         //----UPDATE----
 
+        // regenerate the map when the enter button is pressed
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
+        {
+            ds.newMap(map, dsSize);
+            ds.reGen(map, dsSize, buffer, rect, gridSize, viewPosX - floor((viewGridW) / 2), viewPosY - floor((viewGridH) / 2));
+        }
+
+        //move the map around and update the graphics
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+        {
+            viewPosX += 1;
+            if (viewPosX > dsSize - floor((viewGridW) / 2)) viewPosX = dsSize - floor((viewGridW) / 2);
+            else
+            {
+                ds.reGen(map, dsSize, buffer, rect, gridSize, viewPosX - floor((viewGridW) / 2), viewPosY - floor((viewGridH) / 2));
+            }
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+        {
+            viewPosX -= 1;
+            if (viewPosX < floor((viewGridW) / 2)) viewPosX = floor((viewGridW) / 2);
+            else
+            {
+                ds.reGen(map, dsSize, buffer, rect, gridSize, viewPosX - floor((viewGridW) / 2), viewPosY - floor((viewGridH) / 2));
+            }
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+        {
+            viewPosY -= 1;
+            if (viewPosY < floor((viewGridH) / 2)) viewPosY = floor((viewGridH) / 2);
+            else
+            {
+                ds.reGen(map, dsSize, buffer, rect, gridSize, viewPosX - floor((viewGridW) / 2), viewPosY - floor((viewGridH) / 2));
+            }
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+        {
+            viewPosY += 1;
+            if (viewPosY > dsSize - floor((viewGridH) / 2)) viewPosY = dsSize - floor((viewGridH) / 2);
+            else
+            {
+                ds.reGen(map, dsSize, buffer, rect, gridSize, viewPosX - floor((viewGridW) / 2), viewPosY - floor((viewGridH) / 2));
+            }
+        } 
+        
+        //update the map position to give accurate grid positions
+        int viewGridX = viewPosX - floor((viewGridW) / 2);
+        int viewGridY = viewPosY - floor((viewGridH) / 2);
+
         //Create a vector with the pixel coord's in the actual window not the display
         sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
         //Update the positon of the hex (this is the cursor for now)
         hex.setPosition(mousePos.x + 3, mousePos.y + 3); 
 
-        //This is the position of our mouse in world grid coord's
+        //This is the position of our mouse in world grid coord's but keep it in the map
         mouseX = round(mousePos.x / gridSize);
         mouseY = round(mousePos.y / gridSize);
+        if (mouseX > dsSize) mouseX = dsSize;
+        if (mouseY > dsSize) mouseY = dsSize;
+        if (mouseX < 0) mouseX = 0;
+        if (mouseY < 0) mouseY = 0;
 
         //----DRAW UPDATE-----
       
@@ -177,16 +243,19 @@ int main(int argc, char** argv) {
         //Draw the cursor on the screen
         bufferGUI.draw(hex);
 
-        //Draw the coord of the mouse on the screen
-        float inView = 0;
-        if(mouseX >= 0 && mouseX <= 101 && mouseY >= 0 && mouseY <= 101) inView = ds.map[mouseX][mouseY];
-        text.setString("(" + std::to_string(mouseX) + ", " + std::to_string(mouseY) + ") : " + std::to_string(inView));
+        //Draw the coord of the mouse on the screen as long as its in the map  
+        int newX = mouseX + viewGridX;
+        int newY = mouseY + viewGridY;
+        text.setString("(" + std::to_string(newX) + ", " + std::to_string(newY) + ") : " + std::to_string(map[newX][newY]));
         bufferGUI.draw(text);
 
         //Move the rectangle to the correct position before drawing
         rect.setPosition(mouseX*gridSize+1, mouseY*gridSize+1);
         bufferGUI.draw(rect);
 
+
+        //----DISPLAY THE STUFF----
+        
         //display the buffer on to the window and draw the sprite 
         //on to the window (not really sure how this works honestly)
         buffer.display(); 
@@ -196,7 +265,8 @@ int main(int argc, char** argv) {
         bufferGUI.display(); 
         window.draw(bufferSpriteGUI);
 
-        window.display();// Display the results
+        // Display the window to the screen
+        window.display();
     }
 
 

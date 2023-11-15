@@ -13,6 +13,18 @@
 #include <string>
 #include <random>
 
+//define some colors cause the default ones are ugly
+sf::Vector3i c_black(13, 14, 26);
+sf::Vector3i c_dkblue(33, 47, 106);
+sf::Vector3i c_blue(47, 80, 118);
+sf::Vector3i c_ltblue(70, 113, 128);
+sf::Vector3i c_tan(116, 113, 89);
+sf::Vector3i c_green(49, 83, 76);
+sf::Vector3i c_dkgreen(34, 53, 59);
+sf::Vector3i c_dkpurple(43, 37, 49);
+sf::Vector3i c_purple(77, 61, 85);
+sf::Vector3i c_snow(182, 182, 182);
+
 class game  
 {
 
@@ -35,19 +47,15 @@ public:
 
 class DiamSquare
 {
-private:
-	
+
 public:
 
-	 //alocate space for the grid
-	static const int arraySize = 200;
-	//create the grid here so it stays in the heap
-	float map[arraySize][arraySize] = { -1000.0f };
-
 	//----CREATE THE MAP----
-	void newMap(int size, int high = 20, float roughness = 20, float change = 1.6)
+
+	void newMap(float map[200][200], int size, int high = 20, float roughness = 20, float change = 1.6)
 	{
 		//---INITIALIZE VARIABLES----
+
 		game rand;
 		float avg;
 		int div;
@@ -117,8 +125,8 @@ public:
 				}
 			}
 			
-			//cntDiam = 0;
-			//DIAMOND
+			//----DIAMOND----
+
 			for (float z = 0; z < size + 1; z += half)
 			{
 				for (float i = fmodf((z + half), chunk); i < size + 1; i += chunk)
@@ -168,7 +176,7 @@ public:
 					}
 
 					//calculate the average and use div to only average the amount of values grabbed
-					avg = (x1y + x2y + xy1 + xy2) / div; 
+					avg = (x1y + x2y + xy1 + xy2) / 4; 
 
 					//set the value "0" (from the diagram above) with the average + a random value and make sure we are not overwriting other values
 					if (map[(int)round(i)][(int)round(z)] == empty) map[(int)round(i)][(int)round(z)] = avg + rand.RandRange(-roughness, roughness);
@@ -182,5 +190,43 @@ public:
 		}
 
 	}
+
+	//----GENERATE NEW RANDOM MAP----
+
+	void reGen(float map[200][200],int dsSize, sf::RenderTexture& buffer, sf::RectangleShape& rect, int gridSize, int viewGridX, int viewGridY)
+	{
+		//clear viewwith a background color
+		buffer.clear(sf::Color(c_black.x, c_black.y, c_black.z));
+		rect.setOutlineColor(sf::Color::Transparent);
+		//iterate throught the diamond square grid and draw squares at different colors
+		//for different heights
+		for (int i = 0; i < dsSize + 1; i += 1)
+		{
+			for (int z = 0; z < dsSize + 1; z += 1)
+			{
+				int tx = floor(viewGridX + i);
+				int ty = floor(viewGridY + z);
+
+				//Check the number from the grid and set a corisponding color
+				if (map[tx][ty] < -10) { rect.setFillColor(sf::Color(c_dkblue.x, c_dkblue.y, c_dkblue.z)); }
+				else if (map[tx][ty] < -5) { rect.setFillColor(sf::Color(c_blue.x, c_blue.y, c_blue.z)); }
+				else if (map[tx][ty] < 0) { rect.setFillColor(sf::Color(c_ltblue.x, c_ltblue.y, c_ltblue.z)); }
+				else if (map[tx][ty] < 5) { rect.setFillColor(sf::Color(c_tan.x, c_tan.y, c_tan.z)); }
+				else if (map[tx][ty] < 10) { rect.setFillColor(sf::Color(c_green.x, c_green.y, c_green.z)); }
+				else if (map[tx][ty] < 15) { rect.setFillColor(sf::Color(c_dkgreen.x, c_dkgreen.y, c_dkgreen.z)); }
+				else if (map[tx][ty] < 20) { rect.setFillColor(sf::Color(c_purple.x, c_purple.y, c_purple.z)); }
+				else { rect.setFillColor(sf::Color(c_dkpurple.x, c_dkpurple.y, c_dkpurple.z)); }
+
+				//Move the rectangle to the correct position before drawing
+				rect.setPosition((1) + (i * gridSize), (1) + (z * gridSize));
+				buffer.draw(rect);
+			}
+		}
+
+		//change the rectangle so it can be used as the mouse position
+		rect.setFillColor(sf::Color(0, 0, 0, 0));
+		rect.setOutlineColor(sf::Color::Black);
+	}
+
 };
 	
