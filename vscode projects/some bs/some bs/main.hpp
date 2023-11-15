@@ -13,11 +13,13 @@
 #include <string>
 #include <random>
 
-class game
+class game  
 {
-public:
 
-	int randRange(int min, int max)
+public:
+	
+
+	int RandRange(int min, int max)
 	{
 		std::random_device rd; // obtain a random number from hardware
 		std::mt19937 gen(rd()); // seed the generator
@@ -25,6 +27,7 @@ public:
 		
 		return distr(gen);
 	}
+
 };
 
 class DiamSquare
@@ -34,14 +37,20 @@ public:
 
 	static const int arraySize = 101;
 	float map[arraySize][arraySize] = {-1000.0f};
-	int cntDiam = 0;
-	int cntSqr = 0;
-	int itr[6][4];
-	int run = 0;
 
 	void newMap(int s, int high = 20, float roughness = 20, float change = 1.6)
 	{
 		game rand;
+		float avg;
+		float x1y1; //grab the "X" values shown above
+		float x2y1;
+		float x1y2;
+		float x2y2;
+		float x1y;
+		float x2y;
+		float xy1;
+		float xy2;
+
 		int size = s;
 		float chunk = size; //size of the piece you are working with
 		float half = size/2; // this helps get the center value
@@ -49,32 +58,19 @@ public:
 
 		for (int z = 0; z < size+1; z += 1) { for (int i = 0; i < size+1; i += 1) { map[i][z] = empty; } }
 
-		map[0][0] = rand.randRange(-roughness, roughness);
-		map[0][size] = rand.randRange(-roughness, roughness);
-		map[size][0] = rand.randRange(-roughness, roughness);
-		map[size][size] = rand.randRange(-roughness, roughness);
-
-		float x1y1; //grab the "X" values shown above
-		float x2y1;
-		float x1y2;
-		float x2y2;
-
-		float x1y;
-		float x2y;
-		float xy1;
-		float xy2;
-
-		float avg;
+		map[0][0] = rand.RandRange(-roughness, roughness);
+		map[0][size] = rand.RandRange(-roughness, roughness);
+		map[size][0] = rand.RandRange(-roughness, roughness);
+		map[size][size] = rand.RandRange(-roughness, roughness);
 
 		//SQUARE
 		while (chunk > 1)
 		{		
-			//cntSqr = 0;
 			for (float z = 0; z < size; z += chunk)
 			{
 				for (float i = 0; i < size; i += chunk)
 				{
-					
+
 					// 0 - - - 0	This is the square portion of the code the "X" represents
 					// - - - - -	points that have already been populated. these points are 
 					// - - - - -	averaged and a random value is added "roughness" to generate
@@ -86,7 +82,7 @@ public:
 					// 0 - X - 0	
 					// - - - - -	
 					// X - 0 - X
-
+					
 					x1y1 = map[(int)round(i)][(int)round(z)]; //grab the "X" values shown above
 					x2y1 = map[(int)round(i + chunk)][(int)round(z)];
 					x1y2 = map[(int)round(i)][(int)round(z + chunk)];
@@ -95,7 +91,7 @@ public:
 					avg = (x1y1 + x2y1 + x1y2 + x2y2) / 4;
 
 					//set the value "0" with the average + a random value and make sure we are not overwriting other values
-					if (map[(int)round(i + half)][(int)round(z + half)] == empty) map[(int)round(i + half)][(int)round(z + half)] = avg + rand.randRange(-roughness, roughness);
+					if (map[(int)round(i + half)][(int)round(z + half)] == empty) map[(int)round(i + half)][(int)round(z + half)] = avg + rand.RandRange(-roughness, roughness);
 				}
 			}
 			
@@ -130,7 +126,7 @@ public:
 					avg = (x1y + x2y + xy1 + xy2) / 4;
 
 					//set the value "0" (from the diagram above) with the average + a random value and make sure we are not overwriting other values
-					if (map[(int)round(i)][(int)round(z)] == empty) map[(int)round(i)][(int)round(z)] = avg + rand.randRange(-roughness, roughness);
+					if (map[(int)round(i)][(int)round(z)] == empty) map[(int)round(i)][(int)round(z)] = avg + rand.RandRange(-roughness, roughness);
 				}
 			}
 			chunk /= 2; //this is how we itterate through smaller and smaller chunks
