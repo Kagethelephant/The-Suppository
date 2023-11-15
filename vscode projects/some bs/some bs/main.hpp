@@ -16,6 +16,7 @@
 class game
 {
 public:
+	
 
 	int randRange(int min, int max)
 	{
@@ -25,9 +26,6 @@ public:
 		
 		return distr(gen);
 	}
-
-
-
 };
 
 class DiamSquare
