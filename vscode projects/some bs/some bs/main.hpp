@@ -17,6 +17,7 @@ class game
 {
 
 public:
+	
 
 	int RandRange(int min, int max)
 	{
@@ -36,14 +37,20 @@ public:
 
 	static const int arraySize = 101;
 	float map[arraySize][arraySize] = {-1000.0f};
-	int cntDiam = 0;
-	int cntSqr = 0;
-	int itr[6][4];
-	int run = 0;
 
 	void newMap(int s, int high = 20, float roughness = 20, float change = 1.6)
 	{
 		game rand;
+		float avg;
+		float x1y1; //grab the "X" values shown above
+		float x2y1;
+		float x1y2;
+		float x2y2;
+		float x1y;
+		float x2y;
+		float xy1;
+		float xy2;
+
 		int size = s;
 		float chunk = size; //size of the piece you are working with
 		float half = size/2; // this helps get the center value
@@ -56,27 +63,14 @@ public:
 		map[size][0] = rand.RandRange(-roughness, roughness);
 		map[size][size] = rand.RandRange(-roughness, roughness);
 
-		float x1y1; //grab the "X" values shown above
-		float x2y1;
-		float x1y2;
-		float x2y2;
-
-		float x1y;
-		float x2y;
-		float xy1;
-		float xy2;
-
-		float avg;
-
 		//SQUARE
 		while (chunk > 1)
 		{		
-			//cntSqr = 0;
 			for (float z = 0; z < size; z += chunk)
 			{
 				for (float i = 0; i < size; i += chunk)
 				{
-					
+
 					// 0 - - - 0	This is the square portion of the code the "X" represents
 					// - - - - -	points that have already been populated. these points are 
 					// - - - - -	averaged and a random value is added "roughness" to generate
@@ -88,7 +82,7 @@ public:
 					// 0 - X - 0	
 					// - - - - -	
 					// X - 0 - X
-
+					
 					x1y1 = map[(int)round(i)][(int)round(z)]; //grab the "X" values shown above
 					x2y1 = map[(int)round(i + chunk)][(int)round(z)];
 					x1y2 = map[(int)round(i)][(int)round(z + chunk)];
