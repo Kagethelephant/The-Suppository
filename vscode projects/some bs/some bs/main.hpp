@@ -25,13 +25,13 @@ sf::Vector3i c_dkpurple(43, 37, 49);
 sf::Vector3i c_purple(77, 61, 85);
 sf::Vector3i c_snow(182, 182, 182);
 
-class game  
+class Game  
 {
 
 public:
-	
+
 	//this function generates a random integer between the 2 provided integer's
-	int RandRange(int min, int max)
+	int randRange(int min, int max)
 	{
 		// obtain a random number from hardware
 		std::random_device rd; 
@@ -41,6 +41,44 @@ public:
 		std::uniform_int_distribution<> distr(min, max); 
 		
 		return distr(gen);
+	}
+
+	//----INITIALIZE VIEW----
+
+	sf::Vector2i windowSetup(sf::RenderWindow &win, sf::View &vw, sf::RenderTexture &buf, sf::Sprite &spr, int h)
+	{
+		//get the display dimmensions and calculate the aspect ratio
+		float displayWidth = GetSystemMetrics(SM_CXSCREEN);
+		float DisplayHeight = GetSystemMetrics(SM_CYSCREEN);
+		float aspectRatio = displayWidth / DisplayHeight;
+
+		//create a static window width in pixels and calculate the width based on the aspect ratio
+		int bufferH = h;
+		int bufferW = abs(bufferH * aspectRatio);
+
+		//center position of the window (needed for view setup)
+		int bufferX = bufferW / 2;
+		int bufferY = bufferH / 2;
+
+		//initialize the view with the calculated resolution 
+		win.create(sf::VideoMode(bufferW, bufferH), "Some BS", sf::Style::Fullscreen);
+		//set the frame rate and hide the cursor so we can draw our own
+		win.setFramerateLimit(60);
+		win.setMouseCursorVisible(false);
+
+		//set the size and position of the view
+		vw.setCenter(sf::Vector2f(bufferX, bufferY));
+		vw.setSize(sf::Vector2f(bufferW, bufferH));
+
+		//asign the view to the window
+		win.setView(vw);
+
+		//create a buffer and sprite to draw to
+		buf.create(bufferW, bufferH);
+		spr.setTexture(buf.getTexture());
+
+		//return the calculated width and height of the window in pixels
+		return sf::Vector2i(bufferW, bufferH);
 	}
 
 };
@@ -54,9 +92,10 @@ public:
 
 	void newMap(float map[200][200], int size, int high = 20, float roughness = 20, float change = 1.6)
 	{
+
 		//---INITIALIZE VARIABLES----
 
-		game rand;
+		Game rand;
 		float avg;
 		int div;
 
@@ -79,16 +118,20 @@ public:
 		//to initialize the grid so we know if we missed one
 		float empty = -1000.0f;
 
+
+
 		//---INITIALIZE MAP----
 
 		//initialize the grid (1 cell grater then the size in the x and y ge
 		for (int z = 0; z < size+1; z += 1) { for (int i = 0; i < size+1; i += 1) { map[i][z] = empty; } }
 
 		//set initial corner values to extrapolate from at each corner
-		map[0][0] = rand.RandRange(-roughness, roughness);
-		map[0][size] = rand.RandRange(-roughness, roughness);
-		map[size][0] = rand.RandRange(-roughness, roughness);
-		map[size][size] = rand.RandRange(-roughness, roughness);
+		map[0][0] = rand.randRange(-roughness, roughness);
+		map[0][size] = rand.randRange(-roughness, roughness);
+		map[size][0] = rand.randRange(-roughness, roughness);
+		map[size][size] = rand.randRange(-roughness, roughness);
+
+
 
 		//----SQUARE-----
 
@@ -121,10 +164,12 @@ public:
 					avg = (x1y1 + x2y1 + x1y2 + x2y2) / 4;
 
 					//set the value "0" with the average + a random value and make sure we are not overwriting other values
-					if (map[(int)round(i + half)][(int)round(z + half)] == empty) map[(int)round(i + half)][(int)round(z + half)] = avg + rand.RandRange(-roughness, roughness);
+					if (map[(int)round(i + half)][(int)round(z + half)] == empty) map[(int)round(i + half)][(int)round(z + half)] = avg + rand.randRange(-roughness, roughness);
 				}
 			}
 			
+
+
 			//----DIAMOND----
 
 			for (float z = 0; z < size + 1; z += half)
@@ -179,7 +224,7 @@ public:
 					avg = (x1y + x2y + xy1 + xy2) / 4; 
 
 					//set the value "0" (from the diagram above) with the average + a random value and make sure we are not overwriting other values
-					if (map[(int)round(i)][(int)round(z)] == empty) map[(int)round(i)][(int)round(z)] = avg + rand.RandRange(-roughness, roughness);
+					if (map[(int)round(i)][(int)round(z)] == empty) map[(int)round(i)][(int)round(z)] = avg + rand.randRange(-roughness, roughness);
 				}
 			}
 			//Create a smaller chunk to iterate through and use half to get the center again
@@ -190,6 +235,7 @@ public:
 		}
 
 	}
+
 
 	//----GENERATE NEW RANDOM MAP----
 
