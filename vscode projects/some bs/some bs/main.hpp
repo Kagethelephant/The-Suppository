@@ -16,6 +16,47 @@
 class game
 {
 public:
+	
+	struct vec2
+	{
+		int window;
+		int buffer;
+	};
+
+	vec2 DisplayInit( int height , bool fullscreen)
+	{
+		float resW = GetSystemMetrics(SM_CXSCREEN);
+		float resH = GetSystemMetrics(SM_CYSCREEN);
+
+		float resRatio = resW / resH; //this is the aspect ratio
+
+		int bufferH = height; //Width of the new view scaled down for a pixel look
+		int bufferW = abs(bufferH * resRatio); //the width will always be static and the height is determined with the aspect ratio
+
+		int bufferX = bufferW / 2; //center of the buffer texture for positioning the game view
+		int bufferY = bufferH / 2;
+
+		int style = sf::Style::Default;
+		if (fullscreen) int style = sf::Style::Fullscreen;
+
+		sf::RenderWindow window(sf::VideoMode(bufferW, bufferH), "Scaling", style); //create the winow at default resolution and make fullscreen
+
+		sf::View view(sf::Vector2f(bufferX, bufferY), sf::Vector2f(bufferW, bufferH));// create a view and give it the scaled resolution
+		window.setMouseCursorVisible(false);
+		window.setView(view); //set the view of the window to the view we just created
+
+		sf::RenderTexture buffer; //create the main window texture to draw in the proper resolution (needs to be drawn to the buffer sprite and drawn to the window)
+		buffer.create(bufferW, bufferH); //create the buffer texter with the proper resolution
+		buffer.setSmooth(false);
+
+		sf::Sprite bufferSprite(buffer.getTexture()); //create the sprite that the buffer texture will be drawn to
+
+		window.setFramerateLimit(30); //set the frame rate
+
+		vec2 handles;
+		return handles;
+
+	}
 
 	int randRange(int min, int max)
 	{
@@ -25,6 +66,8 @@ public:
 		
 		return distr(gen);
 	}
+
+	
 };
 
 class DiamSquare

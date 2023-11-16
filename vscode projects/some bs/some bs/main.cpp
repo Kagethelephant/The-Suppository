@@ -5,7 +5,6 @@
 
 int main(int argc, char** argv) {
 
-
     sf::Vector3i c_black(13, 14, 26);
     sf::Vector3i c_dkblue(33, 47, 106);
     sf::Vector3i c_blue(47, 80, 118);
@@ -18,6 +17,8 @@ int main(int argc, char** argv) {
     sf::Vector3i c_snow(182, 182, 182);
 
     game res; //this is defined in the header file
+
+    res.DisplayInit(450, 1);
     float resW = GetSystemMetrics(SM_CXSCREEN);
     float resH = GetSystemMetrics(SM_CYSCREEN);
 
