@@ -118,7 +118,7 @@ public:
 		//to initialize the grid so we know if we missed one
 		float empty = -1000.0f;
 
-
+		
 
 		//---INITIALIZE MAP----
 

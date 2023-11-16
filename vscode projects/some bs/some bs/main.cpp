@@ -249,8 +249,17 @@ int main(int argc, char** argv) {
         bufferGUI.draw(rect);
 
 
+        sf::VertexArray f(sf::Triangles, 3);
+        f[0].position = sf::Vector2f(20.0f, 20.0f);
+        f[0].color = sf::Color(c_blue.x, c_blue.y, c_blue.z);
 
+        f[1].position = sf::Vector2f(100.0f, 20.0f);
+        f[1].color = sf::Color::Red;
 
+        f[2].position = sf::Vector2f(50.0f, 50.0f);
+        f[2].color = sf::Color::Green;
+
+        buffer.draw(f);
 
         //----DISPLAY THE STUFF----
         
