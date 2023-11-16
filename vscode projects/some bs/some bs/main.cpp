@@ -1,80 +1,79 @@
 #include "main.hpp"
-#include <random>
-//link all necessary code from the included packages (mostly SFML)
 
+//alocate space for the grid
+static const int arraySize = 200;
+//create the grid here so it stays in the heap
+float map[arraySize][arraySize] = { -1000.0f };
 
 int main(int argc, char** argv) {
 
-    sf::Vector3i c_black(13, 14, 26);
-    sf::Vector3i c_dkblue(33, 47, 106);
-    sf::Vector3i c_blue(47, 80, 118);
-    sf::Vector3i c_ltblue(70, 113, 128);
-    sf::Vector3i c_tan(116, 113, 89);
-    sf::Vector3i c_green(49, 83, 76);
-    sf::Vector3i c_dkgreen(34, 53, 59);
-    sf::Vector3i c_dkpurple(43, 37, 49);
-    sf::Vector3i c_purple(77, 61, 85);
-    sf::Vector3i c_snow(182, 182, 182);
+    //----GENERAL VARIABLES----
+    
 
-    game res; //this is defined in the header file
 
-    res.DisplayInit(450, 1);
-    float resW = GetSystemMetrics(SM_CXSCREEN);
-    float resH = GetSystemMetrics(SM_CYSCREEN);
 
-    float resRatio = resW / resH; //this is the aspect ratio
+    //----GRID STUFF----
 
-    int bufferH = 450; //Width of the new view scaled down for a pixel look
-    int bufferW = abs(bufferH * resRatio); //the width will always be static and the height is determined with the aspect ratio
-
-    int bufferX = bufferW / 2; //center of the buffer texture for positioning the game view
-    int bufferY = bufferH / 2;
-
+    //size in pixels of the grids to draw to the window
     int gridSize = 4;
-    int gridCountW = round(bufferW / gridSize) + 1;
-    int gridCountH = round(bufferH / gridSize) + 1;
-
-    const int mapSize = 100;
+    //size of diamond square map *MUST BE EVEN*
+    int dsSize = 200;
 
     int mouseX = 150;
     int mouseY = 150;
 
+    int viewPosX = 100;
+    int viewPosY = 125;
+
+    //Create the diamond square object and run function to generate map
     DiamSquare ds;
-    ds.newMap(50);
-
-    sf::RenderWindow window(sf::VideoMode(bufferW, bufferH), "Scaling", sf::Style::Fullscreen); //create the winow at default resolution and make fullscreen
-
-    sf::View view(sf::Vector2f(bufferX, bufferY), sf::Vector2f(bufferW, bufferH));// create a view and give it the scaled resolution
-    window.setMouseCursorVisible(false);
-    window.setView(view); //set the view of the window to the view we just created
-
-    sf::RenderTexture buffer; //create the main window texture to draw in the proper resolution (needs to be drawn to the buffer sprite and drawn to the window)
-    buffer.create(bufferW, bufferH); //create the buffer texter with the proper resolution
-    buffer.setSmooth(false);
-
-    sf::Sprite bufferSprite(buffer.getTexture()); //create the sprite that the buffer texture will be drawn to
-
-    window.setFramerateLimit(30); //set the frame rate
+    ds.newMap(map, dsSize);
 
 
 
+
+    //----VIEW SETUP/SFML----
+
+    sf::RenderWindow window; 
+    sf::View view;
+    sf::RenderTexture buffer;
+    sf::Sprite bufferSprite;
+
+    Game win;
+    sf::Vector2i res;
+    res = win.windowSetup(window, view, buffer, bufferSprite, 450);
+
+    //create a seperate texture to draw the GUI to
+    sf::RenderTexture bufferGUI; 
+    bufferGUI.create(res.x, res.y); 
+    sf::Sprite bufferSpriteGUI(bufferGUI.getTexture());
+
+
+
+
+    //----GLYPHS----
+
+    //load font
     sf::Font font;
     if (!font.loadFromFile("../fonts/small_pixel.ttf")) return 1;
-
+    
+    //Text for the cursor position and debugging
     sf::Text text;
     text.setFont(font);
     text.setString("Hello world");
     text.setCharacterSize(8);
     text.setFillColor(sf::Color(c_black.x, c_black.y, c_black.z));
     text.setStyle(sf::Text::Regular);
-    text.setPosition(400, 20);
+    text.setPosition(5, 5);
 
+    //Hexagon for cursor
     sf::CircleShape hex(10, 6);
     hex.setFillColor(sf::Color::Transparent);
     hex.setOutlineColor(sf::Color(c_black.x, c_black.y, c_black.z));
     hex.setOutlineThickness(2);
     hex.setOrigin(10, 10);
 
+    //rectangles to draw the grids
     sf::RectangleShape rect;
     rect.setSize(sf::Vector2f(gridSize, gridSize));
     rect.setFillColor(sf::Color::Black);
@@ -82,68 +81,197 @@ int main(int argc, char** argv) {
     rect.setOutlineThickness(2);
     rect.setOrigin(0, 0);
 
-    //Main while loop
-    while (window.isOpen()) {
-        sf::Event event;
-        while (window.pollEvent(event)) {
 
-            if (sf::Event::KeyPressed)
-            {
-                if (event.key.code == sf::Keyboard::Escape) { window.close(); }
-            }
-        }
 
-        //UPDATE SHIT
 
-        //DRAW SHIT
-        // Clear the buffer texture to create a background
-        buffer.clear(sf::Color(c_black.x, c_black.y, c_black.z));
+    //----DRAW STATIC----
 
-        
-        for (int i = 0; i < 101; i += 1)
+    //clear viewwith a background color
+    buffer.clear(sf::Color(c_black.x, c_black.y, c_black.z));
+
+
+    //how many grids can fit on the screen
+    int viewGridW = floor(res.x / gridSize);
+    int viewGridH = floor(res.y / gridSize);
+    int viewGridX = viewPosX - floor((viewGridW)/2);
+    int viewGridY = viewPosY - floor((viewGridH)/2);
+
+    //iterate throught the diamond square grid and draw squares at different colors
+    //for different heights
+    for (int i = 0; i < dsSize+1; i += 1)
+    {
+        for (int z = 0; z < dsSize+1; z += 1)
         {
-            for (int z = 0; z < 101; z += 1)
-            {
-                //if (ds.map[i][z] == -1000.0f) { rect.setFillColor(sf::Color(c_col2.x, c_col2.y, c_col2.z)); }
-                if (ds.map[i][z] < -10) { rect.setFillColor(sf::Color(c_dkblue.x, c_dkblue.y, c_dkblue.z)); }
-                else if (ds.map[i][z] < -5) { rect.setFillColor(sf::Color(c_blue.x, c_blue.y, c_blue.z)); }
-                else if (ds.map[i][z] < 0) { rect.setFillColor(sf::Color(c_ltblue.x, c_ltblue.y, c_ltblue.z)); }
-                else if (ds.map[i][z] < 5) { rect.setFillColor(sf::Color(c_tan.x, c_tan.y, c_tan.z)); }
-                else if (ds.map[i][z] < 10) { rect.setFillColor(sf::Color(c_green.x, c_green.y, c_green.z)); }
-                else if (ds.map[i][z] < 15) { rect.setFillColor(sf::Color(c_dkgreen.x, c_dkgreen.y, c_dkgreen.z)); }
-                else if (ds.map[i][z] < 20) { rect.setFillColor(sf::Color(c_purple.x, c_purple.y, c_purple.z)); }
-                else { rect.setFillColor(sf::Color(c_dkpurple.x, c_dkpurple.y, c_dkpurple.z)); }
+            int tx = floor(viewGridX + i);
+            int ty = floor(viewGridY + z);
 
-                if (mouseX == i && mouseY == z) { rect.setFillColor(sf::Color(c_black.x, c_black.y, c_black.z)); }
+            //Check the number from the grid and set a corisponding color
+            if (map[tx][ty] < -10) { rect.setFillColor(sf::Color(c_dkblue.x, c_dkblue.y, c_dkblue.z)); }
+            else if (map[tx][ty] < -5) { rect.setFillColor(sf::Color(c_blue.x, c_blue.y, c_blue.z)); }
+            else if (map[tx][ty] < 0) { rect.setFillColor(sf::Color(c_ltblue.x, c_ltblue.y, c_ltblue.z)); }
+            else if (map[tx][ty] < 5) { rect.setFillColor(sf::Color(c_tan.x, c_tan.y, c_tan.z)); }
+            else if (map[tx][ty] < 10) { rect.setFillColor(sf::Color(c_green.x, c_green.y, c_green.z)); }
+            else if (map[tx][ty] < 15) { rect.setFillColor(sf::Color(c_dkgreen.x, c_dkgreen.y, c_dkgreen.z)); }
+            else if (map[tx][ty] < 20) { rect.setFillColor(sf::Color(c_purple.x, c_purple.y, c_purple.z)); }
+            else { rect.setFillColor(sf::Color(c_dkpurple.x, c_dkpurple.y, c_dkpurple.z)); }
 
-                rect.setPosition((1) + (i * gridSize), (1) + (z * gridSize));
-                buffer.draw(rect);
-
-            }
+            //Move the rectangle to the correct position before drawing
+            rect.setPosition((1) + (i * gridSize), (1) + (z * gridSize));
+            buffer.draw(rect);
         }
-
-        sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-        hex.setPosition(mousePos.x + gridSize, mousePos.y + gridSize); //update the hex to the mouse vector position created above
-        buffer.draw(hex);
-
-        mouseX = round(mousePos.x / gridSize);
-        mouseY = round(mousePos.y / gridSize);
-        float val = 0;
-        if(mouseX >= 0 && mouseX <= 101 && mouseY >= 0 && mouseY <= 101) val = ds.map[mouseX][mouseY];
-        text.setString("(" + std::to_string(mouseX) + ", " + std::to_string(mouseY) + ") : " + std::to_string(val));
-
-
-        buffer.draw(text);
-        buffer.display(); //send the texture from the back buffer to the screen
-        window.draw(bufferSprite);// Draw the render texture's contents
-        window.display();// Display the results
     }
 
-    //some outputs to the console after the while loop closes for debugging
-    std::cout << "Monitor Resolution: " << resH << " X " << resW << std::endl;
-    std::cout << "Window Resolution:  " << bufferH << " X " << bufferW << std::endl;
-    std::cout << "Aspect Ratio: " << resRatio << std::endl;
+    //change the rectangle so it can be used as the mouse position
+    rect.setFillColor(sf::Color(0,0,0,0));
+    rect.setOutlineColor(sf::Color::Black);
 
+
+
+
+    //----MAIN LOOP----
+
+    while (window.isOpen()) {
+
+        //----WINDOW EVENTS----
+
+        //event handler
+        sf::Event event; 
+        while (window.pollEvent(event)) {
+
+            switch (event.type)
+            {
+
+            //if the window was closed useing the x in the top right
+            case sf::Event::Closed:
+                window.close();
+                break;
+
+            //if the escape key is pressed
+            case sf::Event::KeyPressed:
+                if (event.key.code == sf::Keyboard::Escape) { window.close(); }
+                break;
+            }
+
+        }
+
+
+        //----UPDATE GET INPUT----
+
+        // regenerate the map when the enter button is pressed
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
+        {
+            ds.newMap(map, dsSize);
+            ds.reGen(map, dsSize, buffer, rect, gridSize, viewPosX - floor((viewGridW) / 2), viewPosY - floor((viewGridH) / 2));
+        }
+
+        //move the map around and update the graphics
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+        {
+            viewPosX += 1;
+            if (viewPosX > dsSize - floor((viewGridW) / 2)) viewPosX = dsSize - floor((viewGridW) / 2);
+            else
+            {
+                ds.reGen(map, dsSize, buffer, rect, gridSize, viewPosX - floor((viewGridW) / 2), viewPosY - floor((viewGridH) / 2));
+            }
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+        {
+            viewPosX -= 1;
+            if (viewPosX < floor((viewGridW) / 2)) viewPosX = floor((viewGridW) / 2);
+            else
+            {
+                ds.reGen(map, dsSize, buffer, rect, gridSize, viewPosX - floor((viewGridW) / 2), viewPosY - floor((viewGridH) / 2));
+            }
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+        {
+            viewPosY -= 1;
+            if (viewPosY < floor((viewGridH) / 2)) viewPosY = floor((viewGridH) / 2);
+            else
+            {
+                ds.reGen(map, dsSize, buffer, rect, gridSize, viewPosX - floor((viewGridW) / 2), viewPosY - floor((viewGridH) / 2));
+            }
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+        {
+            viewPosY += 1;
+            if (viewPosY > dsSize - floor((viewGridH) / 2)) viewPosY = dsSize - floor((viewGridH) / 2);
+            else
+            {
+                ds.reGen(map, dsSize, buffer, rect, gridSize, viewPosX - floor((viewGridW) / 2), viewPosY - floor((viewGridH) / 2));
+            }
+        } 
+        
+
+
+        //----UPDATE MAKE CALCULATIONS-----
+        
+        //update the map position to give accurate grid positions
+        int viewGridX = viewPosX - floor((viewGridW) / 2);
+        int viewGridY = viewPosY - floor((viewGridH) / 2);
+
+        //Create a vector with the pixel coord's in the actual window not the display
+        sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+
+        //Update the positon of the hex (this is the cursor for now)
+        hex.setPosition(mousePos.x + 3, mousePos.y + 3); 
+
+        //This is the position of our mouse in world grid coord's but keep it in the map
+        mouseX = round(mousePos.x / gridSize);
+        mouseY = round(mousePos.y / gridSize);
+        if (mouseX > dsSize) mouseX = dsSize;
+        if (mouseY > dsSize) mouseY = dsSize;
+        if (mouseX < 0) mouseX = 0;
+        if (mouseY < 0) mouseY = 0;
+
+
+
+
+        //----DRAW UPDATE-----
+      
+        //clear the view transparent so it doesnt cover up the main buffer!
+        bufferGUI.clear(sf::Color(0,0,0,0));
+
+        //Draw the cursor on the screen
+        bufferGUI.draw(hex);
+
+        //Draw the coord of the mouse on the screen as long as its in the map  
+        int newX = mouseX + viewGridX;
+        int newY = mouseY + viewGridY;
+        text.setString("(" + std::to_string(newX) + ", " + std::to_string(newY) + ") : " + std::to_string(map[newX][newY]));
+        bufferGUI.draw(text);
+
+        //Move the rectangle to the correct position before drawing
+        rect.setPosition(mouseX*gridSize+1, mouseY*gridSize+1);
+        bufferGUI.draw(rect);
+
+
+
+
+
+        //----DISPLAY THE STUFF----
+        
+        //display the buffer on to the window and draw the sprite 
+        //on to the window (not really sure how this works honestly)
+        buffer.display(); 
+        window.draw(bufferSprite);
+
+        //do the same as above but for the GUI
+        bufferGUI.display(); 
+        window.draw(bufferSpriteGUI);
+
+        // Display the window to the screen
+        window.display();
+    }
+
+
+    //----DEBUGGING OUTPUTS----
+
+    std::cout << "Window Resolution:  " << res.x << " X " << res.y << std::endl;
+    std::cout << std::endl;
 
     return 0;
 }
