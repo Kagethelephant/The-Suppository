@@ -17,13 +17,20 @@
 sf::Vector3i c_black(13, 14, 26);
 sf::Vector3i c_dkblue(33, 47, 106);
 sf::Vector3i c_blue(47, 80, 118);
-sf::Vector3i c_ltblue(70, 113, 128);
+sf::Vector3i c_ltblue(65, 95, 120);
 sf::Vector3i c_tan(116, 113, 89);
 sf::Vector3i c_green(49, 83, 76);
 sf::Vector3i c_dkgreen(34, 53, 59);
 sf::Vector3i c_dkpurple(43, 37, 49);
 sf::Vector3i c_purple(77, 61, 85);
 sf::Vector3i c_snow(182, 182, 182);
+
+//alocate space for the grid
+static const int mapSize = 1000;
+//create the grid here so it stays in the heap
+float map[mapSize][mapSize] = { -1000.0f };
+
+//----DECLARE CLASSES-----
 
 class game  
 {
@@ -45,14 +52,14 @@ public:
 
 };
 
-class DiamSquare
+class DiamSquare : public sf::Drawable, public sf::Transformable 
 {
 
 public:
 
 	//----CREATE THE MAP----
 
-	void newMap(float map[200][200], int size, int high = 20, float roughness = 20, float change = 1.6)
+	void newMap(float map[mapSize][mapSize], int size, int high = 20, float roughness = 20, float change = 1.4)
 	{
 		//---INITIALIZE VARIABLES----
 
@@ -191,42 +198,87 @@ public:
 
 	}
 
-	//----GENERATE NEW RANDOM MAP----
 
-	void reGen(float map[200][200],int dsSize, sf::RenderTexture& buffer, sf::RectangleShape& rect, int gridSize, int viewGridX, int viewGridY)
+
+
+	//---DRAW WITH VERTICES---
+
+	bool load(sf::RenderTarget& target, float map[mapSize][mapSize], sf::Vector2u tileSize, sf::Vector2i pos, unsigned int width, unsigned int height)
 	{
-		//clear viewwith a background color
-		buffer.clear(sf::Color(c_black.x, c_black.y, c_black.z));
-		rect.setOutlineColor(sf::Color::Transparent);
-		//iterate throught the diamond square grid and draw squares at different colors
-		//for different heights
-		for (int i = 0; i < dsSize + 1; i += 1)
-		{
-			for (int z = 0; z < dsSize + 1; z += 1)
+		// load the tileset texture
+		//if (!m_tileset.loadFromFile(tileset))
+		//	return false;
+
+		// resize the vertex array to fit the level size
+		m_vertices.setPrimitiveType(sf::Triangles);
+		m_vertices.resize(width * height * 6);
+		int offsetX = pos.x - ((int)floor(width / 2));
+		int offsetY = pos.y - ((int)floor(height / 2));
+
+		// populate the vertex array, with two triangles per tile
+		for (unsigned int i = 0 ; i < width; ++i)
+			for (unsigned int j = 0; j < height; ++j)
 			{
-				int tx = floor(viewGridX + i);
-				int ty = floor(viewGridY + z);
+				// get the current tile number
+				int tileNumber = map[i+offsetX][j + offsetY];
+				sf::Color color;
+				// find its position in the tileset texture
+				//int tu = tileNumber % (m_tileset.getSize().x / tileSize.x);
+				//int tv = tileNumber / (m_tileset.getSize().x / tileSize.x);
 
-				//Check the number from the grid and set a corisponding color
-				if (map[tx][ty] < -10) { rect.setFillColor(sf::Color(c_dkblue.x, c_dkblue.y, c_dkblue.z)); }
-				else if (map[tx][ty] < -5) { rect.setFillColor(sf::Color(c_blue.x, c_blue.y, c_blue.z)); }
-				else if (map[tx][ty] < 0) { rect.setFillColor(sf::Color(c_ltblue.x, c_ltblue.y, c_ltblue.z)); }
-				else if (map[tx][ty] < 5) { rect.setFillColor(sf::Color(c_tan.x, c_tan.y, c_tan.z)); }
-				else if (map[tx][ty] < 10) { rect.setFillColor(sf::Color(c_green.x, c_green.y, c_green.z)); }
-				else if (map[tx][ty] < 15) { rect.setFillColor(sf::Color(c_dkgreen.x, c_dkgreen.y, c_dkgreen.z)); }
-				else if (map[tx][ty] < 20) { rect.setFillColor(sf::Color(c_purple.x, c_purple.y, c_purple.z)); }
-				else { rect.setFillColor(sf::Color(c_dkpurple.x, c_dkpurple.y, c_dkpurple.z)); }
+				if (tileNumber < -10) { color = (sf::Color(c_dkblue.x, c_dkblue.y, c_dkblue.z)); }
+				else if (tileNumber < -5) { color = (sf::Color(c_blue.x, c_blue.y, c_blue.z)); }
+				else if (tileNumber < 0) { color = (sf::Color(c_ltblue.x, c_ltblue.y, c_ltblue.z)); }
+				else if (tileNumber < 5) { color = (sf::Color(c_tan.x, c_tan.y, c_tan.z)); }
+				else if (tileNumber < 10) { color = (sf::Color(c_green.x, c_green.y, c_green.z)); }
+				else if (tileNumber < 15) { color = (sf::Color(c_dkgreen.x, c_dkgreen.y, c_dkgreen.z)); }
+				else if (tileNumber < 20) { color = (sf::Color(c_purple.x, c_purple.y, c_purple.z)); }
+				else { color = (sf::Color(c_dkpurple.x, c_dkpurple.y, c_dkpurple.z)); }
 
-				//Move the rectangle to the correct position before drawing
-				rect.setPosition((1) + (i * gridSize), (1) + (z * gridSize));
-				buffer.draw(rect);
+
+				// get a pointer to the triangles' vertices of the current tile
+				sf::Vertex* triangles = &m_vertices[(i + j * width) * 6];
+
+				// define the 6 corners of the two triangles
+				triangles[0].position = sf::Vector2f(i * tileSize.x, j * tileSize.y);
+				triangles[1].position = sf::Vector2f((i + 1) * tileSize.x, j * tileSize.y);
+				triangles[2].position = sf::Vector2f(i * tileSize.x, (j + 1) * tileSize.y);
+				triangles[3].position = sf::Vector2f(i * tileSize.x, (j + 1) * tileSize.y);
+				triangles[4].position = sf::Vector2f((i + 1) * tileSize.x, j * tileSize.y);
+				triangles[5].position = sf::Vector2f((i + 1) * tileSize.x, (j + 1) * tileSize.y);
+
+				// define the 6 matching texture coordinates
+				//triangles[0].texCoords = sf::Vector2f(tu * tileSize.x, tv * tileSize.y);
+				//triangles[1].texCoords = sf::Vector2f((tu + 1) * tileSize.x, tv * tileSize.y);
+				//triangles[2].texCoords = sf::Vector2f(tu * tileSize.x, (tv + 1) * tileSize.y);
+				//triangles[3].texCoords = sf::Vector2f(tu * tileSize.x, (tv + 1) * tileSize.y);
+				//triangles[4].texCoords = sf::Vector2f((tu + 1) * tileSize.x, tv * tileSize.y);
+				//triangles[5].texCoords = sf::Vector2f((tu + 1) * tileSize.x, (tv + 1) * tileSize.y);
+
+				for (int k = 0; k < 6; k += 1)
+				{
+					triangles[k].color = sf::Color(color);
+				}
 			}
-		}
-
-		//change the rectangle so it can be used as the mouse position
-		rect.setFillColor(sf::Color(0, 0, 0, 0));
-		rect.setOutlineColor(sf::Color::Black);
+		target.draw(m_vertices);
+		return true;
 	}
 
+private:
+
+	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
+	{
+		// apply the transform
+		states.transform *= getTransform();
+
+		// apply the tileset texture
+		/*states.texture = &m_tileset;*/
+
+		// draw the vertex array
+		target.draw(m_vertices, states);
+	}
+
+	sf::VertexArray m_vertices;
+	/*sf::Texture m_tileset;*/
 };
 	

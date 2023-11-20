@@ -1,9 +1,5 @@
 #include "main.hpp"
 
-//alocate space for the grid
-static const int arraySize = 200;
-//create the grid here so it stays in the heap
-float map[arraySize][arraySize] = { -1000.0f };
 
 int main(int argc, char** argv) {
 
@@ -17,17 +13,21 @@ int main(int argc, char** argv) {
     //size in pixels of the grids to draw to the window
     int gridSize = 4;
     //size of diamond square map *MUST BE EVEN*
-    int dsSize = 200;
 
     int mouseX = 150;
     int mouseY = 150;
 
-    int viewPosX = 100;
-    int viewPosY = 125;
+    sf::Vector2i viewPos;
+
+    viewPos.x = 100;
+    viewPos.y = 125;
 
     //Create the diamond square object and run function to generate map
     DiamSquare ds;
-    ds.newMap(map, dsSize);
+    ds.newMap(map, mapSize);
+
+
+
 
 
     //----VIEW SETUP/SFML----
@@ -67,6 +67,9 @@ int main(int argc, char** argv) {
     sf::Sprite bufferSprite(buffer.getTexture());
 
 
+
+
+
     //----GLYPHS----
 
     //load font
@@ -92,52 +95,33 @@ int main(int argc, char** argv) {
     //rectangles to draw the grids
     sf::RectangleShape rect;
     rect.setSize(sf::Vector2f(gridSize, gridSize));
-    rect.setFillColor(sf::Color::Black);
-    rect.setOutlineColor(sf::Color::Transparent);
+    rect.setFillColor(sf::Color::Transparent);
+    rect.setOutlineColor(sf::Color::Black);
     rect.setOutlineThickness(2);
     rect.setOrigin(0, 0);
 
 
+
+
+
     //----DRAW STATIC----
-
-    //clear viewwith a background color
-    buffer.clear(sf::Color(c_black.x, c_black.y, c_black.z));
-
 
     //how many grids can fit on the screen
     int viewGridW = floor(bufferW / gridSize);
     int viewGridH = floor(bufferH / gridSize);
-    int viewGridX = viewPosX - floor((viewGridW)/2);
-    int viewGridY = viewPosY - floor((viewGridH)/2);
+    int viewGridX = viewPos.x - floor((viewGridW)/2);
+    int viewGridY = viewPos.y - floor((viewGridH)/2);
 
-    //iterate throught the diamond square grid and draw squares at different colors
-    //for different heights
-    for (int i = 0; i < dsSize+1; i += 1)
-    {
-        for (int z = 0; z < dsSize+1; z += 1)
-        {
-            int tx = floor(viewGridX + i);
-            int ty = floor(viewGridY + z);
+    sf::Vector2u tileSize(gridSize, gridSize);
 
-            //Check the number from the grid and set a corisponding color
-            if (map[tx][ty] < -10) { rect.setFillColor(sf::Color(c_dkblue.x, c_dkblue.y, c_dkblue.z)); }
-            else if (map[tx][ty] < -5) { rect.setFillColor(sf::Color(c_blue.x, c_blue.y, c_blue.z)); }
-            else if (map[tx][ty] < 0) { rect.setFillColor(sf::Color(c_ltblue.x, c_ltblue.y, c_ltblue.z)); }
-            else if (map[tx][ty] < 5) { rect.setFillColor(sf::Color(c_tan.x, c_tan.y, c_tan.z)); }
-            else if (map[tx][ty] < 10) { rect.setFillColor(sf::Color(c_green.x, c_green.y, c_green.z)); }
-            else if (map[tx][ty] < 15) { rect.setFillColor(sf::Color(c_dkgreen.x, c_dkgreen.y, c_dkgreen.z)); }
-            else if (map[tx][ty] < 20) { rect.setFillColor(sf::Color(c_purple.x, c_purple.y, c_purple.z)); }
-            else { rect.setFillColor(sf::Color(c_dkpurple.x, c_dkpurple.y, c_dkpurple.z)); }
+    //clear viewwith a background color
+    buffer.clear(sf::Color(c_black.x, c_black.y, c_black.z));
 
-            //Move the rectangle to the correct position before drawing
-            rect.setPosition((1) + (i * gridSize), (1) + (z * gridSize));
-            buffer.draw(rect);
-        }
-    }
+    ds.load(buffer, map, tileSize,viewPos, viewGridW, viewGridH);
 
-    //change the rectangle so it can be used as the mouse position
-    rect.setFillColor(sf::Color(0,0,0,0));
-    rect.setOutlineColor(sf::Color::Black);
+
+
+
 
 
     //----MAIN LOOP----
@@ -167,59 +151,65 @@ int main(int argc, char** argv) {
         }
 
 
+
+
+
         //----UPDATE----
 
         // regenerate the map when the enter button is pressed
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
         {
-            ds.newMap(map, dsSize);
-            ds.reGen(map, dsSize, buffer, rect, gridSize, viewPosX - floor((viewGridW) / 2), viewPosY - floor((viewGridH) / 2));
+            ds.newMap(map, mapSize);
+            ds.load(buffer, map, tileSize, viewPos, viewGridW, viewGridH);
         }
 
         //move the map around and update the graphics
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
         {
-            viewPosX += 1;
-            if (viewPosX > dsSize - floor((viewGridW) / 2)) viewPosX = dsSize - floor((viewGridW) / 2);
+            viewPos.x += 1;
+            if (viewPos.x > mapSize - floor((viewGridW) / 2)) viewPos.x = mapSize - floor((viewGridW) / 2);
             else
             {
-                ds.reGen(map, dsSize, buffer, rect, gridSize, viewPosX - floor((viewGridW) / 2), viewPosY - floor((viewGridH) / 2));
+                ds.load(buffer, map, tileSize, viewPos, viewGridW, viewGridH);
             }
         }
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
         {
-            viewPosX -= 1;
-            if (viewPosX < floor((viewGridW) / 2)) viewPosX = floor((viewGridW) / 2);
+            viewPos.x -= 1;
+            if (viewPos.x < floor((viewGridW) / 2)+1) viewPos.x = floor((viewGridW) / 2) + 1;
             else
             {
-                ds.reGen(map, dsSize, buffer, rect, gridSize, viewPosX - floor((viewGridW) / 2), viewPosY - floor((viewGridH) / 2));
+                ds.load(buffer, map, tileSize, viewPos, viewGridW, viewGridH);
             }
         }
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
         {
-            viewPosY -= 1;
-            if (viewPosY < floor((viewGridH) / 2)) viewPosY = floor((viewGridH) / 2);
+            viewPos.y -= 1;
+            if (viewPos.y < floor((viewGridH) / 2)+1) viewPos.y = floor((viewGridH) / 2) + 1;
             else
             {
-                ds.reGen(map, dsSize, buffer, rect, gridSize, viewPosX - floor((viewGridW) / 2), viewPosY - floor((viewGridH) / 2));
+                ds.load(buffer, map, tileSize, viewPos, viewGridW, viewGridH);
             }
         }
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
         {
-            viewPosY += 1;
-            if (viewPosY > dsSize - floor((viewGridH) / 2)) viewPosY = dsSize - floor((viewGridH) / 2);
+            viewPos.y += 1;
+            if (viewPos.y > mapSize - floor((viewGridH) / 2)) viewPos.y = mapSize - floor((viewGridH) / 2);
             else
             {
-                ds.reGen(map, dsSize, buffer, rect, gridSize, viewPosX - floor((viewGridW) / 2), viewPosY - floor((viewGridH) / 2));
+                ds.load(buffer, map, tileSize, viewPos, viewGridW, viewGridH);
             }
         } 
         
+
+
+
         //update the map position to give accurate grid positions
-        int viewGridX = viewPosX - floor((viewGridW) / 2);
-        int viewGridY = viewPosY - floor((viewGridH) / 2);
+        int viewGridX = viewPos.x - floor((viewGridW) / 2);
+        int viewGridY = viewPos.y - floor((viewGridH) / 2);
 
         //Create a vector with the pixel coord's in the actual window not the display
         sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
@@ -230,10 +220,13 @@ int main(int argc, char** argv) {
         //This is the position of our mouse in world grid coord's but keep it in the map
         mouseX = round(mousePos.x / gridSize);
         mouseY = round(mousePos.y / gridSize);
-        if (mouseX > dsSize) mouseX = dsSize;
-        if (mouseY > dsSize) mouseY = dsSize;
+        if (mouseX > mapSize) mouseX = mapSize;
+        if (mouseY > mapSize) mouseY = mapSize;
         if (mouseX < 0) mouseX = 0;
         if (mouseY < 0) mouseY = 0;
+
+
+
 
         //----DRAW UPDATE-----
       
@@ -250,8 +243,11 @@ int main(int argc, char** argv) {
         bufferGUI.draw(text);
 
         //Move the rectangle to the correct position before drawing
-        rect.setPosition(mouseX*gridSize+1, mouseY*gridSize+1);
+        rect.setPosition(mouseX*gridSize, mouseY*gridSize);
         bufferGUI.draw(rect);
+
+
+
 
 
         //----DISPLAY THE STUFF----
