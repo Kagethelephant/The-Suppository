@@ -27,44 +27,26 @@ int main(int argc, char** argv) {
     ds.newMap(map, mapSize);
 
 
-
+    //----VIEW SETUP/SFML----
 
 
     //----VIEW SETUP/SFML----
 
-    //  //get display resolution and aspect ratio
-    float displayWidth = GetSystemMetrics(SM_CXSCREEN);
-    float DisplayHeight = GetSystemMetrics(SM_CYSCREEN);
-    float aspectRatio = displayWidth / DisplayHeight;
-
-    //create a static window width in pixels and calculate the width based on the aspect ratio
-    int bufferH = 450;
-    int bufferW = abs(bufferH * aspectRatio);
-
-    //center position of the window (needed for view setup)
-    int bufferX = bufferW / 2;
-    int bufferY = bufferH / 2;
-
-    //create window with scaled resolution and make it fullscreen
-    sf::RenderWindow window(sf::VideoMode(bufferW, bufferH), "Some BS", sf::Style::Fullscreen); 
-    window.setFramerateLimit(60);
-    window.setMouseCursorVisible(false);
-
-     //create view at center of screen and scaled resolution
-    sf::View view(sf::Vector2f(bufferX, bufferY), sf::Vector2f(bufferW, bufferH));
-    window.setView(view); 
-
-    //create a buffer and set it to the size of our window (this will be the main buffer)
+    sf::RenderWindow window; 
+    sf::View view;
     sf::RenderTexture buffer;
-    buffer.create(bufferW, bufferH);
+    sf::Sprite bufferSprite;
 
-    //create another buffer for things that will update
+    Game win;
+    sf::Vector2i res;
+    res = win.windowSetup(window, view, buffer, bufferSprite, 450);
+
+    //create a seperate texture to draw the GUI to
     sf::RenderTexture bufferGUI; 
-    bufferGUI.create(bufferW, bufferH); 
-
-    //create sprites to draw to for each buffer
+    bufferGUI.create(res.x, res.y); 
     sf::Sprite bufferSpriteGUI(bufferGUI.getTexture());
-    sf::Sprite bufferSprite(buffer.getTexture());
+
+
 
 
 
@@ -101,16 +83,17 @@ int main(int argc, char** argv) {
     rect.setOrigin(0, 0);
 
 
+    //----DRAW STATIC----
 
 
 
     //----DRAW STATIC----
 
     //how many grids can fit on the screen
-    int viewGridW = floor(bufferW / gridSize);
-    int viewGridH = floor(bufferH / gridSize);
-    int viewGridX = viewPos.x - floor((viewGridW)/2);
-    int viewGridY = viewPos.y - floor((viewGridH)/2);
+    int viewGridW = floor(res.x / gridSize);
+    int viewGridH = floor(res.y / gridSize);
+    int viewGridX = viewPosX - floor((viewGridW)/2);
+    int viewGridY = viewPosY - floor((viewGridH)/2);
 
     sf::Vector2u tileSize(gridSize, gridSize);
 
@@ -118,6 +101,8 @@ int main(int argc, char** argv) {
     buffer.clear(sf::Color(c_black.x, c_black.y, c_black.z));
 
     ds.load(buffer, map, tileSize,viewPos, viewGridW, viewGridH);
+
+
 
 
 
@@ -149,9 +134,6 @@ int main(int argc, char** argv) {
             }
 
         }
-
-
-
 
 
         //----UPDATE----
@@ -206,7 +188,8 @@ int main(int argc, char** argv) {
         
 
 
-
+        //----UPDATE MAKE CALCULATIONS-----
+        
         //update the map position to give accurate grid positions
         int viewGridX = viewPos.x - floor((viewGridW) / 2);
         int viewGridY = viewPos.y - floor((viewGridH) / 2);
@@ -247,6 +230,18 @@ int main(int argc, char** argv) {
         bufferGUI.draw(rect);
 
 
+        sf::VertexArray f(sf::Triangles, 3);
+        f[0].position = sf::Vector2f(20.0f, 20.0f);
+        f[0].color = sf::Color(c_blue.x, c_blue.y, c_blue.z);
+
+        f[1].position = sf::Vector2f(100.0f, 20.0f);
+        f[1].color = sf::Color::Red;
+
+        f[2].position = sf::Vector2f(50.0f, 50.0f);
+        f[2].color = sf::Color::Green;
+
+        buffer.draw(f);
+
 
 
 
@@ -268,9 +263,7 @@ int main(int argc, char** argv) {
 
     //----DEBUGGING OUTPUTS----
 
-    std::cout << "Monitor Resolution: " << DisplayHeight << " X " << displayWidth << std::endl;
-    std::cout << "Window Resolution:  " << bufferH << " X " << bufferW << std::endl;
-    std::cout << "Aspect Ratio: " << aspectRatio << std::endl;
+    std::cout << "Window Resolution:  " << res.x << " X " << res.y << std::endl;
     std::cout << std::endl;
 
     return 0;
