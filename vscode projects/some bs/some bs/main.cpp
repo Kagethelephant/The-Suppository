@@ -3,18 +3,15 @@
 
 int main(int argc, char** argv) {
 
-    //----GENERAL VARIABLES----
-    
 
 
-
-    //----GRID STUFF----
+    //----GRID VARIABLES----
 
     //size in pixels of the grids to draw to the window
     int tileSize = 16;
 
     //size of diamond square map *MUST BE EVEN*
-    sf::Vector2i mousePos;
+    sf::Vector2f mousePos;
     sf::Vector2i mouseGrid;
     sf::Vector2i viewPos;
 
@@ -23,10 +20,9 @@ int main(int argc, char** argv) {
     viewPos.y = 125;
 
 
-
     //Create the diamond square object and run function to generate map
     DiamSquare ds;
-    ds.newMap(map, mapSize);
+    ds.newMap(dsMap, mapSize);
 
 
 
@@ -42,7 +38,13 @@ int main(int argc, char** argv) {
     sf::Vector2i resPixels;
     resPixels = win.windowSetup(window, view, 600, true,60);
 
-    //create a seperate texture to draw the GUI to
+    //how many grids can fit on the screen
+    sf::Vector2i resTiles;
+    resTiles.x = floor(resPixels.x / tileSize);
+    resTiles.y = floor(resPixels.y / tileSize);
+
+
+    //create the buffers and sprites used to draw the map and gui
     sf::RenderTexture bufferMap;
     sf::RenderTexture bufferGUI;
 
@@ -84,18 +86,11 @@ int main(int argc, char** argv) {
 
     //----DRAW STATIC----
 
-    //how many grids can fit on the screen
-    sf::Vector2i resTiles;
-    resTiles.x = floor(resPixels.x / tileSize);
-    resTiles.y = floor(resPixels.y / tileSize);
-
 
     //clear viewwith a background color
     bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
-
-    ds.drawMap(bufferMap, map, tileSize,viewPos, resTiles,false,"../sprites/tileset.png");
-
-
+    //draw the map with vertex array
+    ds.drawMap(bufferMap, tileMap, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
 
 
 
@@ -134,11 +129,9 @@ int main(int argc, char** argv) {
         // regenerate the map when the enter button is pressed
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
         {
-            ds.newMap(map, mapSize);
-            ds.drawMap(bufferMap, map, tileSize, viewPos, resTiles, false, "../sprites/tileset.png");
+            ds.newMap(dsMap, mapSize);
+            ds.drawMap(bufferMap, tileMap, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
         }
-
-
 
 
 
@@ -147,68 +140,59 @@ int main(int argc, char** argv) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
         {
             viewPos.x += 1;
-            if (viewPos.x > mapSize - floor((resTiles.x) / 2)) viewPos.x = mapSize - floor((resTiles.x) / 2);
+            if (viewPos.x > mapSize - resTiles.x) viewPos.x = mapSize - resTiles.x;
             else
             {
-                ds.drawMap(bufferMap, map, tileSize, viewPos, resTiles, false, "../sprites/tileset.png");
+                ds.drawMap(bufferMap, tileMap, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
             }
         }
-
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
         {
             viewPos.x -= 1;
-            if (viewPos.x < floor((resTiles.x) / 2)+1) viewPos.x = floor((resTiles.x) / 2)+1;
+            if (viewPos.x < 1) viewPos.x = 1;
             else
             {
-                ds.drawMap(bufferMap, map, tileSize, viewPos, resTiles, false, "../sprites/tileset.png");
+                ds.drawMap(bufferMap, tileMap, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
             }
         }
-
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
         {
             viewPos.y -= 1;
-            if (viewPos.y < floor((resTiles.y) / 2)+1) viewPos.y = floor((resTiles.y) / 2)+1;
+            if (viewPos.y < 1) viewPos.y = 1;
             else
             {
-                ds.drawMap(bufferMap, map, tileSize, viewPos, resTiles, false, "../sprites/tileset.png");
+                ds.drawMap(bufferMap, tileMap, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
             }
         }
-
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
         {
             viewPos.y += 1;
-            if (viewPos.y > mapSize - floor((resTiles.y) / 2)-1) viewPos.y = mapSize - floor((resTiles.y) / 2)-1;
+            if (viewPos.y > mapSize - resTiles.y) viewPos.y = mapSize - resTiles.y;
             else
             {
-                ds.drawMap(bufferMap, map, tileSize, viewPos, resTiles, false, "../sprites/tileset.png");
+                ds.drawMap(bufferMap, tileMap, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
             }
         } 
         
 
 
 
-
-        //----UPDATE MAKE CALCULATIONS-----
-        
-        //update the map position to give accurate grid positions
-        int viewGridX = viewPos.x - floor((resTiles.x) / 2);
-        int viewGridY = viewPos.y - floor((resTiles.y) / 2);
+        //----UPDATE MAKE CALCULATIONS-----     
 
         //Create a vector with the pixel coord's in the actual window not the display
-        sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-
+        mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
         //This is the position of our mouse in world grid coord's but keep it in the map
-        mouseGrid.x = round(mousePos.x / tileSize);
-        mouseGrid.y = round(mousePos.y / tileSize);
+        mouseGrid.x = round(mousePos.x / tileSize) + viewPos.x;
+        mouseGrid.y = round(mousePos.y / tileSize) + viewPos.y;
 
-        if (mouseGrid.x > mapSize) mouseGrid.x = mapSize;
-        if (mouseGrid.y > mapSize) mouseGrid.y = mapSize;
-        if (mouseGrid.x < 0) mouseGrid.x = 0;
-        if (mouseGrid.y < 0) mouseGrid.y = 0;
+        if (mouseGrid.x > mapSize-1) mouseGrid.x = mapSize-1;
+        if (mouseGrid.y > mapSize-1) mouseGrid.y = mapSize-1;
+        if (mouseGrid.x < 1) mouseGrid.x = 1;
+        if (mouseGrid.y < 1) mouseGrid.y = 1;
 
 
 
@@ -218,14 +202,12 @@ int main(int argc, char** argv) {
         //clear the view transparent so it doesnt cover up the main buffer!
         bufferGUI.clear(sf::Color::Transparent);
 
-        //Draw the coord of the mouse on the screen as long as its in the map  
-        int newX = mouseGrid.x + viewGridX;
-        int newY = mouseGrid.y + viewGridY;
-        textSmall.setString("(" + std::to_string(newX) + ", " + std::to_string(newY) + ") : " + std::to_string(map[newX][newY]));
+        //Draw the coord of the mouse on the screen for debugging
+        textSmall.setString("(" + std::to_string(mouseGrid.x) + ", " + std::to_string(mouseGrid.y) + ") : " + std::to_string(dsMap[mouseGrid.x][mouseGrid.y]));
         bufferGUI.draw(textSmall);
 
         //Move the rectangle to the correct position before drawing
-        rectCursor.setPosition(mouseGrid.x*tileSize, mouseGrid.y*tileSize);
+        rectCursor.setPosition((mouseGrid.x-viewPos.x)*tileSize, (mouseGrid.y-viewPos.y)*tileSize);
         bufferGUI.draw(rectCursor);
 
 

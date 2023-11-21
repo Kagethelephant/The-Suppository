@@ -28,7 +28,8 @@ sf::Vector3i c_snow(182, 182, 182);
 //alocate space for the grid
 static const int mapSize = 500;
 //create the grid here so it stays in the heap
-float map[mapSize][mapSize] = { -1000.0f };
+float dsMap[mapSize][mapSize];
+float tileMap[mapSize][mapSize];
 
 //----DECLARE CLASSES-----
 
@@ -136,7 +137,6 @@ public:
 		map[size][size] = rand.randRange(-roughness, roughness);
 
 
-
 		//----SQUARE-----
 
 		while (chunk > 1)
@@ -240,9 +240,26 @@ public:
 			roughness /= change; 
 		}
 
+		for (int i = 0; i <= mapSize; ++i)
+		{
+			for (int z = 0; z <= mapSize; ++z)
+			{
+				float tileVal = dsMap[i][z];
+
+				if (tileVal < -15) { tileMap[i][z] = 0; }
+				else if (tileVal < -10) { tileMap[i][z] = 1*28; }
+				else if (tileVal < -5) { tileMap[i][z] = 2*28; }
+				else if (tileVal < 0) { tileMap[i][z] = 3*28; }
+				else if (tileVal < 5) { tileMap[i][z] = 4*28; }
+				else if (tileVal < 10) { tileMap[i][z] = 5*28; }
+				else if (tileVal < 15) { tileMap[i][z] = 6*28; }
+				else { tileMap[i][z] = 7*28; }
+
+			}
+		}
+
 	}
 
-	//----GENERATE NEW RANDOM MAP----
 
 
 
@@ -263,27 +280,23 @@ public:
 		m_vertices.resize(size.x * size.y * 6);
 
 
-		int offsetX = pos.x - ((int)floor(size.x / 2));
-		int offsetY = pos.y - ((int)floor(size.y / 2));
-
-
 		// populate the vertex array, with two triangles per tile
 		for (unsigned int i = 0 ; i < size.x; ++i)
-			for (unsigned int j = 0; j < size.y; ++j)
+			for (unsigned int z = 0; z < size.y; ++z)
 			{
 				// get the current tile number
-				int tileNumber = map[i + offsetX][j + offsetY];
+				int tileNumber = map[i + pos.x][z + pos.y];
 
 				// get a pointer to the triangles' vertices of the current tile
-				sf::Vertex* triangles = &m_vertices[(i + j * size.x) * 6];
+				sf::Vertex* triangles = &m_vertices[(i + z * size.x) * 6];
 
 				// define the 6 corners of the two triangles
-				triangles[0].position = sf::Vector2f(i * tileSize, j * tileSize);
-				triangles[1].position = sf::Vector2f((i + 1) * tileSize, j * tileSize);
-				triangles[2].position = sf::Vector2f(i * tileSize, (j + 1) * tileSize);
-				triangles[3].position = sf::Vector2f(i * tileSize, (j + 1) * tileSize);
-				triangles[4].position = sf::Vector2f((i + 1) * tileSize, j * tileSize);
-				triangles[5].position = sf::Vector2f((i + 1) * tileSize, (j + 1) * tileSize);
+				triangles[0].position = sf::Vector2f(i * tileSize, z * tileSize);
+				triangles[1].position = sf::Vector2f((i + 1) * tileSize, z * tileSize);
+				triangles[2].position = sf::Vector2f(i * tileSize, (z + 1) * tileSize);
+				triangles[3].position = sf::Vector2f(i * tileSize, (z + 1) * tileSize);
+				triangles[4].position = sf::Vector2f((i + 1) * tileSize, z * tileSize);
+				triangles[5].position = sf::Vector2f((i + 1) * tileSize, (z + 1) * tileSize);
 
 				if (solidColor)
 				{
@@ -310,18 +323,21 @@ public:
 				{
 					int index;
 					// get the current tile number
-					if (tileNumber < -10) { index = 0; }
-					else if (tileNumber < -5) { index = 1; }
-					else if (tileNumber < 0) { index = 2; }
-					else if (tileNumber < 5) { index = 3; }
-					else if (tileNumber < 10) { index = 4; }
-					else if (tileNumber < 15) { index = 5; }
-					else if (tileNumber < 20) { index = 6; }
-					else { index = 7; }
+					if (tileNumber < -15) { index = 0; }
+					else if (tileNumber < -10) { index = 1; }
+					else if (tileNumber < -5) { index = 2; }
+					else if (tileNumber < 0) { index = 3; }
+					else if (tileNumber < 5) { index = 4; }
+					else if (tileNumber < 10) { index = 5; }
+					else if (tileNumber < 15) { index = 6; }
+					else if (tileNumber < 20) { index = 7; }
+					else { index = 8; }
 
 					// find its position in the tileset texture
-					int tu = index % (m_tileset.getSize().x / tileSize);
-					int tv = index / (m_tileset.getSize().x / tileSize);
+					//int tu = index % (m_tileset.getSize().x / tileSize);
+					//int tv = index / (m_tileset.getSize().x / tileSize);
+					int tu = tileNumber % (m_tileset.getSize().x / tileSize);
+					int tv = tileNumber / (m_tileset.getSize().x / tileSize);
 
 					// define the 6 matching texture coordinates
 					triangles[0].texCoords = sf::Vector2f(tu * tileSize, tv * tileSize);
