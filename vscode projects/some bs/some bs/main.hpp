@@ -30,6 +30,7 @@ static const int mapSize = 500;
 //create the grid here so it stays in the heap
 float dsMap[mapSize][mapSize];
 float tileMap[mapSize][mapSize];
+float tileMap2[mapSize][mapSize];
 
 //----DECLARE CLASSES-----
 
@@ -247,14 +248,70 @@ public:
 				float tileVal = dsMap[i][z];
 
 				if (tileVal < -15) { tileMap[i][z] = 0; }
-				else if (tileVal < -10) { tileMap[i][z] = 1*28; }
-				else if (tileVal < -5) { tileMap[i][z] = 2*28; }
-				else if (tileVal < 0) { tileMap[i][z] = 3*28; }
-				else if (tileVal < 5) { tileMap[i][z] = 4*28; }
-				else if (tileVal < 10) { tileMap[i][z] = 5*28; }
-				else if (tileVal < 15) { tileMap[i][z] = 6*28; }
-				else { tileMap[i][z] = 7*28; }
+				else if (tileVal < -10) { tileMap[i][z] = 1*29; }
+				else if (tileVal < -5) { tileMap[i][z] = 2*29; }
+				else if (tileVal < 0) { tileMap[i][z] = 3*29; }
+				else if (tileVal < 5) { tileMap[i][z] = 4*29; }
+				else if (tileVal < 10) { tileMap[i][z] = 5*29; }
+				else if (tileVal < 15) { tileMap[i][z] = 6*29; }
+				else { tileMap[i][z] = 7*29; }
 
+			}
+		}
+		for (int i = 0; i <= mapSize; ++i)
+		{
+			for (int z = 0; z <= mapSize; ++z)
+			{
+				float tileVal = tileMap[i][z];
+
+				// 1 2 3
+				// 8 X 4
+				// 7 6 5
+				
+				bool tile1 = (tileMap[i-1][z-1] == tileVal);
+				bool tile2 = (tileMap[i][z-1] == tileVal);
+				bool tile3 = (tileMap[i+1][z-1] == tileVal);
+				bool tile4 = (tileMap[i+1][z] == tileVal);
+				bool tile5 = (tileMap[i+1][z+1] == tileVal);
+				bool tile6 = (tileMap[i][z+1] == tileVal);
+				bool tile7 = (tileMap[i-1][z+1] == tileVal);
+				bool tile8 = (tileMap[i-1][z] == tileVal);
+
+				if (!(tile1 && tile2 && tile3 && tile4 && tile5 && tile6 && tile7 && tile8))
+				{
+					if (tile2 && tile3 && tile4 && tile5 && tile6 && !tile8) tileVal += 1;
+					else if (tile1 && tile2 && tile6 && tile7 && tile8 && !tile4) tileVal += 2;
+					else if (tile1 && tile2 && tile3 && tile4 && tile8 && !tile6) tileVal += 3;
+					else if (tile4 && tile5 && tile6 && tile7 && tile8 && !tile2) tileVal += 4;
+					else if (tile4 && tile5 && tile6  && !tile2 && !tile8) tileVal += 5;
+					else if (tile6 && tile7 && tile8 && !tile2 && !tile4) tileVal += 6;
+					else if (tile2 && tile3 && tile4 && !tile6 && !tile8) tileVal += 7;
+					else if (tile1 && tile2 && tile8 && !tile4 && !tile6) tileVal += 8;
+					else if (!tile1 && tile2 && tile3 && tile4 && tile5 && tile6 && tile7 && tile8) tileVal += 9;
+					else if (tile1 && tile2 && !tile3 && tile4 && tile5 && tile6 && tile7 && tile8) tileVal += 10;
+					else if (tile1 && tile2 && tile3 && tile4 && !tile5 && tile6 && tile7 && tile8) tileVal += 11;
+					else if (tile1 && tile2 && tile3 && tile4 && tile5 && tile6 && !tile7 && tile8) tileVal += 12;
+					else if (!tile2 && !tile4 && !tile6 && !tile8) tileVal += 13;
+					else if (tile2 && !tile4 && !tile6 && !tile8) tileVal += 14;
+					else if (!tile2 && tile4 && !tile6 && !tile8) tileVal += 15;
+					else if (!tile2 && !tile4 && tile6 && !tile8) tileVal += 16;
+					else if (!tile2 && !tile4 && !tile6 && tile8) tileVal += 17;
+					else if (tile1 && tile2 && tile3 && tile4 && !tile5 && tile6 && !tile7 && tile8) tileVal += 18;
+					else if (!tile1 && tile2 && tile3 && tile4 && tile5 && tile6 && !tile7 && tile8) tileVal += 19;
+					else if (!tile1 && tile2 && !tile3 && tile4 && tile5 && tile6 && tile7 && tile8) tileVal += 20;
+					else if (tile1 && tile2 && !tile3 && tile4 && !tile5 && tile6 && tile7 && tile8) tileVal += 21;
+					else if (tile2 && !tile4 && tile6 && !tile8) tileVal += 22;
+					else if (!tile2 && tile4 && !tile6 && tile8) tileVal += 23;
+					else if (tile1 && tile2 && !tile3 && tile4 && !tile5 && tile6 && !tile7 && tile8) tileVal += 24;
+					else if (!tile1 && tile2 && tile3 && tile4 && !tile5 && tile6 && !tile7 && tile8) tileVal += 25;
+					else if (!tile1 && tile2 && !tile3 && tile4 && tile5 && tile6 && !tile7 && tile8) tileVal += 26;
+					else if (!tile1 && tile2 && !tile3 && tile4 && !tile5 && tile6 && tile7 && tile8) tileVal += 27;
+					else if (!tile1 && tile2 && !tile3 && tile4 && !tile5 && tile6 && !tile7 && tile8) tileVal += 28;
+
+					
+				}
+				
+				tileMap2[i][z] = tileVal;
 			}
 		}
 
