@@ -268,50 +268,97 @@ public:
 				// 8 X 4
 				// 7 6 5
 				
-				bool tile1 = (tileMap[i-1][z-1] == tileVal);
-				bool tile2 = (tileMap[i][z-1] == tileVal);
-				bool tile3 = (tileMap[i+1][z-1] == tileVal);
-				bool tile4 = (tileMap[i+1][z] == tileVal);
-				bool tile5 = (tileMap[i+1][z+1] == tileVal);
-				bool tile6 = (tileMap[i][z+1] == tileVal);
-				bool tile7 = (tileMap[i-1][z+1] == tileVal);
-				bool tile8 = (tileMap[i-1][z] == tileVal);
+				bool tile1 = 1;
+				bool tile2 = 1;
+				bool tile3 = 1;
+				bool tile4 = 1;
+				bool tile5 = 1;
+				bool tile6 = 1;
+				bool tile7 = 1;
+				bool tile8 = 1;
+				int cnt = 0;
+				float avg = 0;
 
-				if (!(tile1 && tile2 && tile3 && tile4 && tile5 && tile6 && tile7 && tile8))
-				{
-					if (tile2 && tile3 && tile4 && tile5 && tile6 && !tile8) tileVal += 1;
-					else if (tile1 && tile2 && tile6 && tile7 && tile8 && !tile4) tileVal += 2;
-					else if (tile1 && tile2 && tile3 && tile4 && tile8 && !tile6) tileVal += 3;
-					else if (tile4 && tile5 && tile6 && tile7 && tile8 && !tile2) tileVal += 4;
-					else if (tile4 && tile5 && tile6  && !tile2 && !tile8) tileVal += 5;
-					else if (tile6 && tile7 && tile8 && !tile2 && !tile4) tileVal += 6;
-					else if (tile2 && tile3 && tile4 && !tile6 && !tile8) tileVal += 7;
-					else if (tile1 && tile2 && tile8 && !tile4 && !tile6) tileVal += 8;
-					else if (!tile1 && tile2 && tile3 && tile4 && tile5 && tile6 && tile7 && tile8) tileVal += 9;
-					else if (tile1 && tile2 && !tile3 && tile4 && tile5 && tile6 && tile7 && tile8) tileVal += 10;
-					else if (tile1 && tile2 && tile3 && tile4 && !tile5 && tile6 && tile7 && tile8) tileVal += 11;
-					else if (tile1 && tile2 && tile3 && tile4 && tile5 && tile6 && !tile7 && tile8) tileVal += 12;
-					else if (!tile2 && !tile4 && !tile6 && !tile8) tileVal += 13;
-					else if (tile2 && !tile4 && !tile6 && !tile8) tileVal += 14;
-					else if (!tile2 && tile4 && !tile6 && !tile8) tileVal += 15;
-					else if (!tile2 && !tile4 && tile6 && !tile8) tileVal += 16;
-					else if (!tile2 && !tile4 && !tile6 && tile8) tileVal += 17;
-					else if (tile1 && tile2 && tile3 && tile4 && !tile5 && tile6 && !tile7 && tile8) tileVal += 18;
-					else if (!tile1 && tile2 && tile3 && tile4 && tile5 && tile6 && !tile7 && tile8) tileVal += 19;
-					else if (!tile1 && tile2 && !tile3 && tile4 && tile5 && tile6 && tile7 && tile8) tileVal += 20;
-					else if (tile1 && tile2 && !tile3 && tile4 && !tile5 && tile6 && tile7 && tile8) tileVal += 21;
-					else if (tile2 && !tile4 && tile6 && !tile8) tileVal += 22;
-					else if (!tile2 && tile4 && !tile6 && tile8) tileVal += 23;
-					else if (tile1 && tile2 && !tile3 && tile4 && !tile5 && tile6 && !tile7 && tile8) tileVal += 24;
-					else if (!tile1 && tile2 && tile3 && tile4 && !tile5 && tile6 && !tile7 && tile8) tileVal += 25;
-					else if (!tile1 && tile2 && !tile3 && tile4 && tile5 && tile6 && !tile7 && tile8) tileVal += 26;
-					else if (!tile1 && tile2 && !tile3 && tile4 && !tile5 && tile6 && tile7 && tile8) tileVal += 27;
-					else if (!tile1 && tile2 && !tile3 && tile4 && !tile5 && tile6 && !tile7 && tile8) tileVal += 28;
-
-					
+				if (tileMap[i - 1][z - 1] != tileVal){
+					tile1 = 0;
+					avg += tileMap[i - 1][z - 1];
+					cnt += 1;
 				}
-				
+				if (tileMap[i][z - 1] != tileVal) {
+					tile2 = 0;
+					avg += tileMap[i][z - 1];
+					cnt += 1;
+				}
+				if (tileMap[i + 1][z - 1] != tileVal) {
+					tile3 = 0;
+					avg += tileMap[i + 1][z - 1];
+					cnt += 1;
+				}
+				if (tileMap[i + 1][z] != tileVal) {
+					tile4 = 0;
+					avg += tileMap[i + 1][z];
+					cnt += 1;
+				}
+				if (tileMap[i + 1][z + 1] != tileVal) {
+					tile5 = 0;
+					avg += tileMap[i + 1][z + 1];
+					cnt += 1;
+				}
+				if (tileMap[i][z + 1] != tileVal) {
+					tile6 = 0;
+					avg += tileMap[i][z + 1];
+					cnt += 1;
+				}
+				if (tileMap[i - 1][z + 1] != tileVal) {
+					tile7 = 0;
+					avg += tileMap[i - 1][z + 1];
+					cnt += 1;
+				}
+				if (tileMap[i - 1][z] != tileVal) {
+					tile8 = 0;
+					avg += tileMap[i - 1][z];
+					cnt += 1;
+				}
+
+				if (avg/cnt > tileVal)
+				{ 
+					if (!(tile1 && tile2 && tile3 && tile4 && tile5 && tile6 && tile7 && tile8))
+					{
+						if (tile2 && tile3 && tile4 && tile5 && tile6 && !tile8) tileVal += 1;
+						else if (tile1 && tile2 && tile6 && tile7 && tile8 && !tile4) tileVal += 2;
+						else if (tile1 && tile2 && tile3 && tile4 && tile8 && !tile6) tileVal += 3;
+						else if (tile4 && tile5 && tile6 && tile7 && tile8 && !tile2) tileVal += 4;
+						else if (tile4 && tile5 && tile6 && !tile2 && !tile8) tileVal += 5;
+						else if (tile6 && tile7 && tile8 && !tile2 && !tile4) tileVal += 6;
+						else if (tile2 && tile3 && tile4 && !tile6 && !tile8) tileVal += 7;
+						else if (tile1 && tile2 && tile8 && !tile4 && !tile6) tileVal += 8;
+						else if (!tile1 && tile2 && tile3 && tile4 && tile5 && tile6 && tile7 && tile8) tileVal += 9;
+						else if (tile1 && tile2 && !tile3 && tile4 && tile5 && tile6 && tile7 && tile8) tileVal += 10;
+						else if (tile1 && tile2 && tile3 && tile4 && !tile5 && tile6 && tile7 && tile8) tileVal += 11;
+						else if (tile1 && tile2 && tile3 && tile4 && tile5 && tile6 && !tile7 && tile8) tileVal += 12;
+						else if (!tile2 && !tile4 && !tile6 && !tile8) tileVal += 13;
+						else if (tile2 && !tile4 && !tile6 && !tile8) tileVal += 14;
+						else if (!tile2 && tile4 && !tile6 && !tile8) tileVal += 15;
+						else if (!tile2 && !tile4 && tile6 && !tile8) tileVal += 16;
+						else if (!tile2 && !tile4 && !tile6 && tile8) tileVal += 17;
+						else if (tile1 && tile2 && tile3 && tile4 && !tile5 && tile6 && !tile7 && tile8) tileVal += 18;
+						else if (!tile1 && tile2 && tile3 && tile4 && tile5 && tile6 && !tile7 && tile8) tileVal += 19;
+						else if (!tile1 && tile2 && !tile3 && tile4 && tile5 && tile6 && tile7 && tile8) tileVal += 20;
+						else if (tile1 && tile2 && !tile3 && tile4 && !tile5 && tile6 && tile7 && tile8) tileVal += 21;
+						else if (tile2 && !tile4 && tile6 && !tile8) tileVal += 22;
+						else if (!tile2 && tile4 && !tile6 && tile8) tileVal += 23;
+						else if (tile1 && tile2 && !tile3 && tile4 && !tile5 && tile6 && !tile7 && tile8) tileVal += 24;
+						else if (!tile1 && tile2 && tile3 && tile4 && !tile5 && tile6 && !tile7 && tile8) tileVal += 25;
+						else if (!tile1 && tile2 && !tile3 && tile4 && tile5 && tile6 && !tile7 && tile8) tileVal += 26;
+						else if (!tile1 && tile2 && !tile3 && tile4 && !tile5 && tile6 && tile7 && tile8) tileVal += 27;
+						else if (!tile1 && tile2 && !tile3 && tile4 && !tile5 && tile6 && !tile7 && tile8) tileVal += 28;
+
+
+					}
+				}
 				tileMap2[i][z] = tileVal;
+
+				
 			}
 		}
 
