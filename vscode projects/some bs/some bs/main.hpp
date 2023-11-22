@@ -17,7 +17,7 @@
 sf::Vector3i c_black(13, 14, 26);
 sf::Vector3i c_dkblue(33, 47, 106);
 sf::Vector3i c_blue(47, 80, 118);
-sf::Vector3i c_ltblue(70, 113, 128);
+sf::Vector3i c_ltblue(65, 95, 120);
 sf::Vector3i c_tan(116, 113, 89);
 sf::Vector3i c_green(49, 83, 76);
 sf::Vector3i c_dkgreen(34, 53, 59);
@@ -25,7 +25,16 @@ sf::Vector3i c_dkpurple(43, 37, 49);
 sf::Vector3i c_purple(77, 61, 85);
 sf::Vector3i c_snow(182, 182, 182);
 
-class Game  
+//alocate space for the grid
+static const int mapSize = 500;
+//create the grid here so it stays in the heap
+float dsMap[mapSize][mapSize];
+float tileMap[mapSize][mapSize];
+float tileMap2[mapSize][mapSize];
+
+//----DECLARE CLASSES-----
+
+class game  
 {
 
 public:
@@ -45,7 +54,7 @@ public:
 
 	//----INITIALIZE VIEW----
 
-	sf::Vector2i windowSetup(sf::RenderWindow &win, sf::View &vw, sf::RenderTexture &buf, sf::Sprite &spr, int h)
+	sf::Vector2i windowSetup(sf::RenderWindow &win, sf::View &vw, int h, bool fullscreen = true, int frame = 60)
 	{
 		//get the display dimmensions and calculate the aspect ratio
 		float displayWidth = GetSystemMetrics(SM_CXSCREEN);
@@ -61,7 +70,8 @@ public:
 		int bufferY = bufferH / 2;
 
 		//initialize the view with the calculated resolution 
-		win.create(sf::VideoMode(bufferW, bufferH), "Some BS", sf::Style::Fullscreen);
+		if(fullscreen) win.create(sf::VideoMode(bufferW, bufferH), "Some BS", sf::Style::Fullscreen);
+		else win.create(sf::VideoMode(bufferW, bufferH), "Some BS", sf::Style::Default);
 		//set the frame rate and hide the cursor so we can draw our own
 		win.setFramerateLimit(60);
 		win.setMouseCursorVisible(false);
@@ -73,29 +83,25 @@ public:
 		//asign the view to the window
 		win.setView(vw);
 
-		//create a buffer and sprite to draw to
-		buf.create(bufferW, bufferH);
-		spr.setTexture(buf.getTexture());
-
 		//return the calculated width and height of the window in pixels
 		return sf::Vector2i(bufferW, bufferH);
 	}
 
 };
 
-class DiamSquare : public sf::Drawable, public sf::Transformable
+class DiamSquare : public sf::Drawable, public sf::Transformable 
 {
 
 public:
 
 	//----CREATE THE MAP----
 
-	void newMap(float map[200][200], int size, int high = 20, float roughness = 20, float change = 1.6)
+	void newMap(float map[mapSize][mapSize], int size, int high = 20, float roughness = 20, float change = 1.4)
 	{
 
 		//---INITIALIZE VARIABLES----
 
-		Game rand;
+		game rand;
 		float avg;
 		int div;
 
@@ -130,7 +136,6 @@ public:
 		map[0][size] = rand.randRange(-roughness, roughness);
 		map[size][0] = rand.randRange(-roughness, roughness);
 		map[size][size] = rand.randRange(-roughness, roughness);
-
 
 
 		//----SQUARE-----
@@ -227,104 +232,252 @@ public:
 					if (map[(int)round(i)][(int)round(z)] == empty) map[(int)round(i)][(int)round(z)] = avg + rand.randRange(-roughness, roughness);
 				}
 			}
+
 			//Create a smaller chunk to iterate through and use half to get the center again
 			chunk /= 2; 
 			half /= 2;
+
 			//reduce the amount of change each iteration (higher value is smoother because its reducing the change faster)
 			roughness /= change; 
 		}
 
-	}
-
-
-	//----GENERATE NEW RANDOM MAP----
-
-	void reGen(float map[200][200],int dsSize, sf::RenderTexture& buffer, sf::RectangleShape& rect, int gridSize, int viewGridX, int viewGridY)
-	{
-		//clear viewwith a background color
-		buffer.clear(sf::Color(c_black.x, c_black.y, c_black.z));
-		rect.setOutlineColor(sf::Color::Transparent);
-		//iterate throught the diamond square grid and draw squares at different colors
-		//for different heights
-		for (int i = 0; i < dsSize + 1; i += 1)
+		for (int i = 0; i <= mapSize; ++i)
 		{
-			for (int z = 0; z < dsSize + 1; z += 1)
+			for (int z = 0; z <= mapSize; ++z)
 			{
-				int tx = floor(viewGridX + i);
-				int ty = floor(viewGridY + z);
+				float tileVal = dsMap[i][z];
 
-				//Check the number from the grid and set a corisponding color
-				if (map[tx][ty] < -10) { rect.setFillColor(sf::Color(c_dkblue.x, c_dkblue.y, c_dkblue.z)); }
-				else if (map[tx][ty] < -5) { rect.setFillColor(sf::Color(c_blue.x, c_blue.y, c_blue.z)); }
-				else if (map[tx][ty] < 0) { rect.setFillColor(sf::Color(c_ltblue.x, c_ltblue.y, c_ltblue.z)); }
-				else if (map[tx][ty] < 5) { rect.setFillColor(sf::Color(c_tan.x, c_tan.y, c_tan.z)); }
-				else if (map[tx][ty] < 10) { rect.setFillColor(sf::Color(c_green.x, c_green.y, c_green.z)); }
-				else if (map[tx][ty] < 15) { rect.setFillColor(sf::Color(c_dkgreen.x, c_dkgreen.y, c_dkgreen.z)); }
-				else if (map[tx][ty] < 20) { rect.setFillColor(sf::Color(c_purple.x, c_purple.y, c_purple.z)); }
-				else { rect.setFillColor(sf::Color(c_dkpurple.x, c_dkpurple.y, c_dkpurple.z)); }
+				if (tileVal < -15) { tileMap[i][z] = 0; }
+				else if (tileVal < -10) { tileMap[i][z] = 1*47; }
+				else if (tileVal < -5) { tileMap[i][z] = 2*47; }
+				else if (tileVal < 0) { tileMap[i][z] = 3*47; }
+				else if (tileVal < 5) { tileMap[i][z] = 4*47; }
+				else if (tileVal < 10) { tileMap[i][z] = 5*47; }
+				else if (tileVal < 15) { tileMap[i][z] = 6*47; }
+				else { tileMap[i][z] = 7*47; }
 
-				//Move the rectangle to the correct position before drawing
-				rect.setPosition((1) + (i * gridSize), (1) + (z * gridSize));
-				buffer.draw(rect);
+			}
+		}
+		for (int i = 0; i <= mapSize; ++i)
+		{
+			for (int z = 0; z <= mapSize; ++z)
+			{
+				float tileVal = tileMap[i][z];
+
+				// 1 2 3
+				// 8 X 4
+				// 7 6 5
+				
+				bool tile1 = 1;
+				bool tile2 = 1;
+				bool tile3 = 1;
+				bool tile4 = 1;
+				bool tile5 = 1;
+				bool tile6 = 1;
+				bool tile7 = 1;
+				bool tile8 = 1;
+				int cnt = 0;
+				float avg = 0;
+
+				if (tileMap[i - 1][z - 1] != tileVal){
+					tile1 = 0;
+					avg += tileMap[i - 1][z - 1];
+					cnt += 1;
+				}
+				if (tileMap[i][z - 1] != tileVal) {
+					tile2 = 0;
+					avg += tileMap[i][z - 1];
+					cnt += 1;
+				}
+				if (tileMap[i + 1][z - 1] != tileVal) {
+					tile3 = 0;
+					avg += tileMap[i + 1][z - 1];
+					cnt += 1;
+				}
+				if (tileMap[i + 1][z] != tileVal) {
+					tile4 = 0;
+					avg += tileMap[i + 1][z];
+					cnt += 1;
+				}
+				if (tileMap[i + 1][z + 1] != tileVal) {
+					tile5 = 0;
+					avg += tileMap[i + 1][z + 1];
+					cnt += 1;
+				}
+				if (tileMap[i][z + 1] != tileVal) {
+					tile6 = 0;
+					avg += tileMap[i][z + 1];
+					cnt += 1;
+				}
+				if (tileMap[i - 1][z + 1] != tileVal) {
+					tile7 = 0;
+					avg += tileMap[i - 1][z + 1];
+					cnt += 1;
+				}
+				if (tileMap[i - 1][z] != tileVal) {
+					tile8 = 0;
+					avg += tileMap[i - 1][z];
+					cnt += 1;
+				}
+
+				if (avg/cnt > tileVal)
+				{ 
+					if (!(tile1 && tile2 && tile3 && tile4 && tile5 && tile6 && tile7 && tile8))
+					{
+						if (tile2 && tile3 && tile4 && tile5 && tile6 && !tile8) tileVal += 1;
+						else if (tile1 && tile2 && tile6 && tile7 && tile8 && !tile4) tileVal += 2;
+						else if (tile1 && tile2 && tile3 && tile4 && tile8 && !tile6) tileVal += 3;
+						else if (tile4 && tile5 && tile6 && tile7 && tile8 && !tile2) tileVal += 4;
+						else if (tile4 && tile5 && tile6 && !tile2 && !tile8) tileVal += 5;
+						else if (tile6 && tile7 && tile8 && !tile2 && !tile4) tileVal += 6;
+						else if (tile2 && tile3 && tile4 && !tile6 && !tile8) tileVal += 7;
+						else if (tile1 && tile2 && tile8 && !tile4 && !tile6) tileVal += 8;
+						else if (!tile1 && tile2 && tile3 && tile4 && tile5 && tile6 && tile7 && tile8) tileVal += 9;
+						else if (tile1 && tile2 && !tile3 && tile4 && tile5 && tile6 && tile7 && tile8) tileVal += 10;
+						else if (tile1 && tile2 && tile3 && tile4 && !tile5 && tile6 && tile7 && tile8) tileVal += 11;
+						else if (tile1 && tile2 && tile3 && tile4 && tile5 && tile6 && !tile7 && tile8) tileVal += 12;
+						else if (!tile2 && !tile4 && !tile6 && !tile8) tileVal += 13;
+						else if (tile2 && !tile4 && !tile6 && !tile8) tileVal += 14;
+						else if (!tile2 && tile4 && !tile6 && !tile8) tileVal += 15;
+						else if (!tile2 && !tile4 && tile6 && !tile8) tileVal += 16;
+						else if (!tile2 && !tile4 && !tile6 && tile8) tileVal += 17;
+						else if (tile1 && tile2 && tile3 && tile4 && !tile5 && tile6 && !tile7 && tile8) tileVal += 18;
+						else if (!tile1 && tile2 && tile3 && tile4 && tile5 && tile6 && !tile7 && tile8) tileVal += 19;
+						else if (!tile1 && tile2 && !tile3 && tile4 && tile5 && tile6 && tile7 && tile8) tileVal += 20;
+						else if (tile1 && tile2 && !tile3 && tile4 && !tile5 && tile6 && tile7 && tile8) tileVal += 21;
+						else if (tile2 && !tile4 && tile6 && !tile8) tileVal += 22;
+						else if (!tile2 && tile4 && !tile6 && tile8) tileVal += 23;
+						else if (tile1 && tile2 && !tile3 && tile4 && !tile5 && tile6 && !tile7 && tile8) tileVal += 24;
+						else if (!tile1 && tile2 && tile3 && tile4 && !tile5 && tile6 && !tile7 && tile8) tileVal += 25;
+						else if (!tile1 && tile2 && !tile3 && tile4 && tile5 && tile6 && !tile7 && tile8) tileVal += 26;
+						else if (!tile1 && tile2 && !tile3 && tile4 && !tile5 && tile6 && tile7 && tile8) tileVal += 27;
+						else if (!tile1 && tile2 && !tile3 && tile4 && !tile5 && tile6 && !tile7 && tile8) tileVal += 28;
+						else if (!tile1 && tile2 && !tile3 && tile4 && !tile6 && tile8) tileVal += 29;
+						else if (tile2 && !tile3 && tile4 && !tile5 && tile6 && !tile8) tileVal += 30;
+						else if (!tile2 && tile4 && !tile5 && tile6 && !tile7 && tile8) tileVal += 31;
+						else if (!tile1 && tile2 && !tile4 && tile6 && !tile7 && tile8) tileVal += 32;
+						else if (tile1 && tile2 && !tile4 && tile6 && !tile7 && tile8) tileVal += 33;
+						else if (tile2 && tile3 && tile4 && !tile5 && tile6 && !tile8) tileVal += 34;
+						else if (tile2 && !tile3 && tile4 && tile5 && tile6 && !tile8) tileVal += 35;
+						else if (!tile1 && tile2 && !tile4 && tile6 && tile7 && tile8) tileVal += 36;
+						else if (!tile2 && tile4 && tile5 && tile6 && !tile7 && tile8) tileVal += 37;
+						else if (!tile2 && tile4 && !tile5 && tile6 && tile7 && tile8) tileVal += 38;
+						else if (tile1 && tile2 && !tile3 && tile4 && !tile6 && tile8) tileVal += 39;
+						else if (!tile1 && tile2 && tile3 && tile4 && !tile6 && tile8) tileVal += 40;
+						else if (tile2 && !tile3 && tile4 && !tile6 && !tile8) tileVal += 41;
+						else if (!tile1 && tile2 && !tile4 && !tile6 && tile8) tileVal += 42;
+						else if (!tile2 && tile4 && !tile5 && tile6 && !tile8) tileVal += 43;
+						else if (!tile2 && !tile4 && tile6 && !tile7 && tile8) tileVal += 44;
+						else if (tile1 && tile2 && !tile3 && tile4 && tile5 && tile6 && !tile7 && tile8) tileVal += 45;
+						else if (!tile1 && tile2 && tile3 && tile4 && !tile5 && tile6 && tile7 && tile8) tileVal += 46;
+						
+
+
+					}
+				}
+				tileMap2[i][z] = tileVal;
+
+				
 			}
 		}
 
-		//change the rectangle so it can be used as the mouse position
-		rect.setFillColor(sf::Color(0, 0, 0, 0));
-		rect.setOutlineColor(sf::Color::Black);
 	}
 
 
-	//bool load(sf::Vector2u tileSize, const int* tiles, unsigned int width, unsigned int height)
-	//{
-	//	// load the tileset texture
-	//	/*if (!m_tileset.loadFromFile(tileset))
-	//		return false;*/
 
-	//	// resize the vertex array to fit the level size
-	//	m_vertices.setPrimitiveType(sf::Triangles);
-	//	m_vertices.resize(width * height * 6);
 
-	//	// populate the vertex array, with two triangles per tile
-	//	for (unsigned int i = 0; i < width; ++i)
-	//		for (unsigned int j = 0; j < height; ++j)
-	//		{
-	//			// get the current tile number
-	//			int tileNumber = tiles[i + j * width];
+	//---DRAW WITH VERTICES---
 
-	//			// find its position in the tileset texture
-	//			int tu = tileNumber % (m_tileset.getSize().x / tileSize.x);
-	//			int tv = tileNumber / (m_tileset.getSize().x / tileSize.x);
+	bool drawMap(sf::RenderTarget& target, float map[mapSize][mapSize], int tileSize, sf::Vector2i pos, sf::Vector2i size,bool solidColor = true, const std::string& tileset = "NULL")
+	{
+		// load the tileset texture
+		if (!solidColor)
+		{
+			if (!m_tileset.loadFromFile(tileset))
+				return false;
+		}
+		
 
-	//			// get a pointer to the triangles' vertices of the current tile
-	//			sf::Vertex* triangles = &m_vertices[(i + j * width) * 6];
+		// resize the vertex array to fit the level size
+		m_vertices.setPrimitiveType(sf::Triangles);
+		m_vertices.resize(size.x * size.y * 6);
 
-	//			// define the 6 corners of the two triangles
-	//			triangles[0].position = sf::Vector2f(i * tileSize.x, j * tileSize.y);
-	//			triangles[1].position = sf::Vector2f((i + 1) * tileSize.x, j * tileSize.y);
-	//			triangles[2].position = sf::Vector2f(i * tileSize.x, (j + 1) * tileSize.y);
-	//			triangles[3].position = sf::Vector2f(i * tileSize.x, (j + 1) * tileSize.y);
-	//			triangles[4].position = sf::Vector2f((i + 1) * tileSize.x, j * tileSize.y);
-	//			triangles[5].position = sf::Vector2f((i + 1) * tileSize.x, (j + 1) * tileSize.y);
 
-	//			// define the 6 matching texture coordinates
-	//			triangles[0].texCoords = sf::Vector2f(tu * tileSize.x, tv * tileSize.y);
-	//			triangles[1].texCoords = sf::Vector2f((tu + 1) * tileSize.x, tv * tileSize.y);
-	//			triangles[2].texCoords = sf::Vector2f(tu * tileSize.x, (tv + 1) * tileSize.y);
-	//			triangles[3].texCoords = sf::Vector2f(tu * tileSize.x, (tv + 1) * tileSize.y);
-	//			triangles[4].texCoords = sf::Vector2f((tu + 1) * tileSize.x, tv * tileSize.y);
-	//			triangles[5].texCoords = sf::Vector2f((tu + 1) * tileSize.x, (tv + 1) * tileSize.y);
+		// populate the vertex array, with two triangles per tile
+		for (unsigned int i = 0 ; i < size.x; ++i)
+			for (unsigned int z = 0; z < size.y; ++z)
+			{
+				// get the current tile number
+				int tileNumber = map[i + pos.x][z + pos.y];
 
-	//			triangles[0].color = sf::Color(m_color);
-	//			triangles[1].color = sf::Color(m_color);
-	//			triangles[2].color = sf::Color(m_color);
-	//			triangles[3].color = sf::Color(m_color);
-	//			triangles[4].color = sf::Color(m_color);
-	//			triangles[5].color = sf::Color(m_color);
-	//		}
+				// get a pointer to the triangles' vertices of the current tile
+				sf::Vertex* triangles = &m_vertices[(i + z * size.x) * 6];
 
-	//	return true;
-	//}
+				// define the 6 corners of the two triangles
+				triangles[0].position = sf::Vector2f(i * tileSize, z * tileSize);
+				triangles[1].position = sf::Vector2f((i + 1) * tileSize, z * tileSize);
+				triangles[2].position = sf::Vector2f(i * tileSize, (z + 1) * tileSize);
+				triangles[3].position = sf::Vector2f(i * tileSize, (z + 1) * tileSize);
+				triangles[4].position = sf::Vector2f((i + 1) * tileSize, z * tileSize);
+				triangles[5].position = sf::Vector2f((i + 1) * tileSize, (z + 1) * tileSize);
+
+				if (solidColor)
+				{
+
+					sf::Color color;
+
+					if (tileNumber < -10) { color = (sf::Color(c_dkblue.x, c_dkblue.y, c_dkblue.z)); }
+					else if (tileNumber < -5) { color = (sf::Color(c_blue.x, c_blue.y, c_blue.z)); }
+					else if (tileNumber < 0) { color = (sf::Color(c_ltblue.x, c_ltblue.y, c_ltblue.z)); }
+					else if (tileNumber < 5) { color = (sf::Color(c_tan.x, c_tan.y, c_tan.z)); }
+					else if (tileNumber < 10) { color = (sf::Color(c_green.x, c_green.y, c_green.z)); }
+					else if (tileNumber < 15) { color = (sf::Color(c_dkgreen.x, c_dkgreen.y, c_dkgreen.z)); }
+					else if (tileNumber < 20) { color = (sf::Color(c_purple.x, c_purple.y, c_purple.z)); }
+					else { color = (sf::Color(c_dkpurple.x, c_dkpurple.y, c_dkpurple.z)); }
+
+					for (int k = 0; k < 6; k += 1)
+					{
+						triangles[k].color = sf::Color(color);
+					}
+				}
+
+				
+				else
+				{
+					int index;
+					// get the current tile number
+					if (tileNumber < -15) { index = 0; }
+					else if (tileNumber < -10) { index = 1; }
+					else if (tileNumber < -5) { index = 2; }
+					else if (tileNumber < 0) { index = 3; }
+					else if (tileNumber < 5) { index = 4; }
+					else if (tileNumber < 10) { index = 5; }
+					else if (tileNumber < 15) { index = 6; }
+					else if (tileNumber < 20) { index = 7; }
+					else { index = 8; }
+
+					// find its position in the tileset texture
+					//int tu = index % (m_tileset.getSize().x / tileSize);
+					//int tv = index / (m_tileset.getSize().x / tileSize);
+					int tu = tileNumber % (m_tileset.getSize().x / tileSize);
+					int tv = tileNumber / (m_tileset.getSize().x / tileSize);
+
+					// define the 6 matching texture coordinates
+					triangles[0].texCoords = sf::Vector2f(tu * tileSize, tv * tileSize);
+					triangles[1].texCoords = sf::Vector2f((tu + 1) * tileSize, tv * tileSize);
+					triangles[2].texCoords = sf::Vector2f(tu * tileSize, (tv + 1) * tileSize);
+					triangles[3].texCoords = sf::Vector2f(tu * tileSize, (tv + 1) * tileSize);
+					triangles[4].texCoords = sf::Vector2f((tu + 1) * tileSize, tv * tileSize);
+					triangles[5].texCoords = sf::Vector2f((tu + 1) * tileSize, (tv + 1) * tileSize);
+
+				}
+				
+			}
+
+		if(solidColor)target.draw(m_vertices);
+		else target.draw(m_vertices, &m_tileset); //Need to include the texture???
+		return true;
+	}
 
 private:
 
@@ -333,10 +486,14 @@ private:
 		// apply the transform
 		states.transform *= getTransform();
 
+		// apply the tileset texture
+		states.texture = &m_tileset;
+
 		// draw the vertex array
 		target.draw(m_vertices, states);
 	}
 
 	sf::VertexArray m_vertices;
+	sf::Texture m_tileset;
 };
 	
