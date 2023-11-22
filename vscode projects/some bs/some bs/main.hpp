@@ -248,13 +248,13 @@ public:
 				float tileVal = dsMap[i][z];
 
 				if (tileVal < -15) { tileMap[i][z] = 0; }
-				else if (tileVal < -10) { tileMap[i][z] = 1*29; }
-				else if (tileVal < -5) { tileMap[i][z] = 2*29; }
-				else if (tileVal < 0) { tileMap[i][z] = 3*29; }
-				else if (tileVal < 5) { tileMap[i][z] = 4*29; }
-				else if (tileVal < 10) { tileMap[i][z] = 5*29; }
-				else if (tileVal < 15) { tileMap[i][z] = 6*29; }
-				else { tileMap[i][z] = 7*29; }
+				else if (tileVal < -10) { tileMap[i][z] = 1*47; }
+				else if (tileVal < -5) { tileMap[i][z] = 2*47; }
+				else if (tileVal < 0) { tileMap[i][z] = 3*47; }
+				else if (tileVal < 5) { tileMap[i][z] = 4*47; }
+				else if (tileVal < 10) { tileMap[i][z] = 5*47; }
+				else if (tileVal < 15) { tileMap[i][z] = 6*47; }
+				else { tileMap[i][z] = 7*47; }
 
 			}
 		}
@@ -352,6 +352,25 @@ public:
 						else if (!tile1 && tile2 && !tile3 && tile4 && tile5 && tile6 && !tile7 && tile8) tileVal += 26;
 						else if (!tile1 && tile2 && !tile3 && tile4 && !tile5 && tile6 && tile7 && tile8) tileVal += 27;
 						else if (!tile1 && tile2 && !tile3 && tile4 && !tile5 && tile6 && !tile7 && tile8) tileVal += 28;
+						else if (!tile1 && tile2 && !tile3 && tile4 && !tile6 && tile8) tileVal += 29;
+						else if (tile2 && !tile3 && tile4 && !tile5 && tile6 && !tile8) tileVal += 30;
+						else if (!tile2 && tile4 && !tile5 && tile6 && !tile7 && tile8) tileVal += 31;
+						else if (!tile1 && tile2 && !tile4 && tile6 && !tile7 && tile8) tileVal += 32;
+						else if (tile1 && tile2 && !tile4 && tile6 && !tile7 && tile8) tileVal += 33;
+						else if (tile2 && tile3 && tile4 && !tile5 && tile6 && !tile8) tileVal += 34;
+						else if (tile2 && !tile3 && tile4 && tile5 && tile6 && !tile8) tileVal += 35;
+						else if (!tile1 && tile2 && !tile4 && tile6 && tile7 && tile8) tileVal += 36;
+						else if (!tile2 && tile4 && tile5 && tile6 && !tile7 && tile8) tileVal += 37;
+						else if (!tile2 && tile4 && !tile5 && tile6 && tile7 && tile8) tileVal += 38;
+						else if (tile1 && tile2 && !tile3 && tile4 && !tile6 && tile8) tileVal += 39;
+						else if (!tile1 && tile2 && tile3 && tile4 && !tile6 && tile8) tileVal += 40;
+						else if (tile2 && !tile3 && tile4 && !tile6 && !tile8) tileVal += 41;
+						else if (!tile1 && tile2 && !tile4 && !tile6 && tile8) tileVal += 42;
+						else if (!tile2 && tile4 && !tile5 && tile6 && !tile8) tileVal += 43;
+						else if (!tile2 && !tile4 && tile6 && !tile7 && tile8) tileVal += 44;
+						else if (tile1 && tile2 && !tile3 && tile4 && tile5 && tile6 && !tile7 && tile8) tileVal += 45;
+						else if (!tile1 && tile2 && tile3 && tile4 && !tile5 && tile6 && tile7 && tile8) tileVal += 46;
+						
 
 
 					}
