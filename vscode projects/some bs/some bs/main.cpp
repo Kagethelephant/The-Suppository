@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
 
     //container for the height and width of the window
     sf::Vector2i resPixels;
-    resPixels = win.windowSetup(window, view, 600, true,60);
+    resPixels = win.windowSetup(window, view, 300, false,60);
 
     //how many grids can fit on the screen
     sf::Vector2i resTiles;
@@ -90,7 +90,7 @@ int main(int argc, char** argv) {
     //clear viewwith a background color
     bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
     //draw the map with vertex array
-    ds.drawMap(bufferMap, tileMap, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
+    ds.drawMap(bufferMap, tileMap2, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
 
 
 
@@ -130,7 +130,8 @@ int main(int argc, char** argv) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
         {
             ds.newMap(dsMap, mapSize);
-            ds.drawMap(bufferMap, tileMap, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
+            bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
+            ds.drawMap(bufferMap, tileMap2, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
         }
 
 
@@ -143,7 +144,8 @@ int main(int argc, char** argv) {
             if (viewPos.x > mapSize - resTiles.x) viewPos.x = mapSize - resTiles.x;
             else
             {
-                ds.drawMap(bufferMap, tileMap, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
+                bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
+                ds.drawMap(bufferMap, tileMap2, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
             }
         }
 
@@ -153,7 +155,8 @@ int main(int argc, char** argv) {
             if (viewPos.x < 1) viewPos.x = 1;
             else
             {
-                ds.drawMap(bufferMap, tileMap, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
+                bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
+                ds.drawMap(bufferMap, tileMap2, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
             }
         }
 
@@ -163,7 +166,8 @@ int main(int argc, char** argv) {
             if (viewPos.y < 1) viewPos.y = 1;
             else
             {
-                ds.drawMap(bufferMap, tileMap, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
+                bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
+                ds.drawMap(bufferMap, tileMap2, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
             }
         }
 
@@ -173,7 +177,8 @@ int main(int argc, char** argv) {
             if (viewPos.y > mapSize - resTiles.y) viewPos.y = mapSize - resTiles.y;
             else
             {
-                ds.drawMap(bufferMap, tileMap, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
+                bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
+                ds.drawMap(bufferMap, tileMap2, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
             }
         } 
         
