@@ -247,12 +247,12 @@ public:
 				float tileVal = dsMap[i][z];
 
 				if (tileVal < -15) { tileMap[i][z] = 0; }
-				else if (tileVal < -10) { tileMap[i][z] = 1*28; }
-				else if (tileVal < -5) { tileMap[i][z] = 2*28; }
-				else if (tileVal < 0) { tileMap[i][z] = 3*28; }
-				else if (tileVal < 5) { tileMap[i][z] = 4*28; }
-				else if (tileVal < 10) { tileMap[i][z] = 5*28; }
-				else if (tileVal < 15) { tileMap[i][z] = 6*28; }
+				else if (tileVal < -10) { tileMap[i][z] = 1*29; }
+				else if (tileVal < -5) { tileMap[i][z] = 2*29; }
+				else if (tileVal < 0) { tileMap[i][z] = 3*29; }
+				else if (tileVal < 5) { tileMap[i][z] = 4*29; }
+				else if (tileVal < 10) { tileMap[i][z] = 5*29; }
+				else if (tileVal < 15) { tileMap[i][z] = 6*29; }
 				else { tileMap[i][z] = 7*28; }
 
 			}
