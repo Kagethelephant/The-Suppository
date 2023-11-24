@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
     //clear viewwith a background color
     bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
     //draw the map with vertex array
-    ds.drawMap(bufferMap, tileMap2, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
+    ds.drawMap(bufferMap, dsMap, tileSize, viewPos, resTiles);
 
 
 
@@ -130,7 +130,7 @@ int main(int argc, char** argv) {
         {
             ds.newMap(dsMap, mapSize);
             bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
-            ds.drawMap(bufferMap, tileMap2, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
+            ds.drawMap(bufferMap, dsMap, tileSize, viewPos, resTiles);
         }
 
 
@@ -144,7 +144,7 @@ int main(int argc, char** argv) {
             else
             {
                 bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
-                ds.drawMap(bufferMap, tileMap2, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
+                ds.drawMap(bufferMap, dsMap, tileSize, viewPos, resTiles);
             }
         }
 
@@ -155,7 +155,7 @@ int main(int argc, char** argv) {
             else
             {
                 bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
-                ds.drawMap(bufferMap, tileMap2, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
+                ds.drawMap(bufferMap, dsMap, tileSize, viewPos, resTiles);
             }
         }
 
@@ -166,7 +166,7 @@ int main(int argc, char** argv) {
             else
             {
                 bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
-                ds.drawMap(bufferMap, tileMap2, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
+                ds.drawMap(bufferMap, dsMap, tileSize, viewPos, resTiles);
             }
         }
 
@@ -177,7 +177,7 @@ int main(int argc, char** argv) {
             else
             {
                 bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
-                ds.drawMap(bufferMap, tileMap2, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
+                ds.drawMap(bufferMap, dsMap, tileSize, viewPos, resTiles);
             }
         } 
         
