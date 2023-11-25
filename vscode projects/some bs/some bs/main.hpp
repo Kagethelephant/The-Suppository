@@ -12,6 +12,7 @@
 #include <iostream>
 #include <string>
 #include <random>
+#include <cmath>
 
 //define some colors cause the default ones are ugly
 sf::Vector3i c_black(13, 14, 26);
@@ -127,7 +128,13 @@ public:
 		//---INITIALIZE MAP----
 
 		//initialize the grid (1 cell grater then the size in the x and y ge
-		for (int z = 0; z < size+1; z += 1) { for (int i = 0; i < size+1; i += 1) { map[i][z] = empty; } }
+		for (int z = 0; z < size; ++z) 
+		{ 
+			for (int i = 0; i < size; ++i) 
+			{ 
+				map[i][z] = empty; 
+			} 
+		}
 
 		//set initial corner values to extrapolate from at each corner
 		map[0][0] = rand.randRange(-roughness, roughness);
@@ -246,7 +253,7 @@ public:
 
 	//---DRAW WITH VERTICES---
 
-	bool drawMap(sf::RenderTarget& target, float map[mapSize][mapSize], int tileSize, sf::Vector2i pos, sf::Vector2i size,bool solidColor = true, const std::string& tileset = "NULL")
+	bool drawMap(sf::RenderTarget& target, float map[mapSize][mapSize], sf::Vector2i tileSize, sf::Vector2i pos, sf::Vector2i size,bool solidColor = true, const std::string& tileset = "NULL")
 	{
 		// load the tileset texture
 		if (!solidColor)
@@ -255,51 +262,67 @@ public:
 				return false;
 		}
 		
-
+		game rand;
 		// resize the vertex array to fit the level size
 		m_vertices.setPrimitiveType(sf::Triangles);
 		m_vertices.resize(size.x * size.y * 6);
 
-
 		// populate the vertex array, with two triangles per tile
-		for (unsigned int i = 0 ; i < size.x; ++i)
-			for (unsigned int z = 0; z < size.y; ++z)
+		for (int i = 0; i < size.x; ++i)
+		{
+			for (int z = 0; z < size.y; ++z)
 			{
 				// get the current tile number
-				int tileNumber = map[i + pos.x][z + pos.y];
+				int iX = pos.x - z + floor((i + 1) / 2);
+				int iY = pos.y + z + floor(i / 2);
+
+				int tileNumber;
+				if (iX > 0 && iX < mapSize && iY > 0 && iY < mapSize)
+				{
+					tileNumber = map[iX][iY];
+				}
+				else tileNumber = -10000;
+
+				int posX = i * tileSize.x / 2;
+				int posY = z * tileSize.y - ((i % 2) * 8);
 
 				// get a pointer to the triangles' vertices of the current tile
 				sf::Vertex* triangles = &m_vertices[(i + z * size.x) * 6];
 
-				// define the 6 corners of the two triangles
-				triangles[0].position = sf::Vector2f(i * tileSize, z * tileSize);
-				triangles[1].position = sf::Vector2f((i + 1) * tileSize, z * tileSize);
-				triangles[2].position = sf::Vector2f(i * tileSize, (z + 1) * tileSize);
-				triangles[3].position = sf::Vector2f(i * tileSize, (z + 1) * tileSize);
-				triangles[4].position = sf::Vector2f((i + 1) * tileSize, z * tileSize);
-				triangles[5].position = sf::Vector2f((i + 1) * tileSize, (z + 1) * tileSize);
+				triangles[0].position = sf::Vector2f(posX + 1, posY);
+				triangles[1].position = sf::Vector2f((posX + 1 + (tileSize.x / 2)), (posY - (tileSize.y / 2)));
+				triangles[2].position = sf::Vector2f((posX + 1 + (tileSize.x / 2)), (posY + (tileSize.y / 2)));
+				triangles[3].position = sf::Vector2f((posX + (tileSize.x / 2)), (posY - (tileSize.y / 2)));
+				triangles[4].position = sf::Vector2f((posX + (tileSize.x / 2)), (posY + (tileSize.y / 2)));
+				triangles[5].position = sf::Vector2f(posX + tileSize.x, posY);
+
 
 				if (solidColor)
 				{
-
 					sf::Color color;
 
-					if (tileNumber < -10) { color = (sf::Color(c_dkblue.x, c_dkblue.y, c_dkblue.z)); }
-					else if (tileNumber < -5) { color = (sf::Color(c_blue.x, c_blue.y, c_blue.z)); }
-					else if (tileNumber < 0) { color = (sf::Color(c_ltblue.x, c_ltblue.y, c_ltblue.z)); }
-					else if (tileNumber < 5) { color = (sf::Color(c_tan.x, c_tan.y, c_tan.z)); }
-					else if (tileNumber < 10) { color = (sf::Color(c_green.x, c_green.y, c_green.z)); }
-					else if (tileNumber < 15) { color = (sf::Color(c_dkgreen.x, c_dkgreen.y, c_dkgreen.z)); }
-					else if (tileNumber < 20) { color = (sf::Color(c_purple.x, c_purple.y, c_purple.z)); }
-					else { color = (sf::Color(c_dkpurple.x, c_dkpurple.y, c_dkpurple.z)); }
+					if (tileNumber != -10000)
+					{
+
+						if (tileNumber < -10) { color = (sf::Color(c_dkblue.x, c_dkblue.y, c_dkblue.z)); }
+						else if (tileNumber < -5) { color = (sf::Color(c_blue.x, c_blue.y, c_blue.z)); }
+						else if (tileNumber < 0) { color = (sf::Color(c_ltblue.x, c_ltblue.y, c_ltblue.z)); }
+						else if (tileNumber < 5) { color = (sf::Color(c_tan.x, c_tan.y, c_tan.z)); }
+						else if (tileNumber < 10) { color = (sf::Color(c_green.x, c_green.y, c_green.z)); }
+						else if (tileNumber < 15) { color = (sf::Color(c_dkgreen.x, c_dkgreen.y, c_dkgreen.z)); }
+						else if (tileNumber < 20) { color = (sf::Color(c_purple.x, c_purple.y, c_purple.z)); }
+						else { color = (sf::Color(c_dkpurple.x, c_dkpurple.y, c_dkpurple.z)); }
+					}
+					else color = sf::Color(c_black.x, c_black.y, c_black.z);
 
 					for (int k = 0; k < 6; k += 1)
 					{
 						triangles[k].color = sf::Color(color);
 					}
+
 				}
 
-				
+
 				else
 				{
 					int index;
@@ -317,20 +340,21 @@ public:
 					// find its position in the tileset texture
 					//int tu = index % (m_tileset.getSize().x / tileSize);
 					//int tv = index / (m_tileset.getSize().x / tileSize);
-					int tu = tileNumber % (m_tileset.getSize().x / tileSize);
-					int tv = tileNumber / (m_tileset.getSize().x / tileSize);
+					//int tu = tileNumber % (m_tileset.getSize().x / tileSize);
+					//int tv = tileNumber / (m_tileset.getSize().x / tileSize);
 
 					// define the 6 matching texture coordinates
-					triangles[0].texCoords = sf::Vector2f(tu * tileSize, tv * tileSize);
-					triangles[1].texCoords = sf::Vector2f((tu + 1) * tileSize, tv * tileSize);
-					triangles[2].texCoords = sf::Vector2f(tu * tileSize, (tv + 1) * tileSize);
-					triangles[3].texCoords = sf::Vector2f(tu * tileSize, (tv + 1) * tileSize);
-					triangles[4].texCoords = sf::Vector2f((tu + 1) * tileSize, tv * tileSize);
-					triangles[5].texCoords = sf::Vector2f((tu + 1) * tileSize, (tv + 1) * tileSize);
+					//triangles[0].texCoords = sf::Vector2f(tu * tileSize, tv * tileSize);
+					//triangles[1].texCoords = sf::Vector2f((tu + 1) * tileSize, tv * tileSize);
+					//triangles[2].texCoords = sf::Vector2f(tu * tileSize, (tv + 1) * tileSize);
+					//triangles[3].texCoords = sf::Vector2f(tu * tileSize, (tv + 1) * tileSize);
+					//triangles[4].texCoords = sf::Vector2f((tu + 1) * tileSize, tv * tileSize);
+					//triangles[5].texCoords = sf::Vector2f((tu + 1) * tileSize, (tv + 1) * tileSize);
 
 				}
-				
+
 			}
+		}
 
 		if(solidColor)target.draw(m_vertices);
 		else target.draw(m_vertices, &m_tileset); //Need to include the texture???
