@@ -261,8 +261,9 @@ public:
 			if (!m_tileset.loadFromFile(tileset))
 				return false;
 		}
-		
-		game rand;
+
+		int gap = 1;
+
 		// resize the vertex array to fit the level size
 		m_vertices.setPrimitiveType(sf::Triangles);
 		m_vertices.resize(size.x * size.y * 6);
@@ -283,15 +284,15 @@ public:
 				}
 				else tileNumber = -10000;
 
-				int posX = i * tileSize.x / 2;
+				int posX = (i * tileSize.x / 2);
 				int posY = z * tileSize.y - ((i % 2) * 8);
 
 				// get a pointer to the triangles' vertices of the current tile
 				sf::Vertex* triangles = &m_vertices[(i + z * size.x) * 6];
 
-				triangles[0].position = sf::Vector2f(posX + 1, posY);
-				triangles[1].position = sf::Vector2f((posX + 1 + (tileSize.x / 2)), (posY - (tileSize.y / 2)));
-				triangles[2].position = sf::Vector2f((posX + 1 + (tileSize.x / 2)), (posY + (tileSize.y / 2)));
+				triangles[0].position = sf::Vector2f(posX + gap, posY);
+				triangles[1].position = sf::Vector2f((posX + gap + (tileSize.x / 2)), (posY - (tileSize.y / 2)));
+				triangles[2].position = sf::Vector2f((posX + gap + (tileSize.x / 2)), (posY + (tileSize.y / 2)));
 				triangles[3].position = sf::Vector2f((posX + (tileSize.x / 2)), (posY - (tileSize.y / 2)));
 				triangles[4].position = sf::Vector2f((posX + (tileSize.x / 2)), (posY + (tileSize.y / 2)));
 				triangles[5].position = sf::Vector2f(posX + tileSize.x, posY);

@@ -38,12 +38,14 @@ int main(int argc, char** argv) {
 
     //container for the height and width of the window
     sf::Vector2i resPixels;
-    resPixels = win.windowSetup(window, view, 400, true,60);
+    resPixels = win.windowSetup(window, view, 400, true,15);
 
     //how many grids can fit on the screen
     sf::Vector2i resTiles;
     resTiles.x = ceil(resPixels.x / tileSize.x)*2;
     resTiles.y = ceil(resPixels.y / tileSize.y);
+
+
 
 
     //create the buffers and sprites used to draw the map and gui
@@ -80,8 +82,13 @@ int main(int argc, char** argv) {
     rectCursor.setFillColor(sf::Color::White);
     rectCursor.setOutlineColor(sf::Color::Transparent);
     rectCursor.setOutlineThickness(2);
-    rectCursor.setOrigin(0, 0);
+    rectCursor.setOrigin(1, 1);
 
+    sf::Texture selectionT;
+    selectionT.loadFromFile("../sprites/selection.png");
+    sf::Sprite selectionS;
+    selectionS.setTexture(selectionT);
+    selectionS.setOrigin(0,tileSize.y / 2);
 
 
 
@@ -128,61 +135,24 @@ int main(int argc, char** argv) {
         //----UPDATE----
 
         // regenerate the map when the enter button is pressed
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
-        {
-            ds.newMap(dsMap, mapSize);
-            bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
-            ds.drawMap(bufferMap, dsMap, tileSize, viewPos, resTiles);
-        }
-
-
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) ds.newMap(dsMap, mapSize);
 
 
         //move the map around and update the graphics
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-        {
-            viewPos.x += 1;
-            //if (viewPos.x > mapSize - resTiles.x) viewPos.x = mapSize - resTiles.x;
-            //else
-            //{
-                bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
-                ds.drawMap(bufferMap, dsMap, tileSize, viewPos, resTiles);
-            //}
-        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) viewPos.x += 1;
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-        {
-            viewPos.x -= 1;
-            //if (viewPos.x < 1) viewPos.x = 1;
-            //else
-            //{
-                bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
-                ds.drawMap(bufferMap, dsMap, tileSize, viewPos, resTiles);
-            //}
-        }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-        {
-            viewPos.y -= 1;
-            //if (viewPos.y < 1) viewPos.y = 1;
-            //else
-            //{
-                bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
-                ds.drawMap(bufferMap, dsMap, tileSize, viewPos, resTiles);
-            //}
-        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) viewPos.x -= 1;
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-        {
-            viewPos.y += 1;
-            //if (viewPos.y > mapSize - resTiles.y) viewPos.y = mapSize - resTiles.y;
-            //else
-            //{
-                bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
-                ds.drawMap(bufferMap, dsMap, tileSize, viewPos, resTiles);
-            //}
-        } 
-        
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) viewPos.y -= 1;
+
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) viewPos.y += 1;
+
+        bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
+        ds.drawMap(bufferMap, dsMap, tileSize, viewPos, resTiles);
+
 
 
 
@@ -200,38 +170,13 @@ int main(int argc, char** argv) {
         int gridX = viewPos.x + floor(mouseGrid.x / c);
         int gridY = viewPos.y + floor(mouseGrid.y / c);
 
+        int winX = (gridX-viewPos.x) * 16 + (gridY - viewPos.y) * 16;
+        int winY = (gridY - viewPos.y) * 8 - (gridX - viewPos.x) * 8;
+
         if (gridX > mapSize - 1) gridX = mapSize - 1;
         if (gridY > mapSize - 1) gridY = mapSize - 1;
         if (gridX < 1) gridX = 1;
         if (gridY < 1) gridY = 1;
-
-        // create an array of 3 vertices that define a triangle primitive
-
-        int posX = (mouseGrid.x-viewPos.x)*tileSize.x;
-        int posY = (mouseGrid.y-viewPos.y)*tileSize.y;
-        sf::VertexArray triangle1(sf::Triangles, 3);
-        sf::VertexArray triangle2(sf::Triangles, 3);
-
-        // define the position of the triangle's points
-        triangle1[0].position = sf::Vector2f(posX, posY);
-        triangle1[1].position = sf::Vector2f((posX + (tileSize.x / 2)), (posY - (tileSize.y / 2)));
-        triangle1[2].position = sf::Vector2f((posX + (tileSize.x / 2)), (posY + (tileSize.y / 2)));
-        triangle2[0].position = sf::Vector2f((posX + (tileSize.x / 2)), (posY - (tileSize.y / 2)));
-        triangle2[1].position = sf::Vector2f((posX + (tileSize.x / 2)), (posY + (tileSize.y / 2)));
-        triangle2[2].position = sf::Vector2f(posX + tileSize.x, posY);
-
-        // define the color of the triangle's points
-        triangle1[0].color = sf::Color(50,100,120,150);
-        triangle1[1].color = sf::Color(50, 100, 120, 150);
-        triangle1[2].color = sf::Color(50, 100, 120, 150);
-        triangle2[0].color = sf::Color(50, 100, 120, 150);
-        triangle2[1].color = sf::Color(50, 100, 120, 150);
-        triangle2[2].color = sf::Color(50, 100, 120, 150);
-
-
-        bufferGUI.clear(sf::Color::Transparent);
-        bufferGUI.draw(triangle1);
-        bufferGUI.draw(triangle2);
 
 
 
@@ -239,7 +184,7 @@ int main(int argc, char** argv) {
         //----DRAW UPDATE-----
       
         //clear the view transparent so it doesnt cover up the main buffer!
-        
+        bufferGUI.clear(sf::Color::Transparent);
 
         //Draw the coord of the mouse on the screen for debugging
         textSmall.setPosition(5, 5);
@@ -249,9 +194,11 @@ int main(int argc, char** argv) {
         textSmall.setString("View Position (" + std::to_string(viewPos.x) + ", " + std::to_string(viewPos.y) + ")");
         bufferGUI.draw(textSmall);
 
+
         //Move the rectangle to the correct position before drawing
         rectCursor.setPosition(mousePos.x, mousePos.y);
         bufferGUI.draw(rectCursor);
+
 
        
         //----DISPLAY THE STUFF----
@@ -265,6 +212,9 @@ int main(int argc, char** argv) {
         bufferGUI.display(); 
         window.draw(bufferSpriteGUI);
 
+        selectionS.setPosition(winX, winY);
+        window.draw(selectionS);
+
         // Display the window to the screen
         window.display();
     }
@@ -275,13 +225,6 @@ int main(int argc, char** argv) {
 
     std::cout << "Window Resolution:  " << resPixels.x << " X " << resPixels.y << std::endl;
     std::cout << "Window Resolution:  "  << std::endl;
-
-    for (int i = 0; i < 8; ++i)
-    {
-        int var = floor((i+1)/2);
-        std::cout << "i:  " << i << ", Out: " << var << std::endl;
-    }
-    std::cout << std::endl;
 
     return 0;
 }
