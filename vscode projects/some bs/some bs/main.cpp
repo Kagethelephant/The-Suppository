@@ -8,7 +8,9 @@ int main(int argc, char** argv) {
     //----GRID VARIABLES----
 
     //size in pixels of the grids to draw to the window
-    int tileSize = 16;
+    sf::Vector2i tileSize;
+    tileSize.x = 32;
+    tileSize.y = 16;
 
     //size of diamond square map *MUST BE EVEN*
     sf::Vector2f mousePos;
@@ -16,8 +18,8 @@ int main(int argc, char** argv) {
     sf::Vector2i viewPos;
 
     //start position for the view
-    viewPos.x = 100;
-    viewPos.y = 125;
+    viewPos.x = 50;
+    viewPos.y = -10;
 
 
     //Create the diamond square object and run function to generate map
@@ -36,12 +38,14 @@ int main(int argc, char** argv) {
 
     //container for the height and width of the window
     sf::Vector2i resPixels;
-    resPixels = win.windowSetup(window, view, 800, true,60);
+    resPixels = win.windowSetup(window, view, 400, true,15);
 
     //how many grids can fit on the screen
     sf::Vector2i resTiles;
-    resTiles.x = floor(resPixels.x / tileSize);
-    resTiles.y = floor(resPixels.y / tileSize);
+    resTiles.x = ceil(resPixels.x / tileSize.x)*2;
+    resTiles.y = ceil(resPixels.y / tileSize.y);
+
+
 
 
     //create the buffers and sprites used to draw the map and gui
@@ -68,18 +72,23 @@ int main(int argc, char** argv) {
     textSmall.setFont(fontSmall);
     textSmall.setString("Hello world");
     textSmall.setCharacterSize(8);
-    textSmall.setFillColor(sf::Color(c_black.x, c_black.y, c_black.z));
+    textSmall.setFillColor(sf::Color(c_snow.x, c_snow.y, c_snow.z));
     textSmall.setStyle(sf::Text::Regular);
     textSmall.setPosition(5, 5);
 
     //rectangles to draw the grids
     sf::RectangleShape rectCursor;
-    rectCursor.setSize(sf::Vector2f(tileSize, tileSize));
-    rectCursor.setFillColor(sf::Color::Transparent);
-    rectCursor.setOutlineColor(sf::Color::Black);
+    rectCursor.setSize(sf::Vector2f(3,3));
+    rectCursor.setFillColor(sf::Color::White);
+    rectCursor.setOutlineColor(sf::Color::Transparent);
     rectCursor.setOutlineThickness(2);
-    rectCursor.setOrigin(0, 0);
+    rectCursor.setOrigin(1, 1);
 
+    sf::Texture selectionT;
+    selectionT.loadFromFile("../sprites/selection.png");
+    sf::Sprite selectionS;
+    selectionS.setTexture(selectionT);
+    selectionS.setOrigin(0,tileSize.y / 2);
 
 
 
@@ -89,7 +98,7 @@ int main(int argc, char** argv) {
     //clear viewwith a background color
     bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
     //draw the map with vertex array
-    ds.drawMap(bufferMap, tileMap2, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
+    ds.drawMap(bufferMap, dsMap, tileSize, viewPos, resTiles);
 
 
 
@@ -126,61 +135,24 @@ int main(int argc, char** argv) {
         //----UPDATE----
 
         // regenerate the map when the enter button is pressed
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
-        {
-            ds.newMap(dsMap, mapSize);
-            bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
-            ds.drawMap(bufferMap, tileMap2, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
-        }
-
-
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) ds.newMap(dsMap, mapSize);
 
 
         //move the map around and update the graphics
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-        {
-            viewPos.x += 1;
-            if (viewPos.x > mapSize - resTiles.x) viewPos.x = mapSize - resTiles.x;
-            else
-            {
-                bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
-                ds.drawMap(bufferMap, tileMap2, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
-            }
-        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) viewPos.x += 1;
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-        {
-            viewPos.x -= 1;
-            if (viewPos.x < 1) viewPos.x = 1;
-            else
-            {
-                bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
-                ds.drawMap(bufferMap, tileMap2, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
-            }
-        }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-        {
-            viewPos.y -= 1;
-            if (viewPos.y < 1) viewPos.y = 1;
-            else
-            {
-                bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
-                ds.drawMap(bufferMap, tileMap2, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
-            }
-        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) viewPos.x -= 1;
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-        {
-            viewPos.y += 1;
-            if (viewPos.y > mapSize - resTiles.y) viewPos.y = mapSize - resTiles.y;
-            else
-            {
-                bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
-                ds.drawMap(bufferMap, tileMap2, tileSize, viewPos, resTiles, false, "../sprites/tilesetTransitions.png");
-            }
-        } 
-        
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) viewPos.y -= 1;
+
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) viewPos.y += 1;
+
+        bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
+        ds.drawMap(bufferMap, dsMap, tileSize, viewPos, resTiles);
+
 
 
 
@@ -190,13 +162,21 @@ int main(int argc, char** argv) {
         mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
         //This is the position of our mouse in world grid coord's but keep it in the map
-        mouseGrid.x = round(mousePos.x / tileSize) + viewPos.x;
-        mouseGrid.y = round(mousePos.y / tileSize) + viewPos.y;
+        float c = sqrt(powf(tileSize.y/2, 2) + powf(tileSize.x/2, 2));
 
-        if (mouseGrid.x > mapSize-1) mouseGrid.x = mapSize-1;
-        if (mouseGrid.y > mapSize-1) mouseGrid.y = mapSize-1;
-        if (mouseGrid.x < 1) mouseGrid.x = 1;
-        if (mouseGrid.y < 1) mouseGrid.y = 1;
+        mouseGrid.x = round(((mousePos.x * c) / tileSize.x) - (mousePos.y * c / tileSize.y));
+        mouseGrid.y = round((mousePos.y * c) / tileSize.y + (mousePos.x * c) / tileSize.x);
+
+        int gridX = viewPos.x + floor(mouseGrid.x / c);
+        int gridY = viewPos.y + floor(mouseGrid.y / c);
+
+        int winX = (gridX-viewPos.x) * 16 + (gridY - viewPos.y) * 16;
+        int winY = (gridY - viewPos.y) * 8 - (gridX - viewPos.x) * 8;
+
+        if (gridX > mapSize - 1) gridX = mapSize - 1;
+        if (gridY > mapSize - 1) gridY = mapSize - 1;
+        if (gridX < 1) gridX = 1;
+        if (gridY < 1) gridY = 1;
 
 
 
@@ -207,16 +187,20 @@ int main(int argc, char** argv) {
         bufferGUI.clear(sf::Color::Transparent);
 
         //Draw the coord of the mouse on the screen for debugging
-        textSmall.setString("(" + std::to_string(mouseGrid.x) + ", " + std::to_string(mouseGrid.y) + ") : " + std::to_string(dsMap[mouseGrid.x][mouseGrid.y]));
+        textSmall.setPosition(5, 5);
+        textSmall.setString("Mouse Position (" + std::to_string(gridX) + ", " + std::to_string(gridY) + ") : " + std::to_string(dsMap[gridX][gridY]));
+        bufferGUI.draw(textSmall);
+        textSmall.setPosition(5, 15);
+        textSmall.setString("View Position (" + std::to_string(viewPos.x) + ", " + std::to_string(viewPos.y) + ")");
         bufferGUI.draw(textSmall);
 
+
         //Move the rectangle to the correct position before drawing
-        rectCursor.setPosition((mouseGrid.x-viewPos.x)*tileSize, (mouseGrid.y-viewPos.y)*tileSize);
+        rectCursor.setPosition(mousePos.x, mousePos.y);
         bufferGUI.draw(rectCursor);
 
 
-
-
+       
         //----DISPLAY THE STUFF----
         
         //display the buffer on to the window and draw the sprite 
@@ -228,6 +212,9 @@ int main(int argc, char** argv) {
         bufferGUI.display(); 
         window.draw(bufferSpriteGUI);
 
+        selectionS.setPosition(winX, winY);
+        window.draw(selectionS);
+
         // Display the window to the screen
         window.display();
     }
@@ -237,7 +224,7 @@ int main(int argc, char** argv) {
     //----DEBUGGING OUTPUTS----
 
     std::cout << "Window Resolution:  " << resPixels.x << " X " << resPixels.y << std::endl;
-    std::cout << std::endl;
+    std::cout << "Window Resolution:  "  << std::endl;
 
     return 0;
 }

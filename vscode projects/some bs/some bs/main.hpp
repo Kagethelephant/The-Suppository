@@ -12,6 +12,7 @@
 #include <iostream>
 #include <string>
 #include <random>
+#include <cmath>
 
 //define some colors cause the default ones are ugly
 sf::Vector3i c_black(13, 14, 26);
@@ -29,8 +30,6 @@ sf::Vector3i c_snow(182, 182, 182);
 static const int mapSize = 500;
 //create the grid here so it stays in the heap
 float dsMap[mapSize][mapSize];
-float tileMap[mapSize][mapSize];
-float tileMap2[mapSize][mapSize];
 
 //----DECLARE CLASSES-----
 
@@ -129,7 +128,13 @@ public:
 		//---INITIALIZE MAP----
 
 		//initialize the grid (1 cell grater then the size in the x and y ge
-		for (int z = 0; z < size+1; z += 1) { for (int i = 0; i < size+1; i += 1) { map[i][z] = empty; } }
+		for (int z = 0; z < size; ++z) 
+		{ 
+			for (int i = 0; i < size; ++i) 
+			{ 
+				map[i][z] = empty; 
+			} 
+		}
 
 		//set initial corner values to extrapolate from at each corner
 		map[0][0] = rand.randRange(-roughness, roughness);
@@ -241,146 +246,6 @@ public:
 			roughness /= change; 
 		}
 
-		for (int i = 0; i <= mapSize; ++i)
-		{
-			for (int z = 0; z <= mapSize; ++z)
-			{
-				float tileVal = dsMap[i][z];
-
-				if (tileVal < -15) { tileMap[i][z] = 0; }
-				else if (tileVal < -10) { tileMap[i][z] = 1*47; }
-				else if (tileVal < -5) { tileMap[i][z] = 2*47; }
-				else if (tileVal < 0) { tileMap[i][z] = 3*47; }
-				else if (tileVal < 5) { tileMap[i][z] = 4*47; }
-				else if (tileVal < 10) { tileMap[i][z] = 5*47; }
-				else if (tileVal < 15) { tileMap[i][z] = 6*47; }
-				else { tileMap[i][z] = 7*47; }
-
-			}
-		}
-		for (int i = 0; i <= mapSize; ++i)
-		{
-			for (int z = 0; z <= mapSize; ++z)
-			{
-				float tileVal = tileMap[i][z];
-
-				// 1 2 3
-				// 8 X 4
-				// 7 6 5
-				
-				bool tile1 = 1;
-				bool tile2 = 1;
-				bool tile3 = 1;
-				bool tile4 = 1;
-				bool tile5 = 1;
-				bool tile6 = 1;
-				bool tile7 = 1;
-				bool tile8 = 1;
-				int cnt = 0;
-				float avg = 0;
-
-				if (tileMap[i - 1][z - 1] != tileVal){
-					tile1 = 0;
-					avg += tileMap[i - 1][z - 1];
-					cnt += 1;
-				}
-				if (tileMap[i][z - 1] != tileVal) {
-					tile2 = 0;
-					avg += tileMap[i][z - 1];
-					cnt += 1;
-				}
-				if (tileMap[i + 1][z - 1] != tileVal) {
-					tile3 = 0;
-					avg += tileMap[i + 1][z - 1];
-					cnt += 1;
-				}
-				if (tileMap[i + 1][z] != tileVal) {
-					tile4 = 0;
-					avg += tileMap[i + 1][z];
-					cnt += 1;
-				}
-				if (tileMap[i + 1][z + 1] != tileVal) {
-					tile5 = 0;
-					avg += tileMap[i + 1][z + 1];
-					cnt += 1;
-				}
-				if (tileMap[i][z + 1] != tileVal) {
-					tile6 = 0;
-					avg += tileMap[i][z + 1];
-					cnt += 1;
-				}
-				if (tileMap[i - 1][z + 1] != tileVal) {
-					tile7 = 0;
-					avg += tileMap[i - 1][z + 1];
-					cnt += 1;
-				}
-				if (tileMap[i - 1][z] != tileVal) {
-					tile8 = 0;
-					avg += tileMap[i - 1][z];
-					cnt += 1;
-				}
-
-				if (avg/cnt > tileVal)
-				{ 
-					if (!(tile1 && tile2 && tile3 && tile4 && tile5 && tile6 && tile7 && tile8))
-					{
-						if (tile2 && tile3 && tile4 && tile5 && tile6 && !tile8) tileVal += 1;
-						else if (tile1 && tile2 && tile6 && tile7 && tile8 && !tile4) tileVal += 2;
-						else if (tile1 && tile2 && tile3 && tile4 && tile8 && !tile6) tileVal += 3;
-						else if (tile4 && tile5 && tile6 && tile7 && tile8 && !tile2) tileVal += 4;
-						else if (tile4 && tile5 && tile6 && !tile2 && !tile8) tileVal += 5;
-						else if (tile6 && tile7 && tile8 && !tile2 && !tile4) tileVal += 6;
-						else if (tile2 && tile3 && tile4 && !tile6 && !tile8) tileVal += 7;
-						else if (tile1 && tile2 && tile8 && !tile4 && !tile6) tileVal += 8;
-						else if (!tile1 && tile2 && tile3 && tile4 && tile5 && tile6 && tile7 && tile8) tileVal += 9;
-						else if (tile1 && tile2 && !tile3 && tile4 && tile5 && tile6 && tile7 && tile8) tileVal += 10;
-						else if (tile1 && tile2 && tile3 && tile4 && !tile5 && tile6 && tile7 && tile8) tileVal += 11;
-						else if (tile1 && tile2 && tile3 && tile4 && tile5 && tile6 && !tile7 && tile8) tileVal += 12;
-						else if (!tile2 && !tile4 && !tile6 && !tile8) tileVal += 13;
-						else if (tile2 && !tile4 && !tile6 && !tile8) tileVal += 14;
-						else if (!tile2 && tile4 && !tile6 && !tile8) tileVal += 15;
-						else if (!tile2 && !tile4 && tile6 && !tile8) tileVal += 16;
-						else if (!tile2 && !tile4 && !tile6 && tile8) tileVal += 17;
-						else if (tile1 && tile2 && tile3 && tile4 && !tile5 && tile6 && !tile7 && tile8) tileVal += 18;
-						else if (!tile1 && tile2 && tile3 && tile4 && tile5 && tile6 && !tile7 && tile8) tileVal += 19;
-						else if (!tile1 && tile2 && !tile3 && tile4 && tile5 && tile6 && tile7 && tile8) tileVal += 20;
-						else if (tile1 && tile2 && !tile3 && tile4 && !tile5 && tile6 && tile7 && tile8) tileVal += 21;
-						else if (tile2 && !tile4 && tile6 && !tile8) tileVal += 22;
-						else if (!tile2 && tile4 && !tile6 && tile8) tileVal += 23;
-						else if (tile1 && tile2 && !tile3 && tile4 && !tile5 && tile6 && !tile7 && tile8) tileVal += 24;
-						else if (!tile1 && tile2 && tile3 && tile4 && !tile5 && tile6 && !tile7 && tile8) tileVal += 25;
-						else if (!tile1 && tile2 && !tile3 && tile4 && tile5 && tile6 && !tile7 && tile8) tileVal += 26;
-						else if (!tile1 && tile2 && !tile3 && tile4 && !tile5 && tile6 && tile7 && tile8) tileVal += 27;
-						else if (!tile1 && tile2 && !tile3 && tile4 && !tile5 && tile6 && !tile7 && tile8) tileVal += 28;
-						else if (!tile1 && tile2 && !tile3 && tile4 && !tile6 && tile8) tileVal += 29;
-						else if (tile2 && !tile3 && tile4 && !tile5 && tile6 && !tile8) tileVal += 30;
-						else if (!tile2 && tile4 && !tile5 && tile6 && !tile7 && tile8) tileVal += 31;
-						else if (!tile1 && tile2 && !tile4 && tile6 && !tile7 && tile8) tileVal += 32;
-						else if (tile1 && tile2 && !tile4 && tile6 && !tile7 && tile8) tileVal += 33;
-						else if (tile2 && tile3 && tile4 && !tile5 && tile6 && !tile8) tileVal += 34;
-						else if (tile2 && !tile3 && tile4 && tile5 && tile6 && !tile8) tileVal += 35;
-						else if (!tile1 && tile2 && !tile4 && tile6 && tile7 && tile8) tileVal += 36;
-						else if (!tile2 && tile4 && tile5 && tile6 && !tile7 && tile8) tileVal += 37;
-						else if (!tile2 && tile4 && !tile5 && tile6 && tile7 && tile8) tileVal += 38;
-						else if (tile1 && tile2 && !tile3 && tile4 && !tile6 && tile8) tileVal += 39;
-						else if (!tile1 && tile2 && tile3 && tile4 && !tile6 && tile8) tileVal += 40;
-						else if (tile2 && !tile3 && tile4 && !tile6 && !tile8) tileVal += 41;
-						else if (!tile1 && tile2 && !tile4 && !tile6 && tile8) tileVal += 42;
-						else if (!tile2 && tile4 && !tile5 && tile6 && !tile8) tileVal += 43;
-						else if (!tile2 && !tile4 && tile6 && !tile7 && tile8) tileVal += 44;
-						else if (tile1 && tile2 && !tile3 && tile4 && tile5 && tile6 && !tile7 && tile8) tileVal += 45;
-						else if (!tile1 && tile2 && tile3 && tile4 && !tile5 && tile6 && tile7 && tile8) tileVal += 46;
-						
-
-
-					}
-				}
-				tileMap2[i][z] = tileVal;
-
-				
-			}
-		}
-
 	}
 
 
@@ -388,7 +253,7 @@ public:
 
 	//---DRAW WITH VERTICES---
 
-	bool drawMap(sf::RenderTarget& target, float map[mapSize][mapSize], int tileSize, sf::Vector2i pos, sf::Vector2i size,bool solidColor = true, const std::string& tileset = "NULL")
+	bool drawMap(sf::RenderTarget& target, float map[mapSize][mapSize], sf::Vector2i tileSize, sf::Vector2i pos, sf::Vector2i size,bool solidColor = true, const std::string& tileset = "NULL")
 	{
 		// load the tileset texture
 		if (!solidColor)
@@ -396,52 +261,69 @@ public:
 			if (!m_tileset.loadFromFile(tileset))
 				return false;
 		}
-		
+
+		int gap = 1;
 
 		// resize the vertex array to fit the level size
 		m_vertices.setPrimitiveType(sf::Triangles);
 		m_vertices.resize(size.x * size.y * 6);
 
-
 		// populate the vertex array, with two triangles per tile
-		for (unsigned int i = 0 ; i < size.x; ++i)
-			for (unsigned int z = 0; z < size.y; ++z)
+		for (int i = 0; i < size.x; ++i)
+		{
+			for (int z = 0; z < size.y; ++z)
 			{
 				// get the current tile number
-				int tileNumber = map[i + pos.x][z + pos.y];
+				int iX = pos.x - z + floor((i + 1) / 2);
+				int iY = pos.y + z + floor(i / 2);
+
+				int tileNumber;
+				if (iX > 0 && iX < mapSize && iY > 0 && iY < mapSize)
+				{
+					tileNumber = map[iX][iY];
+				}
+				else tileNumber = -10000;
+
+				int posX = (i * tileSize.x / 2);
+				int posY = z * tileSize.y - ((i % 2) * 8);
 
 				// get a pointer to the triangles' vertices of the current tile
 				sf::Vertex* triangles = &m_vertices[(i + z * size.x) * 6];
 
-				// define the 6 corners of the two triangles
-				triangles[0].position = sf::Vector2f(i * tileSize, z * tileSize);
-				triangles[1].position = sf::Vector2f((i + 1) * tileSize, z * tileSize);
-				triangles[2].position = sf::Vector2f(i * tileSize, (z + 1) * tileSize);
-				triangles[3].position = sf::Vector2f(i * tileSize, (z + 1) * tileSize);
-				triangles[4].position = sf::Vector2f((i + 1) * tileSize, z * tileSize);
-				triangles[5].position = sf::Vector2f((i + 1) * tileSize, (z + 1) * tileSize);
+				triangles[0].position = sf::Vector2f(posX + gap, posY);
+				triangles[1].position = sf::Vector2f((posX + gap + (tileSize.x / 2)), (posY - (tileSize.y / 2)));
+				triangles[2].position = sf::Vector2f((posX + gap + (tileSize.x / 2)), (posY + (tileSize.y / 2)));
+				triangles[3].position = sf::Vector2f((posX + (tileSize.x / 2)), (posY - (tileSize.y / 2)));
+				triangles[4].position = sf::Vector2f((posX + (tileSize.x / 2)), (posY + (tileSize.y / 2)));
+				triangles[5].position = sf::Vector2f(posX + tileSize.x, posY);
+
 
 				if (solidColor)
 				{
-
 					sf::Color color;
 
-					if (tileNumber < -10) { color = (sf::Color(c_dkblue.x, c_dkblue.y, c_dkblue.z)); }
-					else if (tileNumber < -5) { color = (sf::Color(c_blue.x, c_blue.y, c_blue.z)); }
-					else if (tileNumber < 0) { color = (sf::Color(c_ltblue.x, c_ltblue.y, c_ltblue.z)); }
-					else if (tileNumber < 5) { color = (sf::Color(c_tan.x, c_tan.y, c_tan.z)); }
-					else if (tileNumber < 10) { color = (sf::Color(c_green.x, c_green.y, c_green.z)); }
-					else if (tileNumber < 15) { color = (sf::Color(c_dkgreen.x, c_dkgreen.y, c_dkgreen.z)); }
-					else if (tileNumber < 20) { color = (sf::Color(c_purple.x, c_purple.y, c_purple.z)); }
-					else { color = (sf::Color(c_dkpurple.x, c_dkpurple.y, c_dkpurple.z)); }
+					if (tileNumber != -10000)
+					{
+
+						if (tileNumber < -10) { color = (sf::Color(c_dkblue.x, c_dkblue.y, c_dkblue.z)); }
+						else if (tileNumber < -5) { color = (sf::Color(c_blue.x, c_blue.y, c_blue.z)); }
+						else if (tileNumber < 0) { color = (sf::Color(c_ltblue.x, c_ltblue.y, c_ltblue.z)); }
+						else if (tileNumber < 5) { color = (sf::Color(c_tan.x, c_tan.y, c_tan.z)); }
+						else if (tileNumber < 10) { color = (sf::Color(c_green.x, c_green.y, c_green.z)); }
+						else if (tileNumber < 15) { color = (sf::Color(c_dkgreen.x, c_dkgreen.y, c_dkgreen.z)); }
+						else if (tileNumber < 20) { color = (sf::Color(c_purple.x, c_purple.y, c_purple.z)); }
+						else { color = (sf::Color(c_dkpurple.x, c_dkpurple.y, c_dkpurple.z)); }
+					}
+					else color = sf::Color(c_black.x, c_black.y, c_black.z);
 
 					for (int k = 0; k < 6; k += 1)
 					{
 						triangles[k].color = sf::Color(color);
 					}
+
 				}
 
-				
+
 				else
 				{
 					int index;
@@ -459,20 +341,21 @@ public:
 					// find its position in the tileset texture
 					//int tu = index % (m_tileset.getSize().x / tileSize);
 					//int tv = index / (m_tileset.getSize().x / tileSize);
-					int tu = tileNumber % (m_tileset.getSize().x / tileSize);
-					int tv = tileNumber / (m_tileset.getSize().x / tileSize);
+					//int tu = tileNumber % (m_tileset.getSize().x / tileSize);
+					//int tv = tileNumber / (m_tileset.getSize().x / tileSize);
 
 					// define the 6 matching texture coordinates
-					triangles[0].texCoords = sf::Vector2f(tu * tileSize, tv * tileSize);
-					triangles[1].texCoords = sf::Vector2f((tu + 1) * tileSize, tv * tileSize);
-					triangles[2].texCoords = sf::Vector2f(tu * tileSize, (tv + 1) * tileSize);
-					triangles[3].texCoords = sf::Vector2f(tu * tileSize, (tv + 1) * tileSize);
-					triangles[4].texCoords = sf::Vector2f((tu + 1) * tileSize, tv * tileSize);
-					triangles[5].texCoords = sf::Vector2f((tu + 1) * tileSize, (tv + 1) * tileSize);
+					//triangles[0].texCoords = sf::Vector2f(tu * tileSize, tv * tileSize);
+					//triangles[1].texCoords = sf::Vector2f((tu + 1) * tileSize, tv * tileSize);
+					//triangles[2].texCoords = sf::Vector2f(tu * tileSize, (tv + 1) * tileSize);
+					//triangles[3].texCoords = sf::Vector2f(tu * tileSize, (tv + 1) * tileSize);
+					//triangles[4].texCoords = sf::Vector2f((tu + 1) * tileSize, tv * tileSize);
+					//triangles[5].texCoords = sf::Vector2f((tu + 1) * tileSize, (tv + 1) * tileSize);
 
 				}
-				
+
 			}
+		}
 
 		if(solidColor)target.draw(m_vertices);
 		else target.draw(m_vertices, &m_tileset); //Need to include the texture???
