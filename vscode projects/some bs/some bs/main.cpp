@@ -1,9 +1,24 @@
-#include "main.hpp"
+#pragma once
 
+#include "headers/main.hpp"
+
+//create the grid here so it stays in the heap
+float dsMap[mapSize][mapSize];
 
 int main(int argc, char** argv) {
 
 
+    //define some colors cause the default ones are ugly
+    sf::Vector3i c_black(13, 14, 26);
+    sf::Vector3i c_dkblue(33, 47, 106);
+    sf::Vector3i c_blue(47, 80, 118);
+    sf::Vector3i c_ltblue(65, 95, 120);
+    sf::Vector3i c_tan(116, 113, 89);
+    sf::Vector3i c_green(49, 83, 76);
+    sf::Vector3i c_dkgreen(34, 53, 59);
+    sf::Vector3i c_dkpurple(43, 37, 49);
+    sf::Vector3i c_purple(77, 61, 85);
+    sf::Vector3i c_snow(182, 182, 182);
 
     //----GRID VARIABLES----
 
@@ -23,8 +38,8 @@ int main(int argc, char** argv) {
 
 
     //Create the diamond square object and run function to generate map
-    DiamSquare ds;
-    ds.newMap(dsMap, mapSize);
+    Map ds;
+    ds.newMap(dsMap, 500);
 
 
 
@@ -34,11 +49,10 @@ int main(int argc, char** argv) {
     sf::RenderWindow window; 
     sf::View view;
 
-    game win;  
 
     //container for the height and width of the window
     sf::Vector2i resPixels;
-    resPixels = win.windowSetup(window, view, 400, true,15);
+    resPixels = windowSetup(window, view, 400, true,15);
 
     //how many grids can fit on the screen
     sf::Vector2i resTiles;
@@ -199,7 +213,7 @@ int main(int argc, char** argv) {
         rectCursor.setPosition(mousePos.x, mousePos.y);
         bufferGUI.draw(rectCursor);
 
-
+        
        
         //----DISPLAY THE STUFF----
         
