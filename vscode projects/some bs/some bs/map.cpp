@@ -2,8 +2,12 @@
 
 #include "headers/map.hpp"
 
+Map::Map(int _size)
+{
+	m_mapSize = _size;
+}
 
-void Map::newMap(float map[mapSize][mapSize], int size, int high, float roughness, float change)
+void Map::newMap(float _map[G_mapAlloc][G_mapAlloc], int _high, float _roughness, float _change)
 {
 
 	//---INITIALIZE VARIABLES----
@@ -24,9 +28,9 @@ void Map::newMap(float map[mapSize][mapSize], int size, int high, float roughnes
 	float xy2;
 
 	//create a chunk the size of the grid that will be halfed every itteration
-	float chunk = size;
+	float chunk = m_mapSize;
 	//to find the center of the chunk we are working with
-	float half = size / 2;
+	float half = m_mapSize / 2;
 	//to initialize the grid so we know if we missed one
 	float empty = -1000.0f;
 
@@ -35,28 +39,28 @@ void Map::newMap(float map[mapSize][mapSize], int size, int high, float roughnes
 	//---INITIALIZE MAP----
 
 	//initialize the grid (1 cell grater then the size in the x and y ge
-	for (int z = 0; z < size; ++z)
+	for (int z = 0; z < m_mapSize; ++z)
 	{
-		for (int i = 0; i < size; ++i)
+		for (int i = 0; i < m_mapSize; ++i)
 		{
-			map[i][z] = empty;
+			_map[i][z] = empty;
 		}
 	}
 
 	//set initial corner values to extrapolate from at each corner
-	map[0][0] = randRange(-roughness, roughness);
-	map[0][size] = randRange(-roughness, roughness);
-	map[size][0] = randRange(-roughness, roughness);
-	map[size][size] = randRange(-roughness, roughness);
+	_map[0][0] = randRange(-_roughness, _roughness);
+	_map[0][m_mapSize] = randRange(-_roughness, _roughness);
+	_map[m_mapSize][0] = randRange(-_roughness, _roughness);
+	_map[m_mapSize][m_mapSize] = randRange(-_roughness, _roughness);
 
 
 	//----SQUARE-----
 
 	while (chunk > 1)
 	{
-		for (float z = 0; z < size; z += chunk)
+		for (float z = 0; z < m_mapSize; z += chunk)
 		{
-			for (float i = 0; i < size; i += chunk)
+			for (float i = 0; i < m_mapSize; i += chunk)
 			{
 
 				// 0 - - - 0	This is the square portion of the code the "X" represents
@@ -73,15 +77,15 @@ void Map::newMap(float map[mapSize][mapSize], int size, int high, float roughnes
 
 
 				//grab the "X" values shown above
-				x1y1 = map[(int)round(i)][(int)round(z)];
-				x2y1 = map[(int)round(i + chunk)][(int)round(z)];
-				x1y2 = map[(int)round(i)][(int)round(z + chunk)];
-				x2y2 = map[(int)round(i + chunk)][(int)round(z + chunk)];
+				x1y1 = _map[(int)round(i)][(int)round(z)];
+				x2y1 = _map[(int)round(i + chunk)][(int)round(z)];
+				x1y2 = _map[(int)round(i)][(int)round(z + chunk)];
+				x2y2 = _map[(int)round(i + chunk)][(int)round(z + chunk)];
 
 				avg = (x1y1 + x2y1 + x1y2 + x2y2) / 4;
 
 				//set the value "0" with the average + a random value and make sure we are not overwriting other values
-				if (map[(int)round(i + half)][(int)round(z + half)] == empty) map[(int)round(i + half)][(int)round(z + half)] = avg + randRange(-roughness, roughness);
+				if (_map[(int)round(i + half)][(int)round(z + half)] == empty) _map[(int)round(i + half)][(int)round(z + half)] = avg + randRange(-_roughness, _roughness);
 			}
 		}
 
@@ -89,9 +93,9 @@ void Map::newMap(float map[mapSize][mapSize], int size, int high, float roughnes
 
 		//----DIAMOND----
 
-		for (float z = 0; z < size + 1; z += half)
+		for (float z = 0; z < m_mapSize + 1; z += half)
 		{
-			for (float i = fmodf((z + half), chunk); i < size + 1; i += chunk)
+			for (float i = fmodf((z + half), chunk); i < m_mapSize + 1; i += chunk)
 			{
 				// X - - - X	This is the diamond portion of the code the "X" represents
 				// - - - - -	points that have already been populated. these points are 
@@ -115,25 +119,25 @@ void Map::newMap(float map[mapSize][mapSize], int size, int high, float roughnes
 				//grab the "X" values shown above if they are in the map bounds
 				if (i - half >= 0)
 				{
-					x1y = map[(int)round(i - half)][(int)round(z)];
+					x1y = _map[(int)round(i - half)][(int)round(z)];
 					div += 1;
 				}
 
-				if (i + half < size + 1)
+				if (i + half < m_mapSize + 1)
 				{
-					x2y = map[(int)round(i + half)][(int)round(z)];
+					x2y = _map[(int)round(i + half)][(int)round(z)];
 					div += 1;
 				}
 
-				if (z + half < size + 1)
+				if (z + half < m_mapSize + 1)
 				{
-					xy1 = map[(int)round(i)][(int)round(z + half)];
+					xy1 = _map[(int)round(i)][(int)round(z + half)];
 					div += 1;
 				}
 
 				if (z - half >= 0)
 				{
-					xy2 = map[(int)round(i)][(int)round(z - half)];
+					xy2 = _map[(int)round(i)][(int)round(z - half)];
 					div += 1;
 				}
 
@@ -141,7 +145,7 @@ void Map::newMap(float map[mapSize][mapSize], int size, int high, float roughnes
 				avg = (x1y + x2y + xy1 + xy2) / 4;
 
 				//set the value "0" (from the diagram above) with the average + a random value and make sure we are not overwriting other values
-				if (map[(int)round(i)][(int)round(z)] == empty) map[(int)round(i)][(int)round(z)] = avg + randRange(-roughness, roughness);
+				if (_map[(int)round(i)][(int)round(z)] == empty) _map[(int)round(i)][(int)round(z)] = avg + randRange(-_roughness, _roughness);
 			}
 		}
 
@@ -150,7 +154,7 @@ void Map::newMap(float map[mapSize][mapSize], int size, int high, float roughnes
 		half /= 2;
 
 		//reduce the amount of change each iteration (higher value is smoother because its reducing the change faster)
-		roughness /= change;
+		_roughness /= _change;
 	}
 
 }
@@ -160,7 +164,7 @@ void Map::newMap(float map[mapSize][mapSize], int size, int high, float roughnes
 
 //---DRAW WITH VERTICES---
 
-bool Map::drawMap(sf::RenderTarget& target, float map[mapSize][mapSize], sf::Vector2i tileSize, sf::Vector2i pos, sf::Vector2i size, bool solidColor, const std::string& tileset)
+bool Map::drawMap(sf::RenderTarget& _target, float _map[G_mapAlloc][G_mapAlloc], sf::Vector2i _tileSize, sf::Vector2i _position, sf::Vector2i _gridSize, bool _solidColor, const std::string& _tileset)
 {
 
 	//define some colors cause the default ones are ugly
@@ -176,9 +180,9 @@ bool Map::drawMap(sf::RenderTarget& target, float map[mapSize][mapSize], sf::Vec
 	sf::Vector3i c_snow(182, 182, 182);
 
 	// load the tileset texture
-	if (!solidColor)
+	if (!_solidColor)
 	{
-		if (!m_tileset.loadFromFile(tileset))
+		if (!m_tileset.loadFromFile(_tileset))
 			return false;
 	}
 
@@ -186,39 +190,39 @@ bool Map::drawMap(sf::RenderTarget& target, float map[mapSize][mapSize], sf::Vec
 
 	// resize the vertex array to fit the level size
 	m_vertices.setPrimitiveType(sf::Triangles);
-	m_vertices.resize(size.x * size.y * 6);
+	m_vertices.resize(_gridSize.x * _gridSize.y * 6);
 
 	// populate the vertex array, with two triangles per tile
-	for (int i = 0; i < size.x; ++i)
+	for (int i = 0; i < _gridSize.x; ++i)
 	{
-		for (int z = 0; z < size.y; ++z)
+		for (int z = 0; z < _gridSize.y; ++z)
 		{
 			// get the current tile number
-			int iX = pos.x - z + floor((i + 1) / 2);
-			int iY = pos.y + z + floor(i / 2);
+			int iX = _position.x - z + floor((i + 1) / 2);
+			int iY = _position.y + z + floor(i / 2);
 
 			int tileNumber;
-			if (iX > 0 && iX < mapSize && iY > 0 && iY < mapSize)
+			if (iX > 0 && iX < m_mapSize && iY > 0 && iY < m_mapSize)
 			{
-				tileNumber = map[iX][iY];
+				tileNumber = _map[iX][iY];
 			}
 			else tileNumber = -10000;
 
-			int posX = (i * tileSize.x / 2);
-			int posY = z * tileSize.y - ((i % 2) * 8);
+			int posX = (i * _tileSize.x / 2);
+			int posY = z * _tileSize.y - ((i % 2) * 8);
 
 			// get a pointer to the triangles' vertices of the current tile
-			sf::Vertex* triangles = &m_vertices[(i + z * size.x) * 6];
+			sf::Vertex* triangles = &m_vertices[(i + z * _gridSize.x) * 6];
 
 			triangles[0].position = sf::Vector2f(posX + gap, posY);
-			triangles[1].position = sf::Vector2f((posX + gap + (tileSize.x / 2)), (posY - (tileSize.y / 2)));
-			triangles[2].position = sf::Vector2f((posX + gap + (tileSize.x / 2)), (posY + (tileSize.y / 2)));
-			triangles[3].position = sf::Vector2f((posX + (tileSize.x / 2)), (posY - (tileSize.y / 2)));
-			triangles[4].position = sf::Vector2f((posX + (tileSize.x / 2)), (posY + (tileSize.y / 2)));
-			triangles[5].position = sf::Vector2f(posX + tileSize.x, posY);
+			triangles[1].position = sf::Vector2f((posX + gap + (_tileSize.x / 2)), (posY - (_tileSize.y / 2)));
+			triangles[2].position = sf::Vector2f((posX + gap + (_tileSize.x / 2)), (posY + (_tileSize.y / 2)));
+			triangles[3].position = sf::Vector2f((posX + (_tileSize.x / 2)), (posY - (_tileSize.y / 2)));
+			triangles[4].position = sf::Vector2f((posX + (_tileSize.x / 2)), (posY + (_tileSize.y / 2)));
+			triangles[5].position = sf::Vector2f(posX + _tileSize.x, posY);
 
 
-			if (solidColor)
+			if (_solidColor)
 			{
 				sf::Color color;
 
@@ -277,8 +281,8 @@ bool Map::drawMap(sf::RenderTarget& target, float map[mapSize][mapSize], sf::Vec
 		}
 	}
 
-	if (solidColor)target.draw(m_vertices);
-	else target.draw(m_vertices, &m_tileset); //Need to include the texture???
+	if (_solidColor)_target.draw(m_vertices);
+	else _target.draw(m_vertices, &m_tileset); //Need to include the texture???
 	return true;
 }
 

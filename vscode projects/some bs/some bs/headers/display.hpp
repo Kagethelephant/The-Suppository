@@ -9,14 +9,10 @@
 //General
 #include "wtypes.h"
 #include "winuser.h"
-#include <iostream>
-#include <string>
-#include <random>
-#include <cmath>
 
 
-//generates a random integer between the 2 provided integer's
-int randRange(int, int);
+//game header files
+#include "constants.hpp"
 
 
 //sets up window with a pixel scale and returns the dimmensions of the window

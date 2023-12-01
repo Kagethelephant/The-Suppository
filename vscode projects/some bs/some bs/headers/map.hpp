@@ -16,23 +16,26 @@
 
 
 //game libraries
-#include "headers/display.hpp"
-
-//alocate space for the grid
-static const int mapSize = 1000;
+#include "math.hpp"
+#include "constants.hpp"
 
 
 class Map : public sf::Drawable, public sf::Transformable
 {
 
+
 public:
 
+	Map(int);
+
+
+
 	//----CREATE THE MAP----
-	void newMap(float map[mapSize][mapSize], int size, int high = 20, float roughness = 20, float change = 1.4);
+	void newMap(float _map[G_mapAlloc][G_mapAlloc], int _high = 20, float _roughness = 20, float _change = 1.4);
 
 
 	//---DRAW WITH VERTICES---
-	bool drawMap(sf::RenderTarget& target, float map[mapSize][mapSize], sf::Vector2i tileSize, sf::Vector2i pos, sf::Vector2i size, bool solidColor = true, const std::string& tileset = "NULL");
+	bool drawMap(sf::RenderTarget& _target, float _map[G_mapAlloc][G_mapAlloc], sf::Vector2i _tileSize, sf::Vector2i _pos, sf::Vector2i _gridSize, bool _solidColor = true, const std::string& _tileset = "NULL");
 
 
 
@@ -40,7 +43,7 @@ private:
 
 	virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 
-
+	int m_mapSize;
 	sf::VertexArray m_vertices;
 	sf::Texture m_tileset;
 };

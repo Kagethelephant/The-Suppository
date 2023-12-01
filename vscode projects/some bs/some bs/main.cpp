@@ -2,8 +2,13 @@
 
 #include "headers/main.hpp"
 
+
+
+
 //create the grid here so it stays in the heap
-float dsMap[mapSize][mapSize];
+float dsMap[G_mapAlloc][G_mapAlloc];
+
+static const int mapSize = 1000;
 
 int main(int argc, char** argv) {
 
@@ -38,7 +43,7 @@ int main(int argc, char** argv) {
 
 
     //Create the diamond square object and run function to generate map
-    Map ds;
+    Map ds(500);
     ds.newMap(dsMap, 500);
 
 
@@ -46,13 +51,13 @@ int main(int argc, char** argv) {
 
     //----VIEW SETUP/SFML----
 
+    //only window view for the game
     sf::RenderWindow window; 
     sf::View view;
 
-
     //container for the height and width of the window
     sf::Vector2i resPixels;
-    resPixels = windowSetup(window, view, 400, true,15);
+    resPixels = windowSetup(window, view, 300, false,30);
 
     //how many grids can fit on the screen
     sf::Vector2i resTiles;

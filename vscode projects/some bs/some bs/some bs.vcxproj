@@ -133,11 +133,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="headers\math.hpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="display.cpp" />
     <ClCompile Include="map.cpp" />
+    <ClCompile Include="math.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="headers\constants.hpp" />
     <ClInclude Include="headers\main.hpp" />
     <ClInclude Include="headers\display.hpp" />
     <ClInclude Include="headers\map.hpp" />
