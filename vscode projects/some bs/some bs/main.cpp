@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
 
     //container for the height and width of the window
     sf::Vector2i resPixels;
-    resPixels = win.windowSetup(window, view, 800, true,60);
+    resPixels = win.windowSetup(window, view, 400, false,60);
 
     //how many grids can fit on the screen
     sf::Vector2i resTiles;
