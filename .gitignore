@@ -30,3 +30,4 @@
 /vscode projects/networking test server/.vs/networking test server/v17/ipch/AutoPCH/96e038655035b182/MAIN.ipch
 /.vs/VSWorkspaceState.json
 *.ipch
+*.tlog
