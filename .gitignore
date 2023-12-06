@@ -33,3 +33,4 @@
 /vscode projects/some bs/some bs/x64/Debug/some bs.ilk
 /vscode projects/some bs/x64/Debug/some bs.exe
 /vscode projects/some bs/x64/Debug/some bs.pdb
+*.tlog
