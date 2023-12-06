@@ -30,3 +30,6 @@
 /vscode projects/networking test server/.vs/networking test server/v17/ipch/AutoPCH/96e038655035b182/MAIN.ipch
 /.vs/VSWorkspaceState.json
 *.ipch
+/vscode projects/some bs/some bs/x64/Debug/some bs.ilk
+/vscode projects/some bs/x64/Debug/some bs.exe
+/vscode projects/some bs/x64/Debug/some bs.pdb
