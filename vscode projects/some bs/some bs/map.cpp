@@ -186,6 +186,7 @@ bool Map::drawMap(sf::RenderTarget& _target, float _map[G_mapAlloc][G_mapAlloc],
 			return false;
 	}
 
+	//gap in between the cells
 	int gap = 1;
 
 	// resize the vertex array to fit the level size

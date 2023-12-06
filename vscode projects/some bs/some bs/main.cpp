@@ -4,9 +4,9 @@
 
 
 
-
+const int mapAlloc = 1000;
 //create the grid here so it stays in the heap
-float dsMap[G_mapAlloc][G_mapAlloc];
+float dsMap[mapAlloc][mapAlloc];
 
 static const int mapSize = 1000;
 
