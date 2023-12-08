@@ -7,12 +7,7 @@
 #include "SFML/Audio.hpp"
 
 //General
-#include "wtypes.h"
-#include "winuser.h"
-#include <iostream>
 #include <string>
-#include <random>
-#include <cmath>
 
 //Game libraries
 #include "display.hpp"
