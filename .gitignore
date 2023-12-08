@@ -6,23 +6,25 @@
 *.db-shm
 *.db-wal
 *.opendb
-/.vs/The-Suppository/v17/.wsuo
-/vscode projects/some bs/.vs/some bs/FileContentIndex/a62ef7bf-a76b-49c8-8946-82665872a094.vsidx
-/vscode projects/some bs/.vs/some bs/v17/.suo
-<<<<<<< HEAD
-*.vsidx
-*.tlog
-
-/vscode projects/some bs/some bs/x64/Debug/some bs.tlog/some bs.lastbuildstate
-*.log
-=======
-/vscode projects/some bs/.vs/some bs/FileContentIndex/fb331918-8195-4ea4-bd96-581636cb4a80.vsidx
->>>>>>> f5b6a980ecbc2206bf4ed054d45d6e5545797503
-/.vs/VSWorkspaceState.json
-*.ipch
-/vscode projects/some bs/some bs/x64/Debug/some bs.ilk
-/vscode projects/some bs/x64/Debug/some bs.exe
 *.pdb
 *.tlog
 *.obj
 *.idb
+*.vsidx
+*.ipch
+*.log
+
+/.vs/The-Suppository/v17/.wsuo
+/vscode projects/some bs/.vs/some bs/FileContentIndex/a62ef7bf-a76b-49c8-8946-82665872a094.vsidx
+/vscode projects/some bs/.vs/some bs/v17/.suo
+<<<<<<< HEAD
+
+
+
+/vscode projects/some bs/some bs/x64/Debug/some bs.tlog/some bs.lastbuildstate
+=======
+/vscode projects/some bs/.vs/some bs/FileContentIndex/fb331918-8195-4ea4-bd96-581636cb4a80.vsidx
+>>>>>>> f5b6a980ecbc2206bf4ed054d45d6e5545797503
+/.vs/VSWorkspaceState.json
+/vscode projects/some bs/some bs/x64/Debug/some bs.ilk
+/vscode projects/some bs/x64/Debug/some bs.exe
