@@ -1,6 +1,6 @@
 #pragma once
 
-#include "headers/map.hpp"
+#include "map.hpp"
 
 Map::Map(int _size)
 {

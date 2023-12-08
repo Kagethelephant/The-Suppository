@@ -19,8 +19,6 @@
 #include "math.hpp"
 #include "constants.hpp"
 
-const int G_mapAlloc = 1000;
-
 class Map : public sf::Drawable, public sf::Transformable
 {
 

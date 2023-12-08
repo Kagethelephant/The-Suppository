@@ -1,14 +1,13 @@
 #pragma once
 
-#include "headers/main.hpp"
+#include "main.hpp"
 
 
 
-const int mapAlloc = 1000;
 //create the grid here so it stays in the heap
-float dsMap[mapAlloc][mapAlloc];
+float dsMap[G_mapAlloc][G_mapAlloc];
 
-static const int mapSize = 1000;
+static const int mapSize = 500;
 
 int main(int argc, char** argv) {
 
@@ -43,8 +42,8 @@ int main(int argc, char** argv) {
 
 
     //Create the diamond square object and run function to generate map
-    Map ds(500);
-    ds.newMap(dsMap, 500);
+    Map ds(mapSize);
+    ds.newMap(dsMap);
 
 
 

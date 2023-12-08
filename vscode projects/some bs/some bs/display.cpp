@@ -1,6 +1,6 @@
 #pragma once
 
-#include "headers/display.hpp"
+#include "display.hpp"
 
 
 //----INITIALIZE VIEW----
