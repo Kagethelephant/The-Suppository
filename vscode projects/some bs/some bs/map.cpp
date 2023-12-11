@@ -164,20 +164,9 @@ void Map::newMap(float _map[G_mapAlloc][G_mapAlloc], int _high, float _roughness
 
 //---DRAW WITH VERTICES---
 
-bool Map::drawMap(sf::RenderTarget& _target, float _map[G_mapAlloc][G_mapAlloc], sf::Vector2i _tileSize, sf::Vector2i _position, sf::Vector2i _gridSize, bool _solidColor, const std::string& _tileset)
+bool Map::drawMap(sf::RenderTarget& _target, float _map[G_mapAlloc][G_mapAlloc], int _mapX[G_mapAlloc], int _mapY[G_mapAlloc], sf::Vector2i _tileSize, sf::Vector2i _position, sf::Vector2i _gridSize, bool _solidColor, const std::string& _tileset)
 {
 
-	//define some colors cause the default ones are ugly
-	sf::Vector3i c_black(13, 14, 26);
-	sf::Vector3i c_dkblue(33, 47, 106);
-	sf::Vector3i c_blue(47, 80, 118);
-	sf::Vector3i c_ltblue(65, 95, 120);
-	sf::Vector3i c_tan(116, 113, 89);
-	sf::Vector3i c_green(49, 83, 76);
-	sf::Vector3i c_dkgreen(34, 53, 59);
-	sf::Vector3i c_dkpurple(43, 37, 49);
-	sf::Vector3i c_purple(77, 61, 85);
-	sf::Vector3i c_snow(182, 182, 182);
 
 	// load the tileset texture
 	if (!_solidColor)
@@ -185,6 +174,11 @@ bool Map::drawMap(sf::RenderTarget& _target, float _map[G_mapAlloc][G_mapAlloc],
 		if (!m_tileset.loadFromFile(_tileset))
 			return false;
 	}
+
+	//temporary
+	if (!m_tileset.loadFromFile(_tileset))
+		return false;
+
 
 	//gap in between the cells
 	int gap = 1;
@@ -198,22 +192,33 @@ bool Map::drawMap(sf::RenderTarget& _target, float _map[G_mapAlloc][G_mapAlloc],
 	{
 		for (int z = 0; z < _gridSize.y; ++z)
 		{
+
+
 			// get the current tile number
 			int iX = _position.x - z + floor((i + 1) / 2);
 			int iY = _position.y + z + floor(i / 2);
 
+
+
 			int tileNumber;
 			if (iX > 0 && iX < m_mapSize && iY > 0 && iY < m_mapSize)
 			{
-				tileNumber = _map[iX][iY];
+				tileNumber = _map[_mapX[iX]][_mapY[iY]];
 			}
 			else tileNumber = -10000;
+
+
 
 			int posX = (i * _tileSize.x / 2);
 			int posY = z * _tileSize.y - ((i % 2) * 8);
 
+
+
 			// get a pointer to the triangles' vertices of the current tile
 			sf::Vertex* triangles = &m_vertices[(i + z * _gridSize.x) * 6];
+
+			//tempprary
+			int gap = 1;
 
 			triangles[0].position = sf::Vector2f(posX + gap, posY);
 			triangles[1].position = sf::Vector2f((posX + gap + (_tileSize.x / 2)), (posY - (_tileSize.y / 2)));
@@ -229,17 +234,41 @@ bool Map::drawMap(sf::RenderTarget& _target, float _map[G_mapAlloc][G_mapAlloc],
 
 				if (tileNumber != -10000)
 				{
+					int index;
+					// get the current tile number
 
-					if (tileNumber < -10) { color = (sf::Color(c_dkblue.x, c_dkblue.y, c_dkblue.z)); }
-					else if (tileNumber < -5) { color = (sf::Color(c_blue.x, c_blue.y, c_blue.z)); }
-					else if (tileNumber < 0) { color = (sf::Color(c_ltblue.x, c_ltblue.y, c_ltblue.z)); }
-					else if (tileNumber < 5) { color = (sf::Color(c_tan.x, c_tan.y, c_tan.z)); }
-					else if (tileNumber < 10) { color = (sf::Color(c_green.x, c_green.y, c_green.z)); }
-					else if (tileNumber < 15) { color = (sf::Color(c_dkgreen.x, c_dkgreen.y, c_dkgreen.z)); }
-					else if (tileNumber < 20) { color = (sf::Color(c_purple.x, c_purple.y, c_purple.z)); }
-					else { color = (sf::Color(c_dkpurple.x, c_dkpurple.y, c_dkpurple.z)); }
+					if (tileNumber < 15 && tileNumber >10)
+					{
+						// find its position in the tileset texture
+						//int tu = index % (m_tileset.getSize().x / tileSize);
+						//int tv = index / (m_tileset.getSize().x / tileSize);
+						//int tu = tileNumber % (m_tileset.getSize().x / tileSize);
+						//int tv = tileNumber / (m_tileset.getSize().x / tileSize);
+
+						// define the 6 matching texture coordinates
+						triangles[0].texCoords = sf::Vector2f(0, 0);
+						triangles[1].texCoords = sf::Vector2f(32, 0);
+						triangles[2].texCoords = sf::Vector2f(0, 32);
+						triangles[3].texCoords = sf::Vector2f(0, 32);
+						triangles[4].texCoords = sf::Vector2f(32, 0);
+						triangles[5].texCoords = sf::Vector2f(32, 32);
+
+					}
+
+					else
+					{
+						if (tileNumber < -10) { color = (sf::Color(G_dkblue_x, G_dkblue_y, G_dkblue_z)); }
+						else if (tileNumber < -5) { color = (sf::Color(G_blue_x, G_blue_y, G_blue_z)); }
+						else if (tileNumber < 0) { color = (sf::Color(G_ltblue_x, G_ltblue_y, G_ltblue_z)); }
+						else if (tileNumber < 5) { color = (sf::Color(G_tan_x, G_tan_y, G_tan_z)); }
+						else if (tileNumber < 10) { color = (sf::Color(G_green_x, G_green_y, G_green_z)); }
+						else if (tileNumber < 15) { color = (sf::Color(G_dkgreen_x, G_dkgreen_y, G_dkgreen_z)); }
+						else if (tileNumber < 20) { color = (sf::Color(G_purple_x, G_purple_y, G_purple_z)); }
+						else { color = (sf::Color(G_dkpurple_x, G_dkpurple_y, G_dkpurple_z)); }
+					}
+
 				}
-				else color = sf::Color(c_black.x, c_black.y, c_black.z);
+				else color = sf::Color(G_black_x, G_black_y, G_black_z);
 
 				for (int k = 0; k < 6; k += 1)
 				{
@@ -253,15 +282,9 @@ bool Map::drawMap(sf::RenderTarget& _target, float _map[G_mapAlloc][G_mapAlloc],
 			{
 				int index;
 				// get the current tile number
-				if (tileNumber < -15) { index = 0; }
-				else if (tileNumber < -10) { index = 1; }
-				else if (tileNumber < -5) { index = 2; }
-				else if (tileNumber < 0) { index = 3; }
-				else if (tileNumber < 5) { index = 4; }
-				else if (tileNumber < 10) { index = 5; }
-				else if (tileNumber < 15) { index = 6; }
-				else if (tileNumber < 20) { index = 7; }
-				else { index = 8; }
+
+				if (tileNumber < 15 && tileNumber >10) { index = 1; }
+				else { index = 0; }
 
 				// find its position in the tileset texture
 				//int tu = index % (m_tileset.getSize().x / tileSize);
@@ -270,12 +293,12 @@ bool Map::drawMap(sf::RenderTarget& _target, float _map[G_mapAlloc][G_mapAlloc],
 				//int tv = tileNumber / (m_tileset.getSize().x / tileSize);
 
 				// define the 6 matching texture coordinates
-				//triangles[0].texCoords = sf::Vector2f(tu * tileSize, tv * tileSize);
-				//triangles[1].texCoords = sf::Vector2f((tu + 1) * tileSize, tv * tileSize);
-				//triangles[2].texCoords = sf::Vector2f(tu * tileSize, (tv + 1) * tileSize);
-				//triangles[3].texCoords = sf::Vector2f(tu * tileSize, (tv + 1) * tileSize);
-				//triangles[4].texCoords = sf::Vector2f((tu + 1) * tileSize, tv * tileSize);
-				//triangles[5].texCoords = sf::Vector2f((tu + 1) * tileSize, (tv + 1) * tileSize);
+				triangles[0].position = sf::Vector2f(0, 0);
+				triangles[1].position = sf::Vector2f(32, 0);
+				triangles[2].position = sf::Vector2f(0, 32);
+				triangles[3].position = sf::Vector2f(0, 32);
+				triangles[4].position = sf::Vector2f(32, 0);
+				triangles[5].position = sf::Vector2f(32, 32);
 
 			}
 
@@ -285,6 +308,66 @@ bool Map::drawMap(sf::RenderTarget& _target, float _map[G_mapAlloc][G_mapAlloc],
 	if (_solidColor)_target.draw(m_vertices);
 	else _target.draw(m_vertices, &m_tileset); //Need to include the texture???
 	return true;
+}
+
+void Map::sortMapValue(float _map[G_mapAlloc][G_mapAlloc], int _mapX[G_mapAlloc], int _mapY[G_mapAlloc])
+{
+
+	int next;
+	int iIndex;
+	int zIndex;
+	int qIndex;
+	int mIndex;
+
+	for (int i = 0; i < m_mapSize; ++i)
+	{
+		for (int z = 0; z < m_mapSize; ++z)
+		{
+			_mapX[i] = i;
+			_mapY[z] = z;
+		}
+	}
+
+
+	int test;
+
+	for (int i = 0; i < m_mapSize; ++i)
+	{	
+		for (int z = 0; z < m_mapSize; ++z)
+		{
+			next = z + 1;
+
+			iIndex = _mapX[i];
+			zIndex = _mapY[z];
+
+			for (int q = i; q < m_mapSize; ++q)
+			{
+				for (int m = next; m < m_mapSize; ++m)
+				{
+					qIndex = _mapX[q];
+					mIndex = _mapY[m];
+					
+
+					float p1 = _map[iIndex][zIndex];
+					float p2 = _map[qIndex][mIndex];
+
+					if (_map[iIndex][zIndex] < _map[qIndex][mIndex])
+					{
+						_mapX[q] = iIndex;
+						_mapY[m] = zIndex;
+
+						_mapX[i] = qIndex;
+						_mapY[z] = mIndex;
+
+						test = _mapY[m];
+						iIndex = qIndex;
+						zIndex = mIndex;
+					}
+				}
+			}
+			next = 0;
+		}
+	}
 }
 
 

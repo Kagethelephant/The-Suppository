@@ -6,23 +6,13 @@
 
 //create the grid here so it stays in the heap
 float dsMap[G_mapAlloc][G_mapAlloc];
+int dsMapX[G_mapAlloc];
+int dsMapY[G_mapAlloc];
 
-static const int mapSize = 500;
+static const int mapSize = 100;
 
 int main(int argc, char** argv) {
 
-
-    //define some colors cause the default ones are ugly
-    sf::Vector3i c_black(13, 14, 26);
-    sf::Vector3i c_dkblue(33, 47, 106);
-    sf::Vector3i c_blue(47, 80, 118);
-    sf::Vector3i c_ltblue(65, 95, 120);
-    sf::Vector3i c_tan(116, 113, 89);
-    sf::Vector3i c_green(49, 83, 76);
-    sf::Vector3i c_dkgreen(34, 53, 59);
-    sf::Vector3i c_dkpurple(43, 37, 49);
-    sf::Vector3i c_purple(77, 61, 85);
-    sf::Vector3i c_snow(182, 182, 182);
 
     //----GRID VARIABLES----
 
@@ -44,6 +34,7 @@ int main(int argc, char** argv) {
     //Create the diamond square object and run function to generate map
     Map ds(mapSize);
     ds.newMap(dsMap);
+    ds.sortMapValue(dsMap,dsMapX,dsMapY);
 
 
 
@@ -56,7 +47,7 @@ int main(int argc, char** argv) {
 
     //container for the height and width of the window
     sf::Vector2i resPixels;
-    resPixels = windowSetup(window, view, 300, false,30);
+    resPixels = windowSetup(window, view, 500, true,30);
 
     //how many grids can fit on the screen
     sf::Vector2i resTiles;
@@ -90,14 +81,14 @@ int main(int argc, char** argv) {
     textSmall.setFont(fontSmall);
     textSmall.setString("Hello world");
     textSmall.setCharacterSize(8);
-    textSmall.setFillColor(sf::Color(c_snow.x, c_snow.y, c_snow.z));
+    textSmall.setFillColor(sf::Color(G_white_x, G_white_y, G_white_z));
     textSmall.setStyle(sf::Text::Regular);
     textSmall.setPosition(5, 5);
 
     //rectangles to draw the grids
     sf::RectangleShape rectCursor;
     rectCursor.setSize(sf::Vector2f(3,3));
-    rectCursor.setFillColor(sf::Color::White);
+    rectCursor.setFillColor(sf::Color(G_white_x, G_white_y, G_white_z));
     rectCursor.setOutlineColor(sf::Color::Transparent);
     rectCursor.setOutlineThickness(2);
     rectCursor.setOrigin(1, 1);
@@ -114,9 +105,9 @@ int main(int argc, char** argv) {
 
 
     //clear viewwith a background color
-    bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
+    bufferMap.clear(sf::Color(G_black_x, G_black_y, G_black_z));
     //draw the map with vertex array
-    ds.drawMap(bufferMap, dsMap, tileSize, viewPos, resTiles);
+    ds.drawMap(bufferMap, dsMap, dsMapX, dsMapY, tileSize, viewPos, resTiles, true, "../sprites/blockOfRock.png");
 
 
 
@@ -168,8 +159,8 @@ int main(int argc, char** argv) {
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) viewPos.y += 1;
 
-        bufferMap.clear(sf::Color(c_black.x, c_black.y, c_black.z));
-        ds.drawMap(bufferMap, dsMap, tileSize, viewPos, resTiles);
+        bufferMap.clear(sf::Color(G_black_x, G_black_y, G_black_z));
+        ds.drawMap(bufferMap, dsMap, dsMapX, dsMapY, tileSize, viewPos, resTiles, true, "../sprites/blockOfRock.png");
 
 
 
@@ -206,7 +197,7 @@ int main(int argc, char** argv) {
 
         //Draw the coord of the mouse on the screen for debugging
         textSmall.setPosition(5, 5);
-        textSmall.setString("Mouse Position (" + std::to_string(gridX) + ", " + std::to_string(gridY) + ") : " + std::to_string(dsMap[gridX][gridY]));
+        textSmall.setString("Mouse Position (" + std::to_string(gridX) + ", " + std::to_string(gridY) + ") : " + std::to_string(dsMap[dsMapX[gridX]][dsMapY[gridY]]) + ", " + std::to_string(dsMapX[gridX]) + ", " + std::to_string(dsMapY[gridY]));
         bufferGUI.draw(textSmall);
         textSmall.setPosition(5, 15);
         textSmall.setString("View Position (" + std::to_string(viewPos.x) + ", " + std::to_string(viewPos.y) + ")");
