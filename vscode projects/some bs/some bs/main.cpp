@@ -6,8 +6,7 @@
 
 //create the grid here so it stays in the heap
 float dsMap[G_mapAlloc][G_mapAlloc];
-int dsMapX[G_mapAlloc];
-int dsMapY[G_mapAlloc];
+int dsMapIndex[G_mapAlloc][G_mapAlloc][2];
 
 static const int mapSize = 100;
 
@@ -34,7 +33,7 @@ int main(int argc, char** argv) {
     //Create the diamond square object and run function to generate map
     Map ds(mapSize);
     ds.newMap(dsMap);
-    ds.sortMapValue(dsMap,dsMapX,dsMapY);
+    ds.sortMapValue(dsMap,dsMapIndex);
 
 
 
@@ -107,7 +106,7 @@ int main(int argc, char** argv) {
     //clear viewwith a background color
     bufferMap.clear(sf::Color(G_black_x, G_black_y, G_black_z));
     //draw the map with vertex array
-    ds.drawMap(bufferMap, dsMap, dsMapX, dsMapY, tileSize, viewPos, resTiles, true, "../sprites/blockOfRock.png");
+    ds.drawMap(bufferMap, dsMap, dsMapIndex, tileSize, viewPos, resTiles, true, "../sprites/blockOfRock.png");
 
 
 
@@ -160,7 +159,7 @@ int main(int argc, char** argv) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) viewPos.y += 1;
 
         bufferMap.clear(sf::Color(G_black_x, G_black_y, G_black_z));
-        ds.drawMap(bufferMap, dsMap, dsMapX, dsMapY, tileSize, viewPos, resTiles, true, "../sprites/blockOfRock.png");
+        ds.drawMap(bufferMap, dsMap, dsMapIndex, tileSize, viewPos, resTiles, true, "../sprites/blockOfRock.png");
 
 
 
@@ -197,7 +196,7 @@ int main(int argc, char** argv) {
 
         //Draw the coord of the mouse on the screen for debugging
         textSmall.setPosition(5, 5);
-        textSmall.setString("Mouse Position (" + std::to_string(gridX) + ", " + std::to_string(gridY) + ") : " + std::to_string(dsMap[dsMapX[gridX]][dsMapY[gridY]]) + ", " + std::to_string(dsMapX[gridX]) + ", " + std::to_string(dsMapY[gridY]));
+        textSmall.setString("Mouse Position (" + std::to_string(gridX) + ", " + std::to_string(gridY) + ") : " + std::to_string(dsMap[dsMapIndex[gridX][gridY][0]][dsMapIndex[gridX][gridY][1]]) + ", " + std::to_string(dsMapIndex[gridX][gridY][0]) + ", " + std::to_string(dsMapIndex[gridX][gridY][1]));
         bufferGUI.draw(textSmall);
         textSmall.setPosition(5, 15);
         textSmall.setString("View Position (" + std::to_string(viewPos.x) + ", " + std::to_string(viewPos.y) + ")");

@@ -164,7 +164,7 @@ void Map::newMap(float _map[G_mapAlloc][G_mapAlloc], int _high, float _roughness
 
 //---DRAW WITH VERTICES---
 
-bool Map::drawMap(sf::RenderTarget& _target, float _map[G_mapAlloc][G_mapAlloc], int _mapX[G_mapAlloc], int _mapY[G_mapAlloc], sf::Vector2i _tileSize, sf::Vector2i _position, sf::Vector2i _gridSize, bool _solidColor, const std::string& _tileset)
+bool Map::drawMap(sf::RenderTarget& _target, float _map[G_mapAlloc][G_mapAlloc], int _mapIndex[G_mapAlloc][G_mapAlloc][2], sf::Vector2i _tileSize, sf::Vector2i _position, sf::Vector2i _gridSize, bool _solidColor, const std::string& _tileset)
 {
 
 
@@ -203,7 +203,7 @@ bool Map::drawMap(sf::RenderTarget& _target, float _map[G_mapAlloc][G_mapAlloc],
 			int tileNumber;
 			if (iX > 0 && iX < m_mapSize && iY > 0 && iY < m_mapSize)
 			{
-				tileNumber = _map[_mapX[iX]][_mapY[iY]];
+				tileNumber = _map[_mapIndex[iX][iY][0]][_mapIndex[iX][iY][1]];
 			}
 			else tileNumber = -10000;
 
@@ -310,7 +310,7 @@ bool Map::drawMap(sf::RenderTarget& _target, float _map[G_mapAlloc][G_mapAlloc],
 	return true;
 }
 
-void Map::sortMapValue(float _map[G_mapAlloc][G_mapAlloc], int _mapX[G_mapAlloc], int _mapY[G_mapAlloc])
+void Map::sortMapValue(float _map[G_mapAlloc][G_mapAlloc], int _mapIndex[G_mapAlloc][G_mapAlloc][2])
 {
 
 	int next;
@@ -323,8 +323,8 @@ void Map::sortMapValue(float _map[G_mapAlloc][G_mapAlloc], int _mapX[G_mapAlloc]
 	{
 		for (int z = 0; z < m_mapSize; ++z)
 		{
-			_mapX[i] = i;
-			_mapY[z] = z;
+			_mapIndex[i][z][0] = i;
+			_mapIndex[i][z][1] = z;
 		}
 	}
 
@@ -337,29 +337,24 @@ void Map::sortMapValue(float _map[G_mapAlloc][G_mapAlloc], int _mapX[G_mapAlloc]
 		{
 			next = z + 1;
 
-			iIndex = _mapX[i];
-			zIndex = _mapY[z];
+			iIndex = _mapIndex[i][z][0];
+			zIndex = _mapIndex[i][z][1];
 
 			for (int q = i; q < m_mapSize; ++q)
 			{
 				for (int m = next; m < m_mapSize; ++m)
 				{
-					qIndex = _mapX[q];
-					mIndex = _mapY[m];
-					
-
-					float p1 = _map[iIndex][zIndex];
-					float p2 = _map[qIndex][mIndex];
+					qIndex = _mapIndex[q][m][0];
+					mIndex = _mapIndex[q][m][1];
 
 					if (_map[iIndex][zIndex] < _map[qIndex][mIndex])
 					{
-						_mapX[q] = iIndex;
-						_mapY[m] = zIndex;
+						_mapIndex[q][m][0] = iIndex;
+						_mapIndex[q][m][1] = zIndex;
 
-						_mapX[i] = qIndex;
-						_mapY[z] = mIndex;
+						_mapIndex[i][z][0] = qIndex;
+						_mapIndex[i][z][1] = mIndex;
 
-						test = _mapY[m];
 						iIndex = qIndex;
 						zIndex = mIndex;
 					}

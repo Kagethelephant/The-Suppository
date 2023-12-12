@@ -37,9 +37,9 @@ public:
 
 
 	//---DRAW WITH VERTICES---
-	bool drawMap(sf::RenderTarget& _target, float _map[G_mapAlloc][G_mapAlloc], int _mapX[G_mapAlloc], int _mapY[G_mapAlloc], sf::Vector2i _tileSize, sf::Vector2i _pos, sf::Vector2i _gridSize, bool _solidColor = true, const std::string& _tileset = "NULL");
+	bool drawMap(sf::RenderTarget& _target, float _map[G_mapAlloc][G_mapAlloc], int _mapIndex[G_mapAlloc][G_mapAlloc][2], sf::Vector2i _tileSize, sf::Vector2i _pos, sf::Vector2i _gridSize, bool _solidColor = true, const std::string& _tileset = "NULL");
 
-	void sortMapValue(float _map[G_mapAlloc][G_mapAlloc], int _mapX[G_mapAlloc], int _mapY[G_mapAlloc]);
+	void sortMapValue(float _map[G_mapAlloc][G_mapAlloc], int _mapIndex[G_mapAlloc][G_mapAlloc][2]);
 
 private:
 	
