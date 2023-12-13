@@ -359,8 +359,8 @@ void Map::sortMapValue(float _map[G_mapAlloc][G_mapAlloc], int _mapIndex[G_mapAl
 						zIndex = mIndex;
 					}
 				}
+				next = 0;
 			}
-			next = 0;
 		}
 	}
 }
