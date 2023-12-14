@@ -45,7 +45,7 @@ int main() {
 
     //container for the height and width of the window
     sf::Vector2i resPixels;
-    resPixels = windowSetup(window, view, 160, false,30);
+    resPixels = windowSetup(window, view, 500, true,30);
 
     //how many grids can fit on the screen
     sf::Vector2i resTiles;
@@ -190,7 +190,7 @@ int main() {
 
         //Draw the coord of the mouse on the screen for debugging
         textSmall.setPosition(5, 5);
-        //textSmall.setString("Mouse Position (" + std::to_string(gridX) + ", " + std::to_string(gridY) + ") : " + std::to_string(ds.m_map[ds.m_mapSort[gridX][gridY][0]][ds.m_mapSort[gridX][gridY][1]]) + ", " + std::to_string(ds.m_mapSort[gridX][gridY][0]) + ", " + std::to_string(ds.m_mapSort[gridX][gridY][1]));
+        textSmall.setString("Mouse Position (" + std::to_string(gridX) + ", " + std::to_string(gridY) + ") : " + std::to_string(ds.m_map[ds.m_mapSort[gridX][gridY][0]][ds.m_mapSort[gridX][gridY][1]]) + ", " + std::to_string(ds.m_mapSort[gridX][gridY][0]) + ", " + std::to_string(ds.m_mapSort[gridX][gridY][1]));
         bufferGUI.draw(textSmall);
         textSmall.setPosition(5, 15);
         textSmall.setString("View Position (" + std::to_string(viewPos.x) + ", " + std::to_string(viewPos.y) + ")");
