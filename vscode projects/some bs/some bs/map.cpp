@@ -5,9 +5,93 @@
 Map::Map(int _size)
 {
 	m_mapSize = _size;
+
+
+
+	for (int i = 0; i <= m_mapSize; i++)
+	{
+
+		_mapSort[i] = new int* [m_mapSize+1];
+
+		for (int z = 0; z <= m_mapSize; z++)
+		{
+
+			_mapSort[i][z] = new int[2];
+		}
+	}
+
+	// Traverse the 2D array
+	int c = 0;
+	for (int i = 0; i <= m_mapSize; i++)
+	{
+		for (int j = 0; j <= m_mapSize; j++)
+		{
+
+			_mapSort[i][j][0] = ++c;
+			_mapSort[i][j][1] = c;
+		}
+	}
+
+
+
+
+
+	for (int i = 0; i <= m_mapSize; i++)
+	{
+
+		_map[i] = new float [m_mapSize+1];
+
+	}
+
+	c = 0;
+	for (int i = 0; i <= m_mapSize; i++)
+	{
+		for (int j = 0; j <= m_mapSize; j++)
+		{
+
+			_map[i][j] = ++c;
+
+		}
+	}
+
+	for (int i = 0; i < m_mapSize; i++)
+	{
+		for (int j = 0; j < m_mapSize; j++)
+		{
+
+			// Print the values of
+			// memory blocks created
+			//std::cout << _mapI_[i][j][0] << " ";
+			//std::cout << _mapI_[i][j][1] << " ";
+			std::cout << _map[i][j] << " ";
+		}
+		std::cout << std::endl;
+	}
+
 }
 
-void Map::newMap(float _map[G_mapAlloc][G_mapAlloc], int _high, float _roughness, float _change)
+Map::~Map()
+{
+	for (int i = 0; i <= m_mapSize; i++)
+	{
+		for (int j = 0; j <= m_mapSize-1; j++)
+		{
+			delete[] _mapSort[i][j];
+		}
+		delete[] _mapSort[i];
+		delete[] _map[i];
+	}
+	// To delete the inner
+		// arrays
+	
+	delete[] _mapSort; // To delete the outer array
+	delete[] _map;
+	// which contained the pointers
+
+	std::cout << "******DESTROYED******" <<std::endl;
+}
+
+void Map::newMap(int _high, float _roughness, float _change)
 {
 
 	//---INITIALIZE VARIABLES----
@@ -93,9 +177,9 @@ void Map::newMap(float _map[G_mapAlloc][G_mapAlloc], int _high, float _roughness
 
 		//----DIAMOND----
 
-		for (float z = 0; z < m_mapSize + 1; z += half)
+		for (float z = 0; z < m_mapSize ; z += half)
 		{
-			for (float i = fmodf((z + half), chunk); i < m_mapSize + 1; i += chunk)
+			for (float i = fmodf((z + half), chunk); i < m_mapSize ; i += chunk)
 			{
 				// X - - - X	This is the diamond portion of the code the "X" represents
 				// - - - - -	points that have already been populated. these points are 
@@ -123,13 +207,13 @@ void Map::newMap(float _map[G_mapAlloc][G_mapAlloc], int _high, float _roughness
 					div += 1;
 				}
 
-				if (i + half < m_mapSize + 1)
+				if (i + half < m_mapSize+1)
 				{
 					x2y = _map[(int)round(i + half)][(int)round(z)];
 					div += 1;
 				}
 
-				if (z + half < m_mapSize + 1)
+				if (z + half < m_mapSize+1)
 				{
 					xy1 = _map[(int)round(i)][(int)round(z + half)];
 					div += 1;
@@ -164,7 +248,7 @@ void Map::newMap(float _map[G_mapAlloc][G_mapAlloc], int _high, float _roughness
 
 //---DRAW WITH VERTICES---
 
-bool Map::drawMap(sf::RenderTarget& _target, float _map[G_mapAlloc][G_mapAlloc], int _mapIndex[G_mapAlloc][G_mapAlloc][2], sf::Vector2i _tileSize, sf::Vector2i _position, sf::Vector2i _gridSize, bool _solidColor, const std::string& _tileset)
+bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2i _position, sf::Vector2i _gridSize, bool _solidColor, const std::string& _tileset)
 {
 
 
@@ -203,7 +287,8 @@ bool Map::drawMap(sf::RenderTarget& _target, float _map[G_mapAlloc][G_mapAlloc],
 			int tileNumber;
 			if (iX > 0 && iX < m_mapSize && iY > 0 && iY < m_mapSize)
 			{
-				tileNumber = _map[_mapIndex[iX][iY][0]][_mapIndex[iX][iY][1]];
+				tileNumber = _map[_mapSort[iX][iY][0]][_mapSort[iX][iY][1]];
+				//tileNumber = _map[iX][iY];
 			}
 			else tileNumber = -10000;
 
@@ -310,7 +395,7 @@ bool Map::drawMap(sf::RenderTarget& _target, float _map[G_mapAlloc][G_mapAlloc],
 	return true;
 }
 
-void Map::sortMapValue(float _map[G_mapAlloc][G_mapAlloc], int _mapIndex[G_mapAlloc][G_mapAlloc][2])
+void Map::sortMapValue()
 {
 
 	int next;
@@ -323,8 +408,8 @@ void Map::sortMapValue(float _map[G_mapAlloc][G_mapAlloc], int _mapIndex[G_mapAl
 	{
 		for (int z = 0; z < m_mapSize; ++z)
 		{
-			_mapIndex[i][z][0] = i;
-			_mapIndex[i][z][1] = z;
+			_mapSort[i][z][0] = i;
+			_mapSort[i][z][1] = z;
 		}
 	}
 
@@ -337,23 +422,23 @@ void Map::sortMapValue(float _map[G_mapAlloc][G_mapAlloc], int _mapIndex[G_mapAl
 		{
 			next = z + 1;
 
-			iIndex = _mapIndex[i][z][0];
-			zIndex = _mapIndex[i][z][1];
+			iIndex = _mapSort[i][z][0];
+			zIndex = _mapSort[i][z][1];
 
 			for (int q = i; q < m_mapSize; ++q)
 			{
 				for (int m = next; m < m_mapSize; ++m)
 				{
-					qIndex = _mapIndex[q][m][0];
-					mIndex = _mapIndex[q][m][1];
+					qIndex = _mapSort[q][m][0];
+					mIndex = _mapSort[q][m][1];
 
 					if (_map[iIndex][zIndex] < _map[qIndex][mIndex])
 					{
-						_mapIndex[q][m][0] = iIndex;
-						_mapIndex[q][m][1] = zIndex;
+						_mapSort[q][m][0] = iIndex;
+						_mapSort[q][m][1] = zIndex;
 
-						_mapIndex[i][z][0] = qIndex;
-						_mapIndex[i][z][1] = mIndex;
+						_mapSort[i][z][0] = qIndex;
+						_mapSort[i][z][1] = mIndex;
 
 						iIndex = qIndex;
 						zIndex = mIndex;

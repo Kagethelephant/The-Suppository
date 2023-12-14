@@ -5,14 +5,16 @@
 
 
 //create the grid here so it stays in the heap
-float dsMap[G_mapAlloc][G_mapAlloc];
-int dsMapIndex[G_mapAlloc][G_mapAlloc][2];
+//float dsMap[G_mapAlloc][G_mapAlloc];
+//int dsMapIndex[G_mapAlloc][G_mapAlloc][2];
 
-static const int mapSize = 100;
+static const int mapSize = 50;
 
 int main(int argc, char** argv) {
 
 
+
+   
     //----GRID VARIABLES----
 
     //size in pixels of the grids to draw to the window
@@ -32,8 +34,8 @@ int main(int argc, char** argv) {
 
     //Create the diamond square object and run function to generate map
     Map ds(mapSize);
-    ds.newMap(dsMap);
-    ds.sortMapValue(dsMap,dsMapIndex);
+    ds.newMap();
+    ds.sortMapValue();
 
 
 
@@ -46,7 +48,7 @@ int main(int argc, char** argv) {
 
     //container for the height and width of the window
     sf::Vector2i resPixels;
-    resPixels = windowSetup(window, view, 500, true,30);
+    resPixels = windowSetup(window, view, 160, false,30);
 
     //how many grids can fit on the screen
     sf::Vector2i resTiles;
@@ -106,9 +108,7 @@ int main(int argc, char** argv) {
     //clear viewwith a background color
     bufferMap.clear(sf::Color(G_black_x, G_black_y, G_black_z));
     //draw the map with vertex array
-    ds.drawMap(bufferMap, dsMap, dsMapIndex, tileSize, viewPos, resTiles, true, "../sprites/blockOfRock.png");
-
-
+    ds.drawMap(bufferMap, tileSize, viewPos, resTiles, true, "../sprites/blockOfRock.png");
 
 
     //----MAIN LOOP----
@@ -143,7 +143,7 @@ int main(int argc, char** argv) {
         //----UPDATE----
 
         // regenerate the map when the enter button is pressed
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) ds.newMap(dsMap, mapSize);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) ds.newMap(mapSize);
 
 
         //move the map around and update the graphics
@@ -159,7 +159,7 @@ int main(int argc, char** argv) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) viewPos.y += 1;
 
         bufferMap.clear(sf::Color(G_black_x, G_black_y, G_black_z));
-        ds.drawMap(bufferMap, dsMap, dsMapIndex, tileSize, viewPos, resTiles, true, "../sprites/blockOfRock.png");
+        ds.drawMap(bufferMap, tileSize, viewPos, resTiles, true, "../sprites/blockOfRock.png");
 
 
 
@@ -196,7 +196,7 @@ int main(int argc, char** argv) {
 
         //Draw the coord of the mouse on the screen for debugging
         textSmall.setPosition(5, 5);
-        textSmall.setString("Mouse Position (" + std::to_string(gridX) + ", " + std::to_string(gridY) + ") : " + std::to_string(dsMap[dsMapIndex[gridX][gridY][0]][dsMapIndex[gridX][gridY][1]]) + ", " + std::to_string(dsMapIndex[gridX][gridY][0]) + ", " + std::to_string(dsMapIndex[gridX][gridY][1]));
+        //textSmall.setString("Mouse Position (" + std::to_string(gridX) + ", " + std::to_string(gridY) + ") : " + std::to_string(ds._map[ds._mapSort[gridX][gridY][0]][ds._mapSort[gridX][gridY][1]]) + ", " + std::to_string(ds._mapSort[gridX][gridY][0]) + ", " + std::to_string(ds._mapSort[gridX][gridY][1]));
         bufferGUI.draw(textSmall);
         textSmall.setPosition(5, 15);
         textSmall.setString("View Position (" + std::to_string(viewPos.x) + ", " + std::to_string(viewPos.y) + ")");
@@ -230,7 +230,7 @@ int main(int argc, char** argv) {
 
 
     //----DEBUGGING OUTPUTS----
-
+    std::cout << "*****GAME TERMINATED***** " << std::endl;
     std::cout << "Window Resolution:  " << resPixels.x << " X " << resPixels.y << std::endl;
     std::cout << "Window Resolution:  "  << std::endl;
 

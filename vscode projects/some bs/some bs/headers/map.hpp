@@ -29,17 +29,22 @@ class Map : public sf::Drawable, public sf::Transformable
 public:
 
 	Map(int);
+	~Map();
+
+	int*** _mapSort = new int** [G_mapAlloc];
+	float** _map = new float* [G_mapAlloc];
+
 
 
 
 	//----CREATE THE MAP----
-	void newMap(float _map[G_mapAlloc][G_mapAlloc], int _high = 20, float _roughness = 20, float _change = 1.4);
+	void newMap( int _high = 20, float _roughness = 20, float _change = 1.4);
 
 
 	//---DRAW WITH VERTICES---
-	bool drawMap(sf::RenderTarget& _target, float _map[G_mapAlloc][G_mapAlloc], int _mapIndex[G_mapAlloc][G_mapAlloc][2], sf::Vector2i _tileSize, sf::Vector2i _pos, sf::Vector2i _gridSize, bool _solidColor = true, const std::string& _tileset = "NULL");
+	bool drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2i _pos, sf::Vector2i _gridSize, bool _solidColor = true, const std::string& _tileset = "NULL");
 
-	void sortMapValue(float _map[G_mapAlloc][G_mapAlloc], int _mapIndex[G_mapAlloc][G_mapAlloc][2]);
+	void sortMapValue();
 
 private:
 	
