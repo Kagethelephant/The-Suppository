@@ -2,7 +2,7 @@
 
 #include "map.hpp"
 
-Map::Map(int _size)
+Map::Map(const int _size)
 {
 	m_mapSize = _size;
 
@@ -10,64 +10,41 @@ Map::Map(int _size)
 
 	for (int i = 0; i <= m_mapSize; i++)
 	{
-
-		_mapSort[i] = new int* [m_mapSize+1];
+		m_mapSort[i] = new int* [m_mapSize+1];
 
 		for (int z = 0; z <= m_mapSize; z++)
 		{
-
-			_mapSort[i][z] = new int[2];
+			m_mapSort[i][z] = new int[2];
 		}
 	}
 
-	// Traverse the 2D array
+
 	int c = 0;
 	for (int i = 0; i <= m_mapSize; i++)
 	{
 		for (int j = 0; j <= m_mapSize; j++)
 		{
-
-			_mapSort[i][j][0] = ++c;
-			_mapSort[i][j][1] = c;
+			m_mapSort[i][j][0] = ++c;
+			m_mapSort[i][j][1] = c;
 		}
 	}
 
 
 
-
-
 	for (int i = 0; i <= m_mapSize; i++)
 	{
-
-		_map[i] = new float [m_mapSize+1];
-
+		m_map[i] = new float [m_mapSize+1];
 	}
+
 
 	c = 0;
 	for (int i = 0; i <= m_mapSize; i++)
 	{
 		for (int j = 0; j <= m_mapSize; j++)
 		{
-
-			_map[i][j] = ++c;
-
+			m_map[i][j] = ++c;
 		}
 	}
-
-	for (int i = 0; i < m_mapSize; i++)
-	{
-		for (int j = 0; j < m_mapSize; j++)
-		{
-
-			// Print the values of
-			// memory blocks created
-			//std::cout << _mapI_[i][j][0] << " ";
-			//std::cout << _mapI_[i][j][1] << " ";
-			std::cout << _map[i][j] << " ";
-		}
-		std::cout << std::endl;
-	}
-
 }
 
 Map::~Map()
@@ -76,20 +53,21 @@ Map::~Map()
 	{
 		for (int j = 0; j <= m_mapSize-1; j++)
 		{
-			delete[] _mapSort[i][j];
+			delete[] m_mapSort[i][j];
 		}
-		delete[] _mapSort[i];
-		delete[] _map[i];
+		delete[] m_mapSort[i];
+		delete[] m_map[i];
 	}
-	// To delete the inner
-		// arrays
 	
-	delete[] _mapSort; // To delete the outer array
-	delete[] _map;
-	// which contained the pointers
+	delete[] m_mapSort;
+	delete[] m_map;
 
-	std::cout << "******DESTROYED******" <<std::endl;
 }
+
+
+
+
+
 
 void Map::newMap(int _high, float _roughness, float _change)
 {
@@ -127,15 +105,15 @@ void Map::newMap(int _high, float _roughness, float _change)
 	{
 		for (int i = 0; i < m_mapSize; ++i)
 		{
-			_map[i][z] = empty;
+			m_map[i][z] = empty;
 		}
 	}
 
 	//set initial corner values to extrapolate from at each corner
-	_map[0][0] = randRange(-_roughness, _roughness);
-	_map[0][m_mapSize] = randRange(-_roughness, _roughness);
-	_map[m_mapSize][0] = randRange(-_roughness, _roughness);
-	_map[m_mapSize][m_mapSize] = randRange(-_roughness, _roughness);
+	m_map[0][0] = randRange(-_roughness, _roughness);
+	m_map[0][m_mapSize] = randRange(-_roughness, _roughness);
+	m_map[m_mapSize][0] = randRange(-_roughness, _roughness);
+	m_map[m_mapSize][m_mapSize] = randRange(-_roughness, _roughness);
 
 
 	//----SQUARE-----
@@ -161,15 +139,15 @@ void Map::newMap(int _high, float _roughness, float _change)
 
 
 				//grab the "X" values shown above
-				x1y1 = _map[(int)round(i)][(int)round(z)];
-				x2y1 = _map[(int)round(i + chunk)][(int)round(z)];
-				x1y2 = _map[(int)round(i)][(int)round(z + chunk)];
-				x2y2 = _map[(int)round(i + chunk)][(int)round(z + chunk)];
+				x1y1 = m_map[(int)round(i)][(int)round(z)];
+				x2y1 = m_map[(int)round(i + chunk)][(int)round(z)];
+				x1y2 = m_map[(int)round(i)][(int)round(z + chunk)];
+				x2y2 = m_map[(int)round(i + chunk)][(int)round(z + chunk)];
 
 				avg = (x1y1 + x2y1 + x1y2 + x2y2) / 4;
 
 				//set the value "0" with the average + a random value and make sure we are not overwriting other values
-				if (_map[(int)round(i + half)][(int)round(z + half)] == empty) _map[(int)round(i + half)][(int)round(z + half)] = avg + randRange(-_roughness, _roughness);
+				if (m_map[(int)round(i + half)][(int)round(z + half)] == empty) m_map[(int)round(i + half)][(int)round(z + half)] = avg + randRange(-_roughness, _roughness);
 			}
 		}
 
@@ -203,25 +181,25 @@ void Map::newMap(int _high, float _roughness, float _change)
 				//grab the "X" values shown above if they are in the map bounds
 				if (i - half >= 0)
 				{
-					x1y = _map[(int)round(i - half)][(int)round(z)];
+					x1y = m_map[(int)round(i - half)][(int)round(z)];
 					div += 1;
 				}
 
 				if (i + half < m_mapSize+1)
 				{
-					x2y = _map[(int)round(i + half)][(int)round(z)];
+					x2y = m_map[(int)round(i + half)][(int)round(z)];
 					div += 1;
 				}
 
 				if (z + half < m_mapSize+1)
 				{
-					xy1 = _map[(int)round(i)][(int)round(z + half)];
+					xy1 = m_map[(int)round(i)][(int)round(z + half)];
 					div += 1;
 				}
 
 				if (z - half >= 0)
 				{
-					xy2 = _map[(int)round(i)][(int)round(z - half)];
+					xy2 = m_map[(int)round(i)][(int)round(z - half)];
 					div += 1;
 				}
 
@@ -229,7 +207,7 @@ void Map::newMap(int _high, float _roughness, float _change)
 				avg = (x1y + x2y + xy1 + xy2) / 4;
 
 				//set the value "0" (from the diagram above) with the average + a random value and make sure we are not overwriting other values
-				if (_map[(int)round(i)][(int)round(z)] == empty) _map[(int)round(i)][(int)round(z)] = avg + randRange(-_roughness, _roughness);
+				if (m_map[(int)round(i)][(int)round(z)] == empty) m_map[(int)round(i)][(int)round(z)] = avg + randRange(-_roughness, _roughness);
 			}
 		}
 
@@ -287,8 +265,8 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 			int tileNumber;
 			if (iX > 0 && iX < m_mapSize && iY > 0 && iY < m_mapSize)
 			{
-				tileNumber = _map[_mapSort[iX][iY][0]][_mapSort[iX][iY][1]];
-				//tileNumber = _map[iX][iY];
+				tileNumber = m_map[m_mapSort[iX][iY][0]][m_mapSort[iX][iY][1]];
+				//tileNumber = m_map[iX][iY];
 			}
 			else tileNumber = -10000;
 
@@ -408,8 +386,8 @@ void Map::sortMapValue()
 	{
 		for (int z = 0; z < m_mapSize; ++z)
 		{
-			_mapSort[i][z][0] = i;
-			_mapSort[i][z][1] = z;
+			m_mapSort[i][z][0] = i;
+			m_mapSort[i][z][1] = z;
 		}
 	}
 
@@ -422,23 +400,23 @@ void Map::sortMapValue()
 		{
 			next = z + 1;
 
-			iIndex = _mapSort[i][z][0];
-			zIndex = _mapSort[i][z][1];
+			iIndex = m_mapSort[i][z][0];
+			zIndex = m_mapSort[i][z][1];
 
 			for (int q = i; q < m_mapSize; ++q)
 			{
 				for (int m = next; m < m_mapSize; ++m)
 				{
-					qIndex = _mapSort[q][m][0];
-					mIndex = _mapSort[q][m][1];
+					qIndex = m_mapSort[q][m][0];
+					mIndex = m_mapSort[q][m][1];
 
-					if (_map[iIndex][zIndex] < _map[qIndex][mIndex])
+					if (m_map[iIndex][zIndex] < m_map[qIndex][mIndex])
 					{
-						_mapSort[q][m][0] = iIndex;
-						_mapSort[q][m][1] = zIndex;
+						m_mapSort[q][m][0] = iIndex;
+						m_mapSort[q][m][1] = zIndex;
 
-						_mapSort[i][z][0] = qIndex;
-						_mapSort[i][z][1] = mIndex;
+						m_mapSort[i][z][0] = qIndex;
+						m_mapSort[i][z][1] = mIndex;
 
 						iIndex = qIndex;
 						zIndex = mIndex;

@@ -5,14 +5,10 @@
 
 
 //create the grid here so it stays in the heap
-//float dsMap[G_mapAlloc][G_mapAlloc];
-//int dsMapIndex[G_mapAlloc][G_mapAlloc][2];
 
-static const int mapSize = 50;
+int main() {
 
-int main(int argc, char** argv) {
-
-
+    static const int mapSize = 50;
 
    
     //----GRID VARIABLES----
@@ -40,6 +36,7 @@ int main(int argc, char** argv) {
 
 
 
+
     //----VIEW SETUP/SFML----
 
     //only window view for the game
@@ -54,8 +51,6 @@ int main(int argc, char** argv) {
     sf::Vector2i resTiles;
     resTiles.x = ceil(resPixels.x / tileSize.x)*2;
     resTiles.y = ceil(resPixels.y / tileSize.y);
-
-
 
 
     //create the buffers and sprites used to draw the map and gui
@@ -111,9 +106,13 @@ int main(int argc, char** argv) {
     ds.drawMap(bufferMap, tileSize, viewPos, resTiles, true, "../sprites/blockOfRock.png");
 
 
+
+
     //----MAIN LOOP----
 
     while (window.isOpen()) {
+
+
 
         //----WINDOW EVENTS----
 
@@ -147,19 +146,13 @@ int main(int argc, char** argv) {
 
 
         //move the map around and update the graphics
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) viewPos.x += 1;
+        viewPos.x += sf::Keyboard::isKeyPressed(sf::Keyboard::Right) - sf::Keyboard::isKeyPressed(sf::Keyboard::Left);
+        viewPos.y += sf::Keyboard::isKeyPressed(sf::Keyboard::Down) - sf::Keyboard::isKeyPressed(sf::Keyboard::Up);
 
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) viewPos.x -= 1;
-
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) viewPos.y -= 1;
-
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) viewPos.y += 1;
 
         bufferMap.clear(sf::Color(G_black_x, G_black_y, G_black_z));
         ds.drawMap(bufferMap, tileSize, viewPos, resTiles, true, "../sprites/blockOfRock.png");
+
 
 
 
@@ -189,6 +182,7 @@ int main(int argc, char** argv) {
 
 
 
+
         //----DRAW UPDATE-----
       
         //clear the view transparent so it doesnt cover up the main buffer!
@@ -196,7 +190,7 @@ int main(int argc, char** argv) {
 
         //Draw the coord of the mouse on the screen for debugging
         textSmall.setPosition(5, 5);
-        //textSmall.setString("Mouse Position (" + std::to_string(gridX) + ", " + std::to_string(gridY) + ") : " + std::to_string(ds._map[ds._mapSort[gridX][gridY][0]][ds._mapSort[gridX][gridY][1]]) + ", " + std::to_string(ds._mapSort[gridX][gridY][0]) + ", " + std::to_string(ds._mapSort[gridX][gridY][1]));
+        //textSmall.setString("Mouse Position (" + std::to_string(gridX) + ", " + std::to_string(gridY) + ") : " + std::to_string(ds.m_map[ds.m_mapSort[gridX][gridY][0]][ds.m_mapSort[gridX][gridY][1]]) + ", " + std::to_string(ds.m_mapSort[gridX][gridY][0]) + ", " + std::to_string(ds.m_mapSort[gridX][gridY][1]));
         bufferGUI.draw(textSmall);
         textSmall.setPosition(5, 15);
         textSmall.setString("View Position (" + std::to_string(viewPos.x) + ", " + std::to_string(viewPos.y) + ")");
@@ -208,6 +202,8 @@ int main(int argc, char** argv) {
         bufferGUI.draw(rectCursor);
 
         
+
+
        
         //----DISPLAY THE STUFF----
         
@@ -229,7 +225,9 @@ int main(int argc, char** argv) {
 
 
 
+
     //----DEBUGGING OUTPUTS----
+
     std::cout << "*****GAME TERMINATED***** " << std::endl;
     std::cout << "Window Resolution:  " << resPixels.x << " X " << resPixels.y << std::endl;
     std::cout << "Window Resolution:  "  << std::endl;

@@ -28,22 +28,27 @@ class Map : public sf::Drawable, public sf::Transformable
 
 public:
 
-	Map(int);
+	//----CONSTRUCTOR and DESTRUCTOR----
+	Map(const int _size);
 	~Map();
 
-	int*** _mapSort = new int** [G_mapAlloc];
-	float** _map = new float* [G_mapAlloc];
 
-
+	//----ARRAYS----
+	int*** m_mapSort = new int** [G_mapAlloc];
+	float** m_map = new float* [G_mapAlloc];
 
 
 	//----CREATE THE MAP----
 	void newMap( int _high = 20, float _roughness = 20, float _change = 1.4);
 
 
+
 	//---DRAW WITH VERTICES---
 	bool drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2i _pos, sf::Vector2i _gridSize, bool _solidColor = true, const std::string& _tileset = "NULL");
 
+
+
+	//----SORT MAP VALUES-----
 	void sortMapValue();
 
 private:
