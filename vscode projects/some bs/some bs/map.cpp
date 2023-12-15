@@ -2,6 +2,10 @@
 
 #include "map.hpp"
 
+
+
+//-----CONSTRUCTOR------
+
 Map::Map(const int _size)
 {
 	m_mapSize = _size;
@@ -26,6 +30,9 @@ Map::Map(const int _size)
 
 }
 
+
+//------DESTRUCTOR------
+
 Map::~Map()
 {
 	for (int i = 0; i <= m_mapSize; i++)
@@ -49,6 +56,8 @@ Map::~Map()
 
 
 
+
+//------DIAMOND SQUARE------
 
 void Map::newMap(int _high, float _roughness, float _change)
 {
@@ -230,10 +239,8 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 		for (int i = 0; i < _gridSize.x; ++i)
 		{
 
-
-			// get the current tile number
-			int iX = _position.x - z + floor((i + 1) / 2);
-			int iY = _position.y + z + floor(i / 2);
+			int iX = _position.x - floor(z / 2) + i;
+			int iY = _position.y + floor((z + 1) / 2) + i;
 
 
 
@@ -247,8 +254,8 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 
 
 
-			int posX = (i * _tileSize.x / 2);
-			int posY = z * _tileSize.y - ((i % 2) * 8);
+			int posX = (i * _tileSize.x) + ((z % 2)*_tileSize.x)/2;
+			int posY = (z * _tileSize.y)/2;
 
 
 
@@ -272,40 +279,40 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 
 				if (tileNumber != -10000)
 				{
-					//int index;
-					//// get the current tile number
+					int index;
+					// get the current tile number
 
-					//if (tileNumber < 15 && tileNumber >10)
-					//{
-					//	// find its position in the tileset texture
-					//	//int tu = index % (m_tileset.getSize().x / tileSize);
-					//	//int tv = index / (m_tileset.getSize().x / tileSize);
-					//	//int tu = tileNumber % (m_tileset.getSize().x / tileSize);
-					//	//int tv = tileNumber / (m_tileset.getSize().x / tileSize);
+					if (tileNumber < 15 && tileNumber >10)
+					{
+						// find its position in the tileset texture
+						//int tu = index % (m_tileset.getSize().x / tileSize);
+						//int tv = index / (m_tileset.getSize().x / tileSize);
+						//int tu = tileNumber % (m_tileset.getSize().x / tileSize);
+						//int tv = tileNumber / (m_tileset.getSize().x / tileSize);
 
-					//	// define the 6 matching texture coordinates
-					//	triangles[0].texCoords = sf::Vector2f(0, 0);
-					//	triangles[1].texCoords = sf::Vector2f(32, 0);
-					//	triangles[2].texCoords = sf::Vector2f(0, 32);
-					//	triangles[3].texCoords = sf::Vector2f(0, 32);
-					//	triangles[4].texCoords = sf::Vector2f(32, 0);
-					//	triangles[5].texCoords = sf::Vector2f(32, 32);
+						// define the 6 matching texture coordinates
+						triangles[0].texCoords = sf::Vector2f(0, 0);
+						triangles[1].texCoords = sf::Vector2f(32, 0);
+						triangles[2].texCoords = sf::Vector2f(0, 32);
+						triangles[3].texCoords = sf::Vector2f(0, 32);
+						triangles[4].texCoords = sf::Vector2f(32, 0);
+						triangles[5].texCoords = sf::Vector2f(32, 32);
 
-					//}
+					}
 
-					//else
-					//{
-					//	if (tileNumber < -10) { color = (sf::Color(G_dkblue_x, G_dkblue_y, G_dkblue_z)); }
-					//	else if (tileNumber < -5) { color = (sf::Color(G_blue_x, G_blue_y, G_blue_z)); }
-					//	else if (tileNumber < 0) { color = (sf::Color(G_ltblue_x, G_ltblue_y, G_ltblue_z)); }
-					//	else if (tileNumber < 5) { color = (sf::Color(G_tan_x, G_tan_y, G_tan_z)); }
-					//	else if (tileNumber < 10) { color = (sf::Color(G_green_x, G_green_y, G_green_z)); }
-					//	else if (tileNumber < 15) { color = (sf::Color(G_dkgreen_x, G_dkgreen_y, G_dkgreen_z)); }
-					//	else if (tileNumber < 20) { color = (sf::Color(G_purple_x, G_purple_y, G_purple_z)); }
-					//	else { color = (sf::Color(G_dkpurple_x, G_dkpurple_y, G_dkpurple_z)); }
-					//}
+					else
+					{
+						if (tileNumber < -10) { color = (sf::Color(G_dkblue_x, G_dkblue_y, G_dkblue_z)); }
+						else if (tileNumber < -5) { color = (sf::Color(G_blue_x, G_blue_y, G_blue_z)); }
+						else if (tileNumber < 0) { color = (sf::Color(G_ltblue_x, G_ltblue_y, G_ltblue_z)); }
+						else if (tileNumber < 5) { color = (sf::Color(G_tan_x, G_tan_y, G_tan_z)); }
+						else if (tileNumber < 10) { color = (sf::Color(G_green_x, G_green_y, G_green_z)); }
+						else if (tileNumber < 15) { color = (sf::Color(G_dkgreen_x, G_dkgreen_y, G_dkgreen_z)); }
+						else if (tileNumber < 20) { color = (sf::Color(G_purple_x, G_purple_y, G_purple_z)); }
+						else { color = (sf::Color(G_dkpurple_x, G_dkpurple_y, G_dkpurple_z)); }
+					}
 
-					color = sf::Color(5+shade, 5 + shade, 5 + shade);
+					//color = sf::Color(5+shade, 5 + shade, 5 + shade);
 				}
 				else color = sf::Color(G_black_x, G_black_y, G_black_z);
 
@@ -349,6 +356,13 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 	return true;
 }
 
+
+
+
+
+
+
+//-----SORT ARRAY LARGE TO SMALL ------
 void Map::sortMapValue()
 {
 
@@ -406,6 +420,9 @@ void Map::sortMapValue()
 
 
 
+
+
+//------DRAW VERTICE ARRAY-------
 
 void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {

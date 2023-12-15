@@ -45,12 +45,12 @@ int main() {
 
     //container for the height and width of the window
     sf::Vector2i resPixels;
-    resPixels = windowSetup(window, view, 150, false,30);
+    resPixels = windowSetup(window, view, 500, true,30);
 
     //how many grids can fit on the screen
     sf::Vector2i resTiles;
-    resTiles.x = ceil(resPixels.x / tileSize.x)*2;
-    resTiles.y = ceil(resPixels.y / tileSize.y);
+    resTiles.x = ceil(resPixels.x / tileSize.x);
+    resTiles.y = ceil(resPixels.y / tileSize.y)*2;
 
 
     //create the buffers and sprites used to draw the map and gui
@@ -96,26 +96,7 @@ int main() {
     selectionS.setOrigin(0,tileSize.y / 2);
 
 
-
-
-
-
-
-    //******TEST******
-    sf::RectangleShape isoOrder;
-    isoOrder.setSize(sf::Vector2f(5, 5));
-    isoOrder.setOrigin(0, 0);
-
-
-
-
-
-
-
-
     //----DRAW STATIC----
-
-
 
 
 
@@ -197,52 +178,14 @@ int main() {
         ds.drawMap(bufferMap, tileSize, viewPos, resTiles);
 
 
-        bufferGUI.clear(sf::Color::Transparent);
 
-        ////******TEST******
-
-        //int step1 = 1;
-        //int step2 = 0;
-
-        //int j = 21;
-        //int i = 0;
-
-        //int iter = 0;
-
-        //int k, m;
-
-        //while (j > 0)
-        //{
-        //    j -= step2;
-        //    i += step1;
-
-        //    iter += 1;
-
-        //    if (i == 20)
-        //    {
-        //        step1 = 0;
-        //        step2 = 1;
-        //    }
-
-        //    k = i;
-        //    m = j;
-
-        //    while (k > 0 && m > 0)
-        //    {
-        //        k -= 1;
-        //        m -= 1;
-        //        isoOrder.setFillColor(sf::Color(iter*5+(iter % 2)*20, iter * 5, iter * 5));
-        //        isoOrder.setPosition(k * 5, m * 5);
-        //        bufferGUI.draw(isoOrder);
-        //    }
-        //}
 
 
 
         //----DRAW UPDATE-----
       
         //clear the view transparent so it doesnt cover up the main buffer!
-
+        bufferGUI.clear(sf::Color::Transparent);
 
         //Draw the coord of the mouse on the screen for debugging
         textSmall.setPosition(5, 5);
