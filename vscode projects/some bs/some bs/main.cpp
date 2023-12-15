@@ -116,10 +116,7 @@ int main() {
     //----DRAW STATIC----
 
 
-    //clear view with a background color
-    bufferMap.clear(sf::Color(G_black_x, G_black_y, G_black_z));
-    //draw the map with vertex array
-    ds.drawMap(bufferMap, tileSize, viewPos, resTiles, true, "../sprites/blockOfRock.png");
+
 
 
 
@@ -166,10 +163,6 @@ int main() {
         viewPos.y += sf::Keyboard::isKeyPressed(sf::Keyboard::Down) - sf::Keyboard::isKeyPressed(sf::Keyboard::Up);
 
 
-        bufferMap.clear(sf::Color(G_black_x, G_black_y, G_black_z));
-        ds.drawMap(bufferMap, tileSize, viewPos, resTiles, true, "../sprites/blockOfRock.png");
-
-
 
 
 
@@ -198,46 +191,51 @@ int main() {
 
 
 
+        //clear view with a background color
+        bufferMap.clear(sf::Color(G_black_x, G_black_y, G_black_z));
+        //draw the map with vertex array
+        ds.drawMap(bufferMap, tileSize, viewPos, resTiles);
+
 
         bufferGUI.clear(sf::Color::Transparent);
 
-        //******TEST******
+        ////******TEST******
 
-        int step1 = 1;
-        int step2 = 0;
+        //int step1 = 1;
+        //int step2 = 0;
 
-        int j = 21;
-        int i = 0;
+        //int j = 21;
+        //int i = 0;
 
-        int iter = 0;
+        //int iter = 0;
 
-        int k, m;
+        //int k, m;
 
-        while (j > 0)
-        {
-            j -= step2;
-            i += step1;
+        //while (j > 0)
+        //{
+        //    j -= step2;
+        //    i += step1;
 
-            iter += 1;
+        //    iter += 1;
 
-            if (i == 20)
-            {
-                step1 = 0;
-                step2 = 1;
-            }
+        //    if (i == 20)
+        //    {
+        //        step1 = 0;
+        //        step2 = 1;
+        //    }
 
-            k = i;
-            m = j;
+        //    k = i;
+        //    m = j;
 
-            while (k > 0 && m > 0)
-            {
-                k -= 1;
-                m -= 1;
-                isoOrder.setFillColor(sf::Color(iter*5+(iter % 2)*20, iter * 5, iter * 5));
-                isoOrder.setPosition(k * 5, m * 5);
-                bufferGUI.draw(isoOrder);
-            }
-        }
+        //    while (k > 0 && m > 0)
+        //    {
+        //        k -= 1;
+        //        m -= 1;
+        //        isoOrder.setFillColor(sf::Color(iter*5+(iter % 2)*20, iter * 5, iter * 5));
+        //        isoOrder.setPosition(k * 5, m * 5);
+        //        bufferGUI.draw(isoOrder);
+        //    }
+        //}
 
 
 
