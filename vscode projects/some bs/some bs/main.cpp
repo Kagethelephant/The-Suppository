@@ -8,7 +8,7 @@
 
 int main() {
 
-    static const int mapSize = 50;
+    static const int mapSize = 100;
 
    
     //----GRID VARIABLES----
@@ -24,8 +24,8 @@ int main() {
     sf::Vector2i viewPos;
 
     //start position for the view
-    viewPos.x = 50;
-    viewPos.y = -10;
+    viewPos.x = 45;
+    viewPos.y = -5;
 
 
     //Create the diamond square object and run function to generate map
@@ -45,7 +45,7 @@ int main() {
 
     //container for the height and width of the window
     sf::Vector2i resPixels;
-    resPixels = windowSetup(window, view, 500, true,30);
+    resPixels = windowSetup(window, view, 150, false,30);
 
     //how many grids can fit on the screen
     sf::Vector2i resTiles;
@@ -97,10 +97,26 @@ int main() {
 
 
 
+
+
+
+
+    //******TEST******
+    sf::RectangleShape isoOrder;
+    isoOrder.setSize(sf::Vector2f(5, 5));
+    isoOrder.setOrigin(0, 0);
+
+
+
+
+
+
+
+
     //----DRAW STATIC----
 
 
-    //clear viewwith a background color
+    //clear view with a background color
     bufferMap.clear(sf::Color(G_black_x, G_black_y, G_black_z));
     //draw the map with vertex array
     ds.drawMap(bufferMap, tileSize, viewPos, resTiles, true, "../sprites/blockOfRock.png");
@@ -183,10 +199,52 @@ int main() {
 
 
 
+        bufferGUI.clear(sf::Color::Transparent);
+
+        //******TEST******
+
+        int step1 = 1;
+        int step2 = 0;
+
+        int j = 21;
+        int i = 0;
+
+        int iter = 0;
+
+        int k, m;
+
+        while (j > 0)
+        {
+            j -= step2;
+            i += step1;
+
+            iter += 1;
+
+            if (i == 20)
+            {
+                step1 = 0;
+                step2 = 1;
+            }
+
+            k = i;
+            m = j;
+
+            while (k > 0 && m > 0)
+            {
+                k -= 1;
+                m -= 1;
+                isoOrder.setFillColor(sf::Color(iter*5+(iter % 2)*20, iter * 5, iter * 5));
+                isoOrder.setPosition(k * 5, m * 5);
+                bufferGUI.draw(isoOrder);
+            }
+        }
+
+
+
         //----DRAW UPDATE-----
       
         //clear the view transparent so it doesnt cover up the main buffer!
-        bufferGUI.clear(sf::Color::Transparent);
+
 
         //Draw the coord of the mouse on the screen for debugging
         textSmall.setPosition(5, 5);
@@ -230,7 +288,7 @@ int main() {
 
     std::cout << "*****GAME TERMINATED***** " << std::endl;
     std::cout << "Window Resolution:  " << resPixels.x << " X " << resPixels.y << std::endl;
-    std::cout << "Window Resolution:  "  << std::endl;
+
 
     return 0;
 }

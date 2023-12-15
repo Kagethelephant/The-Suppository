@@ -8,19 +8,19 @@ Map::Map(const int _size)
 
 
 
-	for (int i = 0; i <= m_mapSize+1; i++)
+	for (int i = 0; i <= m_mapSize; i++)
 	{
-		m_mapSort[i] = new int* [m_mapSize+2];
+		m_mapSort[i] = new int* [m_mapSize+1];
 
-		for (int z = 0; z <= m_mapSize+1; z++)
+		for (int z = 0; z <= m_mapSize; z++)
 		{
 			m_mapSort[i][z] = new int[2];
 		}
 	}
 
-	for (int i = 0; i <= m_mapSize+1; i++)
+	for (int i = 0; i <= m_mapSize; i++)
 	{
-		m_map[i] = new float [m_mapSize+2];
+		m_map[i] = new float [m_mapSize+1];
 	}
 
 
@@ -28,9 +28,9 @@ Map::Map(const int _size)
 
 Map::~Map()
 {
-	for (int i = 0; i <= m_mapSize+1; i++)
+	for (int i = 0; i <= m_mapSize; i++)
 	{
-		for (int j = 0; j <= m_mapSize+1; j++)
+		for (int j = 0; j <= m_mapSize; j++)
 		{
 			delete[] m_mapSort[i][j];
 		}
@@ -40,6 +40,8 @@ Map::~Map()
 	
 	delete[] m_mapSort;
 	delete[] m_map;
+
+	std::cout << "***** MAP DESTROYED *****" << std::endl;
 
 }
 
@@ -52,21 +54,11 @@ void Map::newMap(int _high, float _roughness, float _change)
 {
 
 	//---INITIALIZE VARIABLES----
-
-	float avg;
 	int div;
 
 	//points to extrapolate from for square step
-	float x1y1;
-	float x2y1;
-	float x1y2;
-	float x2y2;
+	float avg, x1y1, x2y1, x1y2, x2y2, x1y, x2y, xy1, xy2;
 
-	//points to extrapolate from for diamond step
-	float x1y;
-	float x2y;
-	float xy1;
-	float xy2;
 
 	//create a chunk the size of the grid that will be halfed every itteration
 	float chunk = m_mapSize;
@@ -80,9 +72,9 @@ void Map::newMap(int _high, float _roughness, float _change)
 	//---INITIALIZE MAP----
 
 	//initialize the grid (1 cell grater then the size in the x and y ge
-	for (int z = 0; z < m_mapSize; ++z)
+	for (int z = 0; z <= m_mapSize; ++z)
 	{
-		for (int i = 0; i < m_mapSize; ++i)
+		for (int i = 0; i <= m_mapSize; ++i)
 		{
 			m_map[i][z] = empty;
 		}
@@ -118,15 +110,15 @@ void Map::newMap(int _high, float _roughness, float _change)
 
 
 				//grab the "X" values shown above
-				x1y1 = m_map[(int)round(i)][(int)round(z)];
-				x2y1 = m_map[(int)round(i + chunk)][(int)round(z)];
-				x1y2 = m_map[(int)round(i)][(int)round(z + chunk)];
-				x2y2 = m_map[(int)round(i + chunk)][(int)round(z + chunk)];
+				x1y1 = m_map[(int)floor(i)][(int)floor(z)];
+				x2y1 = m_map[(int)floor(i + chunk)][(int)floor(z)];
+				x1y2 = m_map[(int)floor(i)][(int)floor(z + chunk)];
+				x2y2 = m_map[(int)floor(i + chunk)][(int)floor(z + chunk)];
 
 				avg = (x1y1 + x2y1 + x1y2 + x2y2) / 4;
 
 				//set the value "0" with the average + a random value and make sure we are not overwriting other values
-				if (m_map[(int)round(i + half)][(int)round(z + half)] == empty) m_map[(int)round(i + half)][(int)round(z + half)] = avg + randRange(-_roughness, _roughness);
+				if (m_map[(int)floor(i + half)][(int)floor(z + half)] == empty) m_map[(int)floor(i + half)][(int)floor(z + half)] = avg + randRange(-_roughness, _roughness);
 			}
 		}
 
@@ -134,10 +126,12 @@ void Map::newMap(int _high, float _roughness, float _change)
 
 		//----DIAMOND----
 
-		for (float z = 0; z < m_mapSize + 1; z += half)
+		for (float z = 0; z < m_mapSize +1; z += half)
 		{
-			for (float i = fmodf((z + half), chunk); i < m_mapSize + 1; i += chunk)
+
+			for (float i = fmodf((z + half), chunk); i < m_mapSize +1; i += chunk)
 			{
+
 				// X - - - X	This is the diamond portion of the code the "X" represents
 				// - - - - -	points that have already been populated. these points are 
 				// - - 0 - -	averaged and a random value is added "roughness" to generate
@@ -157,28 +151,29 @@ void Map::newMap(int _high, float _roughness, float _change)
 
 				div = 0;
 
+
 				//grab the "X" values shown above if they are in the map bounds
-				if (i - half >= 0)
+				if (floor(i - half) >= 0)
 				{
-					x1y = m_map[(int)round(i - half)][(int)round(z)];
+					x1y = m_map[(int)floor(i - half)][(int)floor(z)];
 					div += 1;
 				}
 
-				if (i + half < m_mapSize + 1)
+				if (floor(i + half) < m_mapSize + 1)
 				{
-					x2y = m_map[(int)round(i + half)][(int)round(z)];
+					x2y = m_map[(int)floor(i + half)][(int)floor(z)];
 					div += 1;
 				}
 
-				if (z + half < m_mapSize + 1)
+				if ((int)floor(z + half) < m_mapSize + 1)
 				{
-					xy1 = m_map[(int)round(i)][(int)round(z + half)];
+					xy1 = m_map[(int)floor(i)][(int)floor(z + half)];
 					div += 1;
 				}
 
-				if (z - half >= 0)
+				if ((int)floor(z - half) >= 0)
 				{
-					xy2 = m_map[(int)round(i)][(int)round(z - half)];
+					xy2 = m_map[(int)floor(i)][(int)floor(z - half)];
 					div += 1;
 				}
 
@@ -186,7 +181,7 @@ void Map::newMap(int _high, float _roughness, float _change)
 				avg = (x1y + x2y + xy1 + xy2) / 4;
 
 				//set the value "0" (from the diagram above) with the average + a random value and make sure we are not overwriting other values
-				if (m_map[(int)round(i)][(int)round(z)] == empty) m_map[(int)round(i)][(int)round(z)] = avg + randRange(-_roughness, _roughness);
+				if (m_map[(int)floor(i)][(int)floor(z)] == empty) m_map[(int)floor(i)][(int)floor(z)] = avg + randRange(-_roughness, _roughness);
 			}
 		}
 
@@ -244,8 +239,8 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 			int tileNumber;
 			if (iX > 0 && iX < m_mapSize && iY > 0 && iY < m_mapSize)
 			{
-				tileNumber = m_map[m_mapSort[iX][iY][0]][m_mapSort[iX][iY][1]];
-				//tileNumber = m_map[iX][iY];
+				//tileNumber = m_map[m_mapSort[iX][iY][0]][m_mapSort[iX][iY][1]];
+				tileNumber = m_map[iX][iY];
 			}
 			else tileNumber = -10000;
 
