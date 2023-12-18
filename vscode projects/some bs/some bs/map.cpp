@@ -265,16 +265,22 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 			//tempprary
 			int gap = 1;
 
-			triangles[0].position = sf::Vector2f(posX + gap, posY);
-			triangles[1].position = sf::Vector2f((posX + gap + (_tileSize.x / 2)), (posY - (_tileSize.y / 2)));
-			triangles[2].position = sf::Vector2f((posX + gap + (_tileSize.x / 2)), (posY + (_tileSize.y / 2)));
-			triangles[3].position = sf::Vector2f((posX + (_tileSize.x / 2)), (posY - (_tileSize.y / 2)));
-			triangles[4].position = sf::Vector2f((posX + (_tileSize.x / 2)), (posY + (_tileSize.y / 2)));
-			triangles[5].position = sf::Vector2f(posX + _tileSize.x, posY);
+			//triangles[0].position = sf::Vector2f(posX + gap, posY);
+			//triangles[1].position = sf::Vector2f((posX + gap + (_tileSize.x / 2)), (posY - (_tileSize.y / 2)));
+			//triangles[2].position = sf::Vector2f((posX + gap + (_tileSize.x / 2)), (posY + (_tileSize.y / 2)));
+			//triangles[3].position = sf::Vector2f((posX + (_tileSize.x / 2)), (posY - (_tileSize.y / 2)));
+			//triangles[4].position = sf::Vector2f((posX + (_tileSize.x / 2)), (posY + (_tileSize.y / 2)));
+			//triangles[5].position = sf::Vector2f(posX + _tileSize.x, posY);
 
+			triangles[0].position = sf::Vector2f(posX, posY);
+			triangles[1].position = sf::Vector2f(posX + 32, posY);
+			triangles[2].position = sf::Vector2f(posX, posY + 32);
+			triangles[3].position = sf::Vector2f(posX, posY + 32);
+			triangles[4].position = sf::Vector2f(posX + 32, posY);
+			triangles[5].position = sf::Vector2f(posX + 32, posY + 32);
 
-			if (_solidColor)
-			{
+			//if (_solidColor)
+			//{
 				sf::Color color;
 
 				if (tileNumber != -10000)
@@ -282,26 +288,25 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 					int index;
 					// get the current tile number
 
-					if (tileNumber < 15 && tileNumber >10)
-					{
-						// find its position in the tileset texture
-						//int tu = index % (m_tileset.getSize().x / tileSize);
-						//int tv = index / (m_tileset.getSize().x / tileSize);
-						//int tu = tileNumber % (m_tileset.getSize().x / tileSize);
-						//int tv = tileNumber / (m_tileset.getSize().x / tileSize);
 
-						// define the 6 matching texture coordinates
-						triangles[0].texCoords = sf::Vector2f(0, 0);
-						triangles[1].texCoords = sf::Vector2f(32, 0);
-						triangles[2].texCoords = sf::Vector2f(0, 32);
-						triangles[3].texCoords = sf::Vector2f(0, 32);
-						triangles[4].texCoords = sf::Vector2f(32, 0);
-						triangles[5].texCoords = sf::Vector2f(32, 32);
+					// find its position in the tileset texture
+					//int tu = index % (m_tileset.getSize().x / tileSize);
+					//int tv = index / (m_tileset.getSize().x / tileSize);
+					//int tu = tileNumber % (m_tileset.getSize().x / tileSize);
+					//int tv = tileNumber / (m_tileset.getSize().x / tileSize);
 
-					}
+					// define the 6 matching texture coordinates
+					triangles[0].texCoords = sf::Vector2f(0, 0);
+					triangles[1].texCoords = sf::Vector2f(32, 0);
+					triangles[2].texCoords = sf::Vector2f(0, 32);
+					triangles[3].texCoords = sf::Vector2f(0, 32);
+					triangles[4].texCoords = sf::Vector2f(32, 0);
+					triangles[5].texCoords = sf::Vector2f(32, 32);
 
-					else
-					{
+					
+
+					//else
+					//{
 						if (tileNumber < -10) { color = (sf::Color(G_dkblue_x, G_dkblue_y, G_dkblue_z)); }
 						else if (tileNumber < -5) { color = (sf::Color(G_blue_x, G_blue_y, G_blue_z)); }
 						else if (tileNumber < 0) { color = (sf::Color(G_ltblue_x, G_ltblue_y, G_ltblue_z)); }
@@ -310,49 +315,50 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 						else if (tileNumber < 15) { color = (sf::Color(G_dkgreen_x, G_dkgreen_y, G_dkgreen_z)); }
 						else if (tileNumber < 20) { color = (sf::Color(G_purple_x, G_purple_y, G_purple_z)); }
 						else { color = (sf::Color(G_dkpurple_x, G_dkpurple_y, G_dkpurple_z)); }
-					}
+					//}
 
 					//color = sf::Color(5+shade, 5 + shade, 5 + shade);
 				}
-				else color = sf::Color(G_black_x, G_black_y, G_black_z);
+				//else color = sf::Color(G_black_x, G_black_y, G_black_z);
 
 				for (int k = 0; k < 6; k += 1)
 				{
 					triangles[k].color = sf::Color(color);
 				}
 
-			}
+			//}
 
 
-			else
-			{
-				int index;
-				// get the current tile number
+			//else
+			//{
+			//	int index;
+			//	// get the current tile number
 
-				if (tileNumber < 15 && tileNumber >10) { index = 1; }
-				else { index = 0; }
+			//	if (tileNumber < 15 && tileNumber >10) { index = 1; }
+			//	else { index = 0; }
 
-				// find its position in the tileset texture
-				//int tu = index % (m_tileset.getSize().x / tileSize);
-				//int tv = index / (m_tileset.getSize().x / tileSize);
-				//int tu = tileNumber % (m_tileset.getSize().x / tileSize);
-				//int tv = tileNumber / (m_tileset.getSize().x / tileSize);
+			//	// find its position in the tileset texture
+			//	//int tu = index % (m_tileset.getSize().x / tileSize);
+			//	//int tv = index / (m_tileset.getSize().x / tileSize);
+			//	//int tu = tileNumber % (m_tileset.getSize().x / tileSize);
+			//	//int tv = tileNumber / (m_tileset.getSize().x / tileSize);
 
-				// define the 6 matching texture coordinates
-				triangles[0].position = sf::Vector2f(0, 0);
-				triangles[1].position = sf::Vector2f(32, 0);
-				triangles[2].position = sf::Vector2f(0, 32);
-				triangles[3].position = sf::Vector2f(0, 32);
-				triangles[4].position = sf::Vector2f(32, 0);
-				triangles[5].position = sf::Vector2f(32, 32);
+			//	// define the 6 matching texture coordinates
+			//	triangles[0].position = sf::Vector2f(0, 0);
+			//	triangles[1].position = sf::Vector2f(32, 0);
+			//	triangles[2].position = sf::Vector2f(0, 32);
+			//	triangles[3].position = sf::Vector2f(0, 32);
+			//	triangles[4].position = sf::Vector2f(32, 0);
+			//	triangles[5].position = sf::Vector2f(32, 32);
 
-			}
+			//}
 
 		}
 	}
 
-	if (_solidColor)_target.draw(m_vertices);
-	else _target.draw(m_vertices, &m_tileset); //Need to include the texture???
+	//if (_solidColor)_target.draw(m_vertices);
+	//else _target.draw(m_vertices, &m_tileset); //Need to include the texture???
+	_target.draw(m_vertices, &m_tileset);
 	return true;
 }
 
