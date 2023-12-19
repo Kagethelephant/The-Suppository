@@ -289,7 +289,7 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 
 				if (iX > 0 && iX < m_mapSize && iY > 0 && iY < m_mapSize)
 					tileNumber = m_mapTile[iX][iY];
-				else tileNumber = -10000;
+				else tileNumber = -1000;
 
 
 				// get a pointer to the triangles' vertices of the current tile
@@ -306,41 +306,54 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 				triangles[4].position = sf::Vector2f(posX + 32, posY - (k * 16));
 				triangles[5].position = sf::Vector2f(posX + 32, posY + 32 - (k * 16));
 
+				if (tileNumber != -1000)
+				{
+					index = 0;
+					//this is where we would select the different tiles from the tileset
+					//but we are just changing the colors so we dont have to draw everyting yet
+					if (k == 0) { color = (sf::Color(G_dkblue_x, G_dkblue_y, G_dkblue_z)); }
+					else if (k == 1) { color = (sf::Color(G_blue_x, G_blue_y, G_blue_z)); }
+					else if (k == 2) { color = (sf::Color(G_ltblue_x, G_ltblue_y, G_ltblue_z)); }
+					else if (k == 3) { color = (sf::Color(G_tan_x, G_tan_y, G_tan_z)); }
+					else if (k == 4) { color = (sf::Color(G_green_x, G_green_y, G_green_z)); }
+					else if (k == 5) { color = (sf::Color(G_dkgreen_x, G_dkgreen_y, G_dkgreen_z)); }
+					else if (k == 6) { color = (sf::Color(G_purple_x, G_purple_y, G_purple_z)); }
+					else { color = (sf::Color(G_dkpurple_x, G_dkpurple_y, G_dkpurple_z)); }
 
+				}
+
+				else
+				{
+					index = 22;
+					color = sf::Color(G_black_x, G_black_y, G_black_z);
+				}
+
+				for (int k = 0; k < 6; k += 1)
+				{
+					triangles[k].color = sf::Color(color);
+				}
+
+				tu = 32 * (index % (m_tileset.getSize().x / 32));
+				tv = 32 * (index / (m_tileset.getSize().x / 32));
+
+				// define the 6 matching texture coordinates
+				triangles[0].texCoords = sf::Vector2f(tu + 0, tv + 0);
+				triangles[1].texCoords = sf::Vector2f(tu + 32, tv + 0);
+				triangles[2].texCoords = sf::Vector2f(tu + 0, tv + 32);
+				triangles[3].texCoords = sf::Vector2f(tu + 0, tv + 32);
+				triangles[4].texCoords = sf::Vector2f(tu + 32, tv + 0);
+				triangles[5].texCoords = sf::Vector2f(tu + 32, tv + 32);
 
 				if (tileNumber >= k)
 				{
-
-
-
 					index = 22;
 
-					if (tileNumber != -10000)
-					{
-						index = 0;
-						//this is where we would select the different tiles from the tileset
-						//but we are just changing the colors so we dont have to draw everyting yet
-						if (k == 0) { color = (sf::Color(G_dkblue_x, G_dkblue_y, G_dkblue_z)); }
-						else if (k == 1) { color = (sf::Color(G_blue_x, G_blue_y, G_blue_z)); }
-						else if (k == 2) { color = (sf::Color(G_ltblue_x, G_ltblue_y, G_ltblue_z)); }
-						else if (k == 3) { color = (sf::Color(G_tan_x, G_tan_y, G_tan_z)); }
-						else if (k == 4) { color = (sf::Color(G_green_x, G_green_y, G_green_z)); }
-						else if (k == 5) { color = (sf::Color(G_dkgreen_x, G_dkgreen_y, G_dkgreen_z)); }
-						else if (k == 6) { color = (sf::Color(G_purple_x, G_purple_y, G_purple_z)); }
-						else { color = (sf::Color(G_dkpurple_x, G_dkpurple_y, G_dkpurple_z)); }
 
-					}
 
-					else
-					{
-						index = 22;
-						color = sf::Color(G_black_x, G_black_y, G_black_z);
-					}
-
-					for (int k = 0; k < 6; k += 1)
-					{
-						triangles[k].color = sf::Color(color);
-					}
+				}
+				else if (k == 3)
+				{
+					index = 0;
 
 					tu = 32 * (index % (m_tileset.getSize().x / 32));
 					tv = 32 * (index / (m_tileset.getSize().x / 32));
@@ -353,6 +366,10 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 					triangles[4].texCoords = sf::Vector2f(tu + 32, tv + 0);
 					triangles[5].texCoords = sf::Vector2f(tu + 32, tv + 32);
 
+					for (int k = 0; k < 6; k += 1)
+					{
+						triangles[k].color = sf::Color(G_ltblue_x, G_ltblue_y, G_ltblue_z,1);
+					}
 				}
 				else
 				{
