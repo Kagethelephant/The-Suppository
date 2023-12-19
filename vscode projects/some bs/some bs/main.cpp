@@ -45,7 +45,7 @@ int main() {
 
     //container for the height and width of the window
     sf::Vector2i resPixels;
-    resPixels = windowSetup(window, view, 150, false,30);
+    resPixels = windowSetup(window, view, 500, true,30);
 
     //how many grids can fit on the screen
     sf::Vector2i resTiles;
@@ -162,7 +162,7 @@ int main() {
         int gridY = viewPos.y + floor(mouseGrid.y / c);
 
         int winX = (gridX-viewPos.x) * 16 + (gridY - viewPos.y) * 16;
-        int winY = (gridY - viewPos.y) * 8 - (gridX - viewPos.x) * 8;
+        int winY = (gridY - viewPos.y) * 8 - (gridX - viewPos.x) * 8 + 8;
 
         if (gridX > mapSize - 1) gridX = mapSize - 1;
         if (gridY > mapSize - 1) gridY = mapSize - 1;
@@ -200,6 +200,8 @@ int main() {
         rectCursor.setPosition(mousePos.x, mousePos.y);
         bufferGUI.draw(rectCursor);
 
+        selectionS.setPosition(winX, winY);
+        bufferGUI.draw(selectionS);
         
 
 
@@ -214,9 +216,6 @@ int main() {
         //do the same as above but for the GUI
         bufferGUI.display(); 
         window.draw(bufferSpriteGUI);
-
-        selectionS.setPosition(winX, winY);
-        window.draw(selectionS);
 
         // Display the window to the screen
         window.display();

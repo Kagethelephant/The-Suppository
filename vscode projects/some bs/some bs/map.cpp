@@ -214,63 +214,50 @@ void Map::newMap(int _high, float _roughness, float _change)
 
 bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2i _position, sf::Vector2i _gridSize, const std::string& _tileset)
 {
-
-	bool _solidColor = false;
-	if (_tileset == "NULL")
-		_solidColor = true;
-	else if (!m_tileset.loadFromFile(_tileset))
+	if (!m_tileset.loadFromFile(_tileset))
 		return -1;
 
+	_gridSize.x += 2;
+	_gridSize.y += 2;
+	_position.y -= 2;
 
-	int shade = 0;
+	int tileNumber;
+	int index;
 
-	//gap in between the cells
-	int gap = 1;
+	int iX, iY;
+	int posX, posY;
+	int tu, tv;
+
+
 
 	// resize the vertex array to fit the level size
 	m_vertices.setPrimitiveType(sf::Triangles);
-	m_vertices.resize(_gridSize.x * _gridSize.y * 6);
+	m_vertices.resize((_gridSize.x) * (_gridSize.y) * 6);
 
 	// populate the vertex array, with two triangles per tile
 	for (int z = 0; z < _gridSize.y; ++z)
 	{
-		shade += 25;
-
 		for (int i = 0; i < _gridSize.x; ++i)
 		{
 
-			int iX = _position.x - floor(z / 2) + i;
-			int iY = _position.y + floor((z + 1) / 2) + i;
 
+			posX = (((i) * _tileSize.x) + ((z % 2) * _tileSize.x) / 2) - _tileSize.x;
+			posY = (((z) * _tileSize.y) / 2) - _tileSize.y;
 
+			iX = _position.x - floor(z / 2) + i;
+			iY = _position.y + floor((z + 1) / 2) + i;
 
-			int tileNumber;
+			
 			if (iX > 0 && iX < m_mapSize && iY > 0 && iY < m_mapSize)
-			{
-				//tileNumber = m_map[m_mapSort[iX][iY][0]][m_mapSort[iX][iY][1]];
 				tileNumber = m_map[iX][iY];
-			}
 			else tileNumber = -10000;
-
-
-
-			int posX = (i * _tileSize.x) + ((z % 2)*_tileSize.x)/2;
-			int posY = (z * _tileSize.y)/2;
 
 
 
 			// get a pointer to the triangles' vertices of the current tile
 			sf::Vertex* triangles = &m_vertices[(i + z * _gridSize.x) * 6];
 
-			//tempprary
-			int gap = 1;
 
-			//triangles[0].position = sf::Vector2f(posX + gap, posY);
-			//triangles[1].position = sf::Vector2f((posX + gap + (_tileSize.x / 2)), (posY - (_tileSize.y / 2)));
-			//triangles[2].position = sf::Vector2f((posX + gap + (_tileSize.x / 2)), (posY + (_tileSize.y / 2)));
-			//triangles[3].position = sf::Vector2f((posX + (_tileSize.x / 2)), (posY - (_tileSize.y / 2)));
-			//triangles[4].position = sf::Vector2f((posX + (_tileSize.x / 2)), (posY + (_tileSize.y / 2)));
-			//triangles[5].position = sf::Vector2f(posX + _tileSize.x, posY);
 
 			triangles[0].position = sf::Vector2f(posX, posY);
 			triangles[1].position = sf::Vector2f(posX + 32, posY);
@@ -279,86 +266,55 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 			triangles[4].position = sf::Vector2f(posX + 32, posY);
 			triangles[5].position = sf::Vector2f(posX + 32, posY + 32);
 
-			//if (_solidColor)
-			//{
+
 				sf::Color color;
+				index = 22;
 
 				if (tileNumber != -10000)
 				{
-					int index;
-					// get the current tile number
+					index = 0;
+					//this is where we would select the different tiles from the tileset
+					//but we are just changing the colors so we dont have to draw everyting yet
+					if (tileNumber < -10) { color = (sf::Color(G_dkblue_x, G_dkblue_y, G_dkblue_z)); }
+					else if (tileNumber < -5) { color = (sf::Color(G_blue_x, G_blue_y, G_blue_z)); }
+					else if (tileNumber < 0) { color = (sf::Color(G_ltblue_x, G_ltblue_y, G_ltblue_z)); }
+					else if (tileNumber < 5) { color = (sf::Color(G_tan_x, G_tan_y, G_tan_z)); }
+					else if (tileNumber < 10) { color = (sf::Color(G_green_x, G_green_y, G_green_z)); }
+					else if (tileNumber < 15) { color = (sf::Color(G_dkgreen_x, G_dkgreen_y, G_dkgreen_z)); }
+					else if (tileNumber < 20) { color = (sf::Color(G_purple_x, G_purple_y, G_purple_z)); }
+					else { color = (sf::Color(G_dkpurple_x, G_dkpurple_y, G_dkpurple_z)); }
 
-
-					// find its position in the tileset texture
-					//int tu = index % (m_tileset.getSize().x / tileSize);
-					//int tv = index / (m_tileset.getSize().x / tileSize);
-					//int tu = tileNumber % (m_tileset.getSize().x / tileSize);
-					//int tv = tileNumber / (m_tileset.getSize().x / tileSize);
-
-					// define the 6 matching texture coordinates
-					triangles[0].texCoords = sf::Vector2f(0, 0);
-					triangles[1].texCoords = sf::Vector2f(32, 0);
-					triangles[2].texCoords = sf::Vector2f(0, 32);
-					triangles[3].texCoords = sf::Vector2f(0, 32);
-					triangles[4].texCoords = sf::Vector2f(32, 0);
-					triangles[5].texCoords = sf::Vector2f(32, 32);
-
-					
-
-					//else
-					//{
-						if (tileNumber < -10) { color = (sf::Color(G_dkblue_x, G_dkblue_y, G_dkblue_z)); }
-						else if (tileNumber < -5) { color = (sf::Color(G_blue_x, G_blue_y, G_blue_z)); }
-						else if (tileNumber < 0) { color = (sf::Color(G_ltblue_x, G_ltblue_y, G_ltblue_z)); }
-						else if (tileNumber < 5) { color = (sf::Color(G_tan_x, G_tan_y, G_tan_z)); }
-						else if (tileNumber < 10) { color = (sf::Color(G_green_x, G_green_y, G_green_z)); }
-						else if (tileNumber < 15) { color = (sf::Color(G_dkgreen_x, G_dkgreen_y, G_dkgreen_z)); }
-						else if (tileNumber < 20) { color = (sf::Color(G_purple_x, G_purple_y, G_purple_z)); }
-						else { color = (sf::Color(G_dkpurple_x, G_dkpurple_y, G_dkpurple_z)); }
-					//}
-
-					//color = sf::Color(5+shade, 5 + shade, 5 + shade);
 				}
-				//else color = sf::Color(G_black_x, G_black_y, G_black_z);
+
+				else 
+				{
+					index = 22;
+					color = sf::Color(G_black_x, G_black_y, G_black_z);
+				}
 
 				for (int k = 0; k < 6; k += 1)
 				{
 					triangles[k].color = sf::Color(color);
 				}
 
-			//}
+				tu = 32 * (index % (m_tileset.getSize().x / 32));
+				tv = 32 * (index / (m_tileset.getSize().x / 32));
 
+				// define the 6 matching texture coordinates
+				triangles[0].texCoords = sf::Vector2f(tu + 0, tv + 0);
+				triangles[1].texCoords = sf::Vector2f(tu + 32, tv + 0);
+				triangles[2].texCoords = sf::Vector2f(tu + 0, tv + 32);
+				triangles[3].texCoords = sf::Vector2f(tu + 0, tv + 32);
+				triangles[4].texCoords = sf::Vector2f(tu + 32, tv + 0);
+				triangles[5].texCoords = sf::Vector2f(tu + 32, tv + 32);
 
-			//else
-			//{
-			//	int index;
-			//	// get the current tile number
-
-			//	if (tileNumber < 15 && tileNumber >10) { index = 1; }
-			//	else { index = 0; }
-
-			//	// find its position in the tileset texture
-			//	//int tu = index % (m_tileset.getSize().x / tileSize);
-			//	//int tv = index / (m_tileset.getSize().x / tileSize);
-			//	//int tu = tileNumber % (m_tileset.getSize().x / tileSize);
-			//	//int tv = tileNumber / (m_tileset.getSize().x / tileSize);
-
-			//	// define the 6 matching texture coordinates
-			//	triangles[0].position = sf::Vector2f(0, 0);
-			//	triangles[1].position = sf::Vector2f(32, 0);
-			//	triangles[2].position = sf::Vector2f(0, 32);
-			//	triangles[3].position = sf::Vector2f(0, 32);
-			//	triangles[4].position = sf::Vector2f(32, 0);
-			//	triangles[5].position = sf::Vector2f(32, 32);
-
-			//}
 
 		}
 	}
 
-	//if (_solidColor)_target.draw(m_vertices);
-	//else _target.draw(m_vertices, &m_tileset); //Need to include the texture???
-	_target.draw(m_vertices, &m_tileset);
+
+	_target.draw(m_vertices, &m_tileset); //Need to include the texture???
+
 	return true;
 }
 
