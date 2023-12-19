@@ -34,8 +34,9 @@ public:
 
 
 	//----ARRAYS----
-	int*** m_mapSort = new int** [G_mapAlloc];
-	float** m_map = new float* [G_mapAlloc];
+	short int*** m_mapSort = new short int** [G_mapAlloc];
+	short int** m_mapTile = new short int* [G_mapAlloc];
+	short int** m_map = new short int* [G_mapAlloc];
 
 
 	//----CREATE THE MAP----
@@ -57,6 +58,6 @@ private:
 	virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 
 	int m_mapSize;
-	sf::VertexArray m_vertices;
+	sf::VertexArray m_vertices[8];
 	sf::Texture m_tileset;
 };
