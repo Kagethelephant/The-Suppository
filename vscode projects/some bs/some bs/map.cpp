@@ -256,7 +256,7 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 		return -1;
 
 	_gridSize.x += 2;
-	_gridSize.y += 2;
+	_gridSize.y += 18;
 	_position.y -= 2;
 
 	int tileNumber;
@@ -281,7 +281,6 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 		{
 			for (int i = 0; i < _gridSize.x; ++i)
 			{
-
 
 
 				iX = _position.x - floor(z / 2) + i;
@@ -309,7 +308,7 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 
 
 
-				if (tileNumber == k)
+				if (tileNumber >= k)
 				{
 
 
@@ -321,13 +320,13 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 						index = 0;
 						//this is where we would select the different tiles from the tileset
 						//but we are just changing the colors so we dont have to draw everyting yet
-						if (tileNumber == 0) { color = (sf::Color(G_dkblue_x, G_dkblue_y, G_dkblue_z)); }
-						else if (tileNumber == 1) { color = (sf::Color(G_blue_x, G_blue_y, G_blue_z)); }
-						else if (tileNumber == 2) { color = (sf::Color(G_ltblue_x, G_ltblue_y, G_ltblue_z)); }
-						else if (tileNumber == 3) { color = (sf::Color(G_tan_x, G_tan_y, G_tan_z)); }
-						else if (tileNumber == 4) { color = (sf::Color(G_green_x, G_green_y, G_green_z)); }
-						else if (tileNumber == 5) { color = (sf::Color(G_dkgreen_x, G_dkgreen_y, G_dkgreen_z)); }
-						else if (tileNumber == 6) { color = (sf::Color(G_purple_x, G_purple_y, G_purple_z)); }
+						if (k == 0) { color = (sf::Color(G_dkblue_x, G_dkblue_y, G_dkblue_z)); }
+						else if (k == 1) { color = (sf::Color(G_blue_x, G_blue_y, G_blue_z)); }
+						else if (k == 2) { color = (sf::Color(G_ltblue_x, G_ltblue_y, G_ltblue_z)); }
+						else if (k == 3) { color = (sf::Color(G_tan_x, G_tan_y, G_tan_z)); }
+						else if (k == 4) { color = (sf::Color(G_green_x, G_green_y, G_green_z)); }
+						else if (k == 5) { color = (sf::Color(G_dkgreen_x, G_dkgreen_y, G_dkgreen_z)); }
+						else if (k == 6) { color = (sf::Color(G_purple_x, G_purple_y, G_purple_z)); }
 						else { color = (sf::Color(G_dkpurple_x, G_dkpurple_y, G_dkpurple_z)); }
 
 					}

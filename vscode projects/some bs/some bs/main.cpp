@@ -8,7 +8,7 @@
 
 int main() {
 
-    static const int mapSize = 100;
+    static const int mapSize = 200;
 
    
     //----GRID VARIABLES----
@@ -45,7 +45,7 @@ int main() {
 
     //container for the height and width of the window
     sf::Vector2i resPixels;
-    resPixels = windowSetup(window, view, 300, false,30);
+    resPixels = windowSetup(window, view, 150, false,30);
 
     //how many grids can fit on the screen
     sf::Vector2i resTiles;
