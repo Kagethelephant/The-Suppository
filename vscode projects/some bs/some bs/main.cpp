@@ -3,9 +3,6 @@
 #include "main.hpp"
 
 
-
-//create the grid here so it stays in the heap
-
 int main() {
 
     static const int mapSize = 200;
@@ -32,7 +29,7 @@ int main() {
     Map ds(mapSize);
     ds.newMap();
     ds.sortMapValue();
-
+    ds.erode(1);
 
 
 
@@ -45,7 +42,7 @@ int main() {
 
     //container for the height and width of the window
     sf::Vector2i resPixels;
-    resPixels = windowSetup(window, view, 300, false,30);
+    resPixels = windowSetup(window, view, 250, false,30);
 
     //how many grids can fit on the screen
     sf::Vector2i resTiles;
@@ -176,7 +173,7 @@ int main() {
         bufferMap.clear(sf::Color(G_black_x, G_black_y, G_black_z));
         //draw the map with vertex array
         ds.drawMap(bufferMap, tileSize, viewPos, resTiles, "../sprites/blockOfRock.png");
-
+        ds.miniMap(bufferMap);
 
 
 
@@ -190,7 +187,7 @@ int main() {
         //Draw the coord of the mouse on the screen for debugging
         textSmall.setPosition(5, 5);
         //textSmall.setString("Mouse Position (" + std::to_string(gridX) + ", " + std::to_string(gridY) + ") : " + std::to_string(ds.m_map[ds.m_mapSort[gridX][gridY][0]][ds.m_mapSort[gridX][gridY][1]]) + ", " + std::to_string(ds.m_mapSort[gridX][gridY][0]) + ", " + std::to_string(ds.m_mapSort[gridX][gridY][1]));
-        textSmall.setString("Mouse Position (" + std::to_string(gridX) + ", " + std::to_string(gridY) + ") : " + std::to_string(ds.m_map[gridX][gridY]));
+        textSmall.setString("Mouse Position (" + std::to_string(gridX) + ", " + std::to_string(gridY) + ") : " + std::to_string(ds.m_moisture[gridX][gridY]));
         bufferGUI.draw(textSmall);
         textSmall.setPosition(5, 15);
         textSmall.setString("View Position (" + std::to_string(viewPos.x) + ", " + std::to_string(viewPos.y) + ")");

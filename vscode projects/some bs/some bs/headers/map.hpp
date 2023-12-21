@@ -36,11 +36,18 @@ public:
 	//----ARRAYS----
 	short int*** m_mapSort = new short int** [G_mapAlloc];
 	short int** m_mapTile = new short int* [G_mapAlloc];
-	short int** m_map = new short int* [G_mapAlloc];
+	float** m_map = new float* [G_mapAlloc];
+	float** m_moisture = new float* [G_mapAlloc];
 
 
 	//----CREATE THE MAP----
-	void newMap( int _high = 20, float _roughness = 40, float _change = 1.6);
+	void newMap(float _roughness = 40, float _change = 1.6);
+
+
+	void erode(int _iter);
+
+
+	void miniMap(sf::RenderTarget& _target);
 
 
 	int findTile(int _i, int _z);
@@ -61,5 +68,6 @@ private:
 
 	int m_mapSize;
 	sf::VertexArray m_vertices[8];
+	sf::VertexArray m_vertices2;
 	sf::Texture m_tileset;
 };

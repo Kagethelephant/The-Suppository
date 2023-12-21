@@ -19,17 +19,36 @@ Map::Map(const int _size)
 		for (int z = 0; z <= m_mapSize; z++)
 		{
 			m_mapSort[i][z] = new short int[2];
+			m_mapSort[i][z][0] = -1000;
+			m_mapSort[i][z][1] = -1000;
 		}
 	}
 
 	for (int i = 0; i <= m_mapSize; i++)
 	{
-		m_map[i] = new short int [m_mapSize+1];
+		m_map[i] = new float [m_mapSize+1];
+		for (int j = 0; j < m_mapSize + 1; j++)
+		{
+			m_map[i][j] = -1000;
+		}
+	}
+
+	for (int i = 0; i <= m_mapSize; i++)
+	{
+		m_moisture[i] = new float[m_mapSize + 1];
+		for (int j = 0; j < m_mapSize + 1; j++)
+		{
+			m_moisture[i][j] = 0;
+		}
 	}
 
 	for (int i = 0; i <= m_mapSize; i++)
 	{
 		m_mapTile[i] = new short int[m_mapSize + 1];
+		for (int j = 0; j < m_mapSize + 1; j++)
+		{
+			m_mapTile[i][j] = -1000;
+		}
 	}
 
 
@@ -48,9 +67,11 @@ Map::~Map()
 		}
 		delete[] m_mapSort[i];
 		delete[] m_mapTile[i];
+		delete[] m_moisture[i];
 		delete[] m_map[i];
 	}
 	
+	delete[] m_moisture;
 	delete[] m_mapSort;
 	delete[] m_mapTile;
 	delete[] m_map;
@@ -66,14 +87,24 @@ Map::~Map()
 
 //------DIAMOND SQUARE------
 
-void Map::newMap(int _high, float _roughness, float _change)
+void Map::newMap( float _roughness, float _change)
 {
 
 	//---INITIALIZE VARIABLES----
 	int div;
 
 	//points to extrapolate from for square step
-	int avg, x1y1, x2y1, x1y2, x2y2, x1y, x2y, xy1, xy2;
+	float avg, x1y1, x2y1, x1y2, x2y2, x1y, x2y, xy1, xy2;
+
+	int step1 = -25;
+	int step2 = -15;
+	int step3 = -5;
+	int step4 = 0;
+	int step5 = 10;
+	int step6 = 20;
+	int step7 = 30;
+
+
 
 
 
@@ -82,7 +113,7 @@ void Map::newMap(int _high, float _roughness, float _change)
 	//to find the center of the chunk we are working with
 	float half = m_mapSize / 2;
 	//to initialize the grid so we know if we missed one
-	int empty = -1000;
+	float empty = -1000.0;
 
 
 
@@ -133,7 +164,7 @@ void Map::newMap(int _high, float _roughness, float _change)
 				x2y2 = m_map[(int)floor(i + chunk)][(int)floor(z + chunk)];
 
 
-				avg = round((x1y1 + x2y1 + x1y2 + x2y2) / 4);
+				avg = (x1y1 + x2y1 + x1y2 + x2y2) / 4;
 				avg += randRange(-_roughness, _roughness);
 
 				//set the value "0" with the average + a random value and make sure we are not overwriting other values
@@ -141,13 +172,13 @@ void Map::newMap(int _high, float _roughness, float _change)
 				{
 					m_map[(int)floor(i + half)][(int)floor(z + half)] = avg;
 
-					if (avg < -10)     { m_mapTile[(int)floor(i + half)][(int)floor(z + half)] = 0; }
-					else if (avg < -5) { m_mapTile[(int)floor(i + half)][(int)floor(z + half)] = 1; }
-					else if (avg < 0)  { m_mapTile[(int)floor(i + half)][(int)floor(z + half)] = 2; }
-					else if (avg < 5)  { m_mapTile[(int)floor(i + half)][(int)floor(z + half)] = 3; }
-					else if (avg < 10) { m_mapTile[(int)floor(i + half)][(int)floor(z + half)] = 4; }
-					else if (avg < 15) { m_mapTile[(int)floor(i + half)][(int)floor(z + half)] = 5; }
-					else if (avg < 20) { m_mapTile[(int)floor(i + half)][(int)floor(z + half)] = 6; }
+					if (avg < step1)     { m_mapTile[(int)floor(i + half)][(int)floor(z + half)] = 0; }
+					else if (avg < step2) { m_mapTile[(int)floor(i + half)][(int)floor(z + half)] = 1; }
+					else if (avg < step3)  { m_mapTile[(int)floor(i + half)][(int)floor(z + half)] = 2; }
+					else if (avg < step4)  { m_mapTile[(int)floor(i + half)][(int)floor(z + half)] = 3; }
+					else if (avg < step5) { m_mapTile[(int)floor(i + half)][(int)floor(z + half)] = 4; }
+					else if (avg < step6) { m_mapTile[(int)floor(i + half)][(int)floor(z + half)] = 5; }
+					else if (avg < step7) { m_mapTile[(int)floor(i + half)][(int)floor(z + half)] = 6; }
 					else               { m_mapTile[(int)floor(i + half)][(int)floor(z + half)] = 7; }
 				}
 			}
@@ -210,7 +241,7 @@ void Map::newMap(int _high, float _roughness, float _change)
 
 
 				//calculate the average and use div to only average the amount of values grabbed
-				avg = round((x1y + x2y + xy1 + xy2) / 4);
+				avg = (x1y + x2y + xy1 + xy2) / 4;
 				avg += randRange(-_roughness, _roughness);
 
 
@@ -220,13 +251,13 @@ void Map::newMap(int _high, float _roughness, float _change)
 				{
 					m_map[(int)floor(i)][(int)floor(z)] = avg;
 
-					if (avg < -10)     { m_mapTile[(int)floor(i)][(int)floor(z)] = 0; }
-					else if (avg < -5) { m_mapTile[(int)floor(i)][(int)floor(z)] = 1; }
-					else if (avg < 0)  { m_mapTile[(int)floor(i)][(int)floor(z)] = 2; }
-					else if (avg < 5)  { m_mapTile[(int)floor(i)][(int)floor(z)] = 3; }
-					else if (avg < 10) { m_mapTile[(int)floor(i)][(int)floor(z)] = 4; }
-					else if (avg < 15) { m_mapTile[(int)floor(i)][(int)floor(z)] = 5; }
-					else if (avg < 20) { m_mapTile[(int)floor(i)][(int)floor(z)] = 6; }
+					if (avg < step1)     { m_mapTile[(int)floor(i)][(int)floor(z)] = 0; }
+					else if (avg < step2) { m_mapTile[(int)floor(i)][(int)floor(z)] = 1; }
+					else if (avg < step3)  { m_mapTile[(int)floor(i)][(int)floor(z)] = 2; }
+					else if (avg < step4)  { m_mapTile[(int)floor(i)][(int)floor(z)] = 3; }
+					else if (avg < step5) { m_mapTile[(int)floor(i)][(int)floor(z)] = 4; }
+					else if (avg < step6) { m_mapTile[(int)floor(i)][(int)floor(z)] = 5; }
+					else if (avg < step7) { m_mapTile[(int)floor(i)][(int)floor(z)] = 6; }
 					else               { m_mapTile[(int)floor(i)][(int)floor(z)] = 7; }
 				}
 			}
@@ -242,6 +273,176 @@ void Map::newMap(int _high, float _roughness, float _change)
 	}
 
 }
+
+void Map::erode(int _iter)
+{
+
+	float block_H[9];
+	for (int i = 0; i < 9; i++)
+	{
+		block[i] = 1000;
+	}
+		
+
+	int _i;
+	int _z;
+
+	int min;
+	int k_min;
+
+
+	for (int k = 0; k < _iter; k++)
+	{
+		for (int i = 0; i < m_mapSize; i++)
+		{
+			for (int z = 0; z < m_mapSize; z++)
+			{
+				
+				_i = m_mapSort[i][z][0];
+				_z = m_mapSort[i][z][1];
+
+				block[0] = m_map[_i][_z];
+
+				if (block[0] <= 0)
+				{
+					m_moisture[_i][_z] = -block[0];
+				}
+				else
+				{
+
+					if (_i > 0)
+					{
+						if (_z > 0) block[1] = m_map[_i - 1][_z - 1];;
+						block[8] = m_map[_i - 1][_z];
+						if (_z < m_mapSize) block[7] = m_map[_i - 1][_z + 1];
+					}
+
+					if (_i < m_mapSize)
+					{
+						if (_z > 0) block[3] = m_map[_i + 1][_z - 1];
+						block[4] = m_map[_i + 1][_z];
+						if (_z < m_mapSize) block[5] = m_map[_i + 1][_z + 1];
+					}
+
+					if (_z > 0) block[2] = m_map[_i][_z - 1];
+					if (_z < m_mapSize) block[6] = m_map[_i][_z + 1];
+
+
+					//  [ 1 ] [ 2 ] [ 3 ]
+					// 
+					//  [ 8 ] [ 0 ] [ 4 ]
+					// 
+					//  [ 7 ] [ 6 ] [ 5 ]
+
+					k_min = 0;
+					min = block[k_min];
+
+					for (int k = 1; k < 9; k++)
+					{
+						if (block[k] < block[k_min])
+						{
+							k_min = k;
+							min = block[k];
+						}
+					}
+				}
+
+
+
+			}
+		}
+	}
+}
+
+
+
+
+
+
+
+
+void Map::miniMap(sf::RenderTarget& _target)
+{
+	int k;
+	int index;
+
+	int offsetX = 0;
+	int offsetY = 30;
+
+	int posX, posY;
+
+	sf::Color color;
+
+
+	// populate the vertex array, with two triangles per tile
+
+		// resize the vertex array to fit the level size
+		m_vertices2.setPrimitiveType(sf::Triangles);
+		m_vertices2.resize((m_mapSize) * (m_mapSize) * 6);
+
+		for (int i = 0; i < m_mapSize; ++i)
+		{
+			for (int z = 0; z < m_mapSize; ++z)
+			{
+
+
+				if (i > 0 && i < m_mapSize && z > 0 && z < m_mapSize)
+					k = m_mapTile[i][z];
+				else k = -1000;
+
+
+				// get a pointer to the triangles' vertices of the current tile
+				sf::Vertex* triangles = &m_vertices2[(i + z * m_mapSize) * 6];
+
+				posX = i + offsetX;
+				posY = z + offsetY;
+
+
+				triangles[0].position = sf::Vector2f(posX, posY);
+				triangles[1].position = sf::Vector2f(posX + 2, posY);
+				triangles[2].position = sf::Vector2f(posX, posY + 2);
+				triangles[3].position = sf::Vector2f(posX, posY + 2);
+				triangles[4].position = sf::Vector2f(posX + 2, posY);
+				triangles[5].position = sf::Vector2f(posX + 2, posY + 2);
+
+				index = 0;
+				color = (sf::Color::Transparent);
+
+				if (k != -1000)
+				{
+
+					//if (tileNumber == k)index = findTile(iX, iY);
+					//else index = 0;
+					index = 0;
+
+					//this is where we would select the different tiles from the tileset
+					//but we are just changing the colors so we dont have to draw everyting yet
+					if (k == 0) { color = (sf::Color(G_dkblue_x, G_dkblue_y, G_dkblue_z)); }
+					else if (k == 1) { color = (sf::Color(G_blue_x, G_blue_y, G_blue_z)); }
+					else if (k == 2) { color = (sf::Color(G_ltblue_x, G_ltblue_y, G_ltblue_z)); }
+					else if (k == 3) { color = (sf::Color(G_tan_x, G_tan_y, G_tan_z)); }
+					else if (k == 4) { color = (sf::Color(G_green_x, G_green_y, G_green_z)); }
+					else if (k == 5) { color = (sf::Color(G_dkgreen_x, G_dkgreen_y, G_dkgreen_z)); }
+					else if (k == 6) { color = (sf::Color(G_purple_x, G_purple_y, G_purple_z)); }
+					else { color = (sf::Color(G_dkpurple_x, G_dkpurple_y, G_dkpurple_z)); }
+
+					
+
+				}
+				for (int k = 0; k < 6; k += 1)
+				{
+					triangles[k].color = color;
+				}
+			}
+		}
+		_target.draw(m_vertices2); //Need to include the texture???
+}
+
+
+
+
+
+
 
 int Map::findTile(int _i, int _z)
 {
@@ -454,8 +655,9 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 				{					
 					if (tileNumber >= k)
 					{
-						if (tileNumber == k)index = findTile(iX, iY);
-						else index = 0;
+						//if (tileNumber == k)index = findTile(iX, iY);
+						//else index = 0;
+						index = 0;
 
 						//this is where we would select the different tiles from the tileset
 						//but we are just changing the colors so we dont have to draw everyting yet
