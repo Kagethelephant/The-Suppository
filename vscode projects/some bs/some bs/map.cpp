@@ -238,8 +238,149 @@ void Map::newMap(int _high, float _roughness, float _change)
 
 		//reduce the amount of change each iteration (higher value is smoother because its reducing the change faster)
 		_roughness /= _change;
+
 	}
 
+}
+
+int Map::findTile(int _i, int _z)
+{
+	int index = m_mapTile[_i][_z];
+	int indexNew;
+
+	int _1 = true;
+	int _2 = true;
+	int _3 = true;
+	int _4 = true;
+	int _5 = true;
+	int _6 = true;
+	int _7 = true;
+	int _8 = true;
+
+
+	//  [ 1 ] [ 2 ] [ 3 ]
+	// 
+	//  [ 8 ] [ X ] [ 4 ]
+	// 
+	//  [ 7 ] [ 6 ] [ 5 ]
+
+
+	if (_i > 0)
+	{
+		if (_z > 0) _1 = (m_mapTile[_i - 1][_z - 1] == index);
+		_8 = (m_mapTile[_i - 1][_z] == index);
+		if (_z < m_mapSize) _7= (m_mapTile[_i - 1][_z + 1] == index);
+	}
+
+	if (_i < m_mapSize)
+	{
+		if (_z > 0) _3 = (m_mapTile[_i + 1][_z - 1] == index);
+		_4 = (m_mapTile[_i + 1][_z] == index);
+		if (_z < m_mapSize) _5 = (m_mapTile[_i + 1][_z + 1] == index);
+	}
+
+	if(_z > 0) _2 = (m_mapTile[_i][_z - 1] == index);
+	if (_z < m_mapSize) _6 = (m_mapTile[_i][_z + 1] == index);
+
+
+	if (!_1 && _2 && _3 && _4 && _5 && _6 && !_7 && !_8) indexNew = 1;
+	//  X 0 0
+	//  X * 0
+	//  X 0 0
+
+	else if (_1 && _2 && _3 && _4 && !_5 && !_6 && !_7 && _8) indexNew = 2;
+	//  0 0 0
+	//  0 * 0
+	//  X X X
+
+	else if (_2 && _3 && _4 && !_6 && !_7 && !_8) indexNew = 3;
+	//    0 0
+	//  X * 0
+	//  X X  
+
+	else if (_2 && _3 && _4 && _6 && !_7 && _8) indexNew = 4;
+	//    0 0
+	//  0 * 0
+	//  X 0 
+
+	else if (_2 && !_4 && !_6 && !_8) indexNew = 5;
+	//    0  
+	//  X * X
+	//    X  
+
+	else if (_2 && !_4 && _6 && !_8) indexNew = 6;
+	//    0  
+	//  X * X
+	//    0  
+
+	else if (!_2 && _4 && !_6 && _8) indexNew = 7;
+	//    X  
+	//  0 * 0
+	//    X  
+
+	else if (!_2 && _4 && !_6 && !_8) indexNew = 8;
+	//    X 
+	//  X * 0
+	//    X  
+
+	else if (!_1 && _2 && !_3 && _4 && !_5 && _6 && !_7 && _8) indexNew = 9;
+	//  X 0 X
+	//  0 * 0
+	//  X 0 X
+
+	else if (!_1 && _2 && !_3 && _4 && !_6 && _8) indexNew = 10;
+	//  X 0 X
+	//  0 * 0
+	//    X  
+
+	else if (!_2 && _4 && !_5 && _6 && !_7 && _8) indexNew = 11;
+	//    X  
+	//  0 * 0
+	//  X 0 X
+
+	else if (!_2 && _4 && !_5 && _6 && !_8) indexNew = 12;
+	//    X  
+	//  X * 0
+	//    0 X
+
+	else if (!_2 && !_4 && _6 && !_7 && _8) indexNew = 13;
+	//    X  
+	//  0 * X
+	//  X 0  
+
+	else if (_2 && !_3 && _4 && !_6 && !_8) indexNew = 14;
+	//    0 X
+	//  X * 0
+	//    X  
+
+	else if (!_2 && !_4 && !_6 && _8) indexNew = 15;
+	//    X  
+	//  0 * X
+	//    X  
+
+	else if (!_2 && !_4 && _6 && !_8) indexNew = 16;
+	//    X  
+	//  X * X
+	//    0  
+
+	else if (!_2 && !_4 && _6 && !_7 && _8) indexNew = 17;
+	//    X  
+	//  0 * X
+	//  X 0  
+
+	else if (_1 && _2 && _3 && _4 && !_5 && _6 && !_7 && _8) indexNew = 18;
+	//  0 0 0
+	//  0 * 0
+	//  X 0 X
+
+	else if (!_1 && _2 && _3 && _4 && _5 && _6 && !_7 && _8) indexNew = 19;
+	//  X 0 0
+	//  0 * 0
+	//  X 0 0
+	else indexNew = 0;
+
+
+	return indexNew;
 }
 
 
@@ -313,7 +454,8 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 				{					
 					if (tileNumber >= k)
 					{
-						index = 0;
+						if (tileNumber == k)index = findTile(iX, iY);
+						else index = 0;
 
 						//this is where we would select the different tiles from the tileset
 						//but we are just changing the colors so we dont have to draw everyting yet

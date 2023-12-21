@@ -40,8 +40,10 @@ public:
 
 
 	//----CREATE THE MAP----
-	void newMap( int _high = 20, float _roughness = 20, float _change = 1.5);
+	void newMap( int _high = 20, float _roughness = 40, float _change = 1.6);
 
+
+	int findTile(int _i, int _z);
 
 
 	//---DRAW WITH VERTICES---
