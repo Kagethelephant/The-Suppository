@@ -118,7 +118,7 @@ void Map::newMap(int _high, float _roughness, float _change)
 				// - - - - -	averaged and a random value is added "roughness" to generate
 				// - - - - -	the "0" values. This is the initialization done above
 				// 0 - - - 0
-
+				//
 				// X - 0 - X	This is what the first iteration in this loop will look like
 				// - - - - -	 
 				// 0 - X - 0	
@@ -168,7 +168,7 @@ void Map::newMap(int _high, float _roughness, float _change)
 				// - - 0 - -	averaged and a random value is added "roughness" to generate
 				// - - - - -	the "0" values.
 				// X - - - X
-
+				//
 				// X - X - X	This is what the next iteration would look like
 				// - 0 - 0 -	 
 				// X - X - X	
@@ -250,6 +250,79 @@ void Map::newMap(int _high, float _roughness, float _change)
 
 //---DRAW WITH VERTICES---
 
+int Map::getIndex(int _x, int _y, int _quad)
+{
+	int index = m_mapTile[_x][_y];
+	int newIndex = index;
+
+	bool c1 = 1, c2 = 1, c3 = 1, c4 = 1, c5 = 1, c6 = 1, c7 = 1, c8 = 1;
+
+	if (_x > 0)
+	{
+		if (_y > 0) c1 = (index <= m_mapTile[_x - 1][_y - 1]);
+		c8 = (index <= m_mapTile[_x - 1][_y]);
+		if (_y < m_mapSize) c7 = (index <= m_mapTile[_x - 1][_y + 1]);
+	}
+
+	if (_x < m_mapSize)
+	{
+		if (_y > 0) c3 = (index <= m_mapTile[_x + 1][_y - 1]);
+		c4 = (index <= m_mapTile[_x + 1][_y]);
+		if (_y < m_mapSize) c5 = (index <= m_mapTile[_x + 1][_y + 1]);
+	}
+
+	if (_y > 0) c2 = (index <= m_mapTile[_x][_y - 1]);
+	if (_y < m_mapSize) c6 = (index <= m_mapTile[_x][_y + 1]);
+
+
+	// 1 | 3
+	// -----
+	// 2 | 4
+
+
+	if (_quad == 1)
+	{
+		if (c8 && c1 && c2) newIndex = 0;
+		else if (!c8 && c2) newIndex = 4;
+		else if (c8 && !c2) newIndex = 8;
+		else if (!c8 && !c2) newIndex = 12;
+		else if (c8 && !c1 && c2) newIndex = 16;
+	}
+
+	else if (_quad == 3)
+	{
+		if (c8 && c7 && c6) newIndex = 1;
+		else if (!c8 && c6) newIndex = 5;
+		else if (c8 && !c6) newIndex = 9;
+		else if (!c8 && !c6) newIndex = 13;
+		else if (c8 && !c7 && c6) newIndex = 17;
+	}
+
+	else if (_quad == 0)
+	{
+		if (c4 && c3 && c2) newIndex = 2;
+		else if (!c4 && c2) newIndex = 6;
+		else  if (c4 && !c2) newIndex = 10;
+		else if (!c4 && !c2) newIndex = 14;
+		else if (c4 && !c3 && c2) newIndex = 18;
+	}
+
+	else if (_quad == 2)
+	{
+		if (c4 && c5 && c6) newIndex = 3;
+		else if (!c4 && c6) newIndex = 7;
+		else if (c4 && !c6) newIndex = 11;
+		else if (!c4 && !c6) newIndex = 15;
+		else if (c4 && !c5 && c6) newIndex = 19;
+	}
+
+	return newIndex;
+}
+
+
+
+
+
 bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2i _position, sf::Vector2i _gridSize, const std::string& _tileset)
 {
 	if (!m_tileset.loadFromFile(_tileset))
@@ -261,6 +334,8 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 
 	int tileNumber;
 	int index;
+
+	int quad[4];
 
 	int iX, iY;
 	int posX, posY;
@@ -275,7 +350,7 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 	{
 		// resize the vertex array to fit the level size
 		m_vertices[k].setPrimitiveType(sf::Triangles);
-		m_vertices[k].resize((_gridSize.x) * (_gridSize.y) * 6);
+		m_vertices[k].resize((_gridSize.x) * (_gridSize.y) * 24);
 
 		for (int z = 0; z < _gridSize.y; ++z)
 		{
@@ -293,18 +368,24 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 
 
 				// get a pointer to the triangles' vertices of the current tile
-				sf::Vertex* triangles = &m_vertices[k][(i + z * _gridSize.x) * 6];
+				sf::Vertex* triangles = &m_vertices[k][(i + z * _gridSize.x) * 24];
 
 				posX = (((i)*_tileSize.x) + ((z % 2) * _tileSize.x) / 2) - _tileSize.x;
 				posY = (((z)*_tileSize.y) / 2) - _tileSize.y;
 
 
-				triangles[0].position = sf::Vector2f(posX, posY-(k*16));
-				triangles[1].position = sf::Vector2f(posX + 32, posY - (k * 16));
-				triangles[2].position = sf::Vector2f(posX, posY + 32 - (k * 16));
-				triangles[3].position = sf::Vector2f(posX, posY + 32 - (k * 16));
-				triangles[4].position = sf::Vector2f(posX + 32, posY - (k * 16));
-				triangles[5].position = sf::Vector2f(posX + 32, posY + 32 - (k * 16));
+				for (int j = 0; j < 4; j++)
+				{
+					triangles[(j * 6)].position = sf::Vector2f(posX, posY - (k * 16));
+					triangles[(j * 6) + 1].position = sf::Vector2f(posX + 32, posY - (k * 16));
+					triangles[(j * 6) + 2].position = sf::Vector2f(posX, posY + 32 - (k * 16));
+					triangles[(j * 6) + 3].position = sf::Vector2f(posX, posY + 32 - (k * 16));
+					triangles[(j * 6) + 4].position = sf::Vector2f(posX + 32, posY - (k * 16));
+					triangles[(j * 6) + 5].position = sf::Vector2f(posX + 32, posY + 32 - (k * 16));
+				}
+
+
+
 
 				index = 0;
 				color = (sf::Color::Transparent);
@@ -327,11 +408,11 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 						else { color = (sf::Color(G_dkpurple_x, G_dkpurple_y, G_dkpurple_z)); }
 
 					}
-					else if (k == 3)
-					{
-						index = 21;
-						color = sf::Color(G_blue_x, G_blue_y, G_blue_z, 150);
-					}
+					//else if (k == 3)
+					//{
+					//	index = 21;
+					//	color = sf::Color(G_blue_x, G_blue_y, G_blue_z, 150);
+					//}
 					else
 					{
 						color = (sf::Color::Transparent);
@@ -344,22 +425,28 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 					color = sf::Color(G_black_x, G_black_y, G_black_z);
 				}
 
-				for (int k = 0; k < 6; k += 1)
+				for (int k = 0; k < 24; k += 1)
 				{
 					triangles[k].color = color;
 				}
 
-				tu = 32 * (index % (m_tileset.getSize().x / 32));
-				tv = 32 * (index / (m_tileset.getSize().x / 32));
+				if (iX > 0 && iX < m_mapSize && iY > 0 && iY < m_mapSize)
+				{
+					for (int j = 0; j < 4; j++)
+					{
+						index = getIndex(iX, iY, j);
+						tu = 32 * (index % (m_tileset.getSize().x / 32));
+						tv = 32 * (index / (m_tileset.getSize().x / 32));
 
-				// define the 6 matching texture coordinates
-				triangles[0].texCoords = sf::Vector2f(tu + 0, tv + 0);
-				triangles[1].texCoords = sf::Vector2f(tu + 32, tv + 0);
-				triangles[2].texCoords = sf::Vector2f(tu + 0, tv + 32);
-				triangles[3].texCoords = sf::Vector2f(tu + 0, tv + 32);
-				triangles[4].texCoords = sf::Vector2f(tu + 32, tv + 0);
-				triangles[5].texCoords = sf::Vector2f(tu + 32, tv + 32);
-
+						// define the 6 matching texture coordinates
+						triangles[(j * 6)].texCoords = sf::Vector2f(tu + 0, tv + 0);
+						triangles[(j * 6) + 1].texCoords = sf::Vector2f(tu + 32, tv + 0);
+						triangles[(j * 6) + 2].texCoords = sf::Vector2f(tu + 0, tv + 32);
+						triangles[(j * 6) + 3].texCoords = sf::Vector2f(tu + 0, tv + 32);
+						triangles[(j * 6) + 4].texCoords = sf::Vector2f(tu + 32, tv + 0);
+						triangles[(j * 6) + 5].texCoords = sf::Vector2f(tu + 32, tv + 32);
+					}
+				}
 			}
 		}
 	}

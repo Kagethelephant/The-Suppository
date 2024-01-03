@@ -175,7 +175,7 @@ int main() {
         //clear view with a background color
         bufferMap.clear(sf::Color(G_black_x, G_black_y, G_black_z));
         //draw the map with vertex array
-        ds.drawMap(bufferMap, tileSize, viewPos, resTiles, "../sprites/blockOfRock.png");
+        ds.drawMap(bufferMap, tileSize, viewPos, resTiles, "../sprites/testTileset.png");
 
 
 

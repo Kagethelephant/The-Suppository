@@ -43,6 +43,8 @@ public:
 	void newMap( int _high = 20, float _roughness = 20, float _change = 1.5);
 
 
+	//----GET INDEX----
+	int getIndex(int _x, int _y, int _quad);
 
 	//---DRAW WITH VERTICES---
 	bool drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2i _pos, sf::Vector2i _gridSize, const std::string& _tileset = "NULL");
