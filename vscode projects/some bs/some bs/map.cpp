@@ -33,14 +33,6 @@ Map::Map(const int _size)
 		}
 	}
 
-	for (int i = 0; i <= m_mapSize; i++)
-	{
-		m_moisture[i] = new float[m_mapSize + 1];
-		for (int j = 0; j < m_mapSize + 1; j++)
-		{
-			m_moisture[i][j] = 0;
-		}
-	}
 
 	for (int i = 0; i <= m_mapSize; i++)
 	{
@@ -67,11 +59,10 @@ Map::~Map()
 		}
 		delete[] m_mapSort[i];
 		delete[] m_mapTile[i];
-		delete[] m_moisture[i];
 		delete[] m_map[i];
 	}
 	
-	delete[] m_moisture;
+
 	delete[] m_mapSort;
 	delete[] m_mapTile;
 	delete[] m_map;
@@ -274,315 +265,87 @@ void Map::newMap( float _roughness, float _change)
 
 }
 
-void Map::erode(int _iter)
-{
 
-	float block_H[9];
-	for (int i = 0; i < 9; i++)
-	{
-		block[i] = 1000;
-	}
-		
 
-	int _i;
-	int _z;
 
-	int min;
-	int k_min;
 
+//void Map::miniMap(sf::RenderTarget& _target)
+//{
+//	int k;
+//	int index;
+//
+//	int offsetX = 0;
+//	int offsetY = 30;
+//
+//	int posX, posY;
+//
+//	sf::Color color;
+//
+//
+//	// populate the vertex array, with two triangles per tile
+//
+//		// resize the vertex array to fit the level size
+//		m_vertices2.setPrimitiveType(sf::Triangles);
+//		m_vertices2.resize((m_mapSize) * (m_mapSize) * 6);
+//
+//		for (int i = 0; i < m_mapSize; ++i)
+//		{
+//			for (int z = 0; z < m_mapSize; ++z)
+//			{
+//
+//
+//				if (i > 0 && i < m_mapSize && z > 0 && z < m_mapSize)
+//					k = m_mapTile[i][z];
+//				else k = -1000;
+//
+//
+//				// get a pointer to the triangles' vertices of the current tile
+//				sf::Vertex* triangles = &m_vertices2[(i + z * m_mapSize) * 6];
+//
+//				posX = i + offsetX;
+//				posY = z + offsetY;
+//
+//
+//				triangles[0].position = sf::Vector2f(posX, posY);
+//				triangles[1].position = sf::Vector2f(posX + 2, posY);
+//				triangles[2].position = sf::Vector2f(posX, posY + 2);
+//				triangles[3].position = sf::Vector2f(posX, posY + 2);
+//				triangles[4].position = sf::Vector2f(posX + 2, posY);
+//				triangles[5].position = sf::Vector2f(posX + 2, posY + 2);
+//
+//				index = 0;
+//				color = (sf::Color::Transparent);
+//
+//				if (k != -1000)
+//				{
+//
+//					//if (tileNumber == k)index = findTile(iX, iY);
+//					//else index = 0;
+//					index = 0;
+//
+//					//this is where we would select the different tiles from the tileset
+//					//but we are just changing the colors so we dont have to draw everyting yet
+//					if (k == 0) { color = (sf::Color(G_dkblue_x, G_dkblue_y, G_dkblue_z)); }
+//					else if (k == 1) { color = (sf::Color(G_blue_x, G_blue_y, G_blue_z)); }
+//					else if (k == 2) { color = (sf::Color(G_ltblue_x, G_ltblue_y, G_ltblue_z)); }
+//					else if (k == 3) { color = (sf::Color(G_tan_x, G_tan_y, G_tan_z)); }
+//					else if (k == 4) { color = (sf::Color(G_green_x, G_green_y, G_green_z)); }
+//					else if (k == 5) { color = (sf::Color(G_dkgreen_x, G_dkgreen_y, G_dkgreen_z)); }
+//					else if (k == 6) { color = (sf::Color(G_purple_x, G_purple_y, G_purple_z)); }
+//					else { color = (sf::Color(G_dkpurple_x, G_dkpurple_y, G_dkpurple_z)); }
+//
+//					
+//
+//				}
+//				for (int k = 0; k < 6; k += 1)
+//				{
+//					triangles[k].color = color;
+//				}
+//			}
+//		}
+//		_target.draw(m_vertices2); //Need to include the texture???
+//}
 
-	for (int k = 0; k < _iter; k++)
-	{
-		for (int i = 0; i < m_mapSize; i++)
-		{
-			for (int z = 0; z < m_mapSize; z++)
-			{
-				
-				_i = m_mapSort[i][z][0];
-				_z = m_mapSort[i][z][1];
-
-				block[0] = m_map[_i][_z];
-
-				if (block[0] <= 0)
-				{
-					m_moisture[_i][_z] = -block[0];
-				}
-				else
-				{
-
-					if (_i > 0)
-					{
-						if (_z > 0) block[1] = m_map[_i - 1][_z - 1];;
-						block[8] = m_map[_i - 1][_z];
-						if (_z < m_mapSize) block[7] = m_map[_i - 1][_z + 1];
-					}
-
-					if (_i < m_mapSize)
-					{
-						if (_z > 0) block[3] = m_map[_i + 1][_z - 1];
-						block[4] = m_map[_i + 1][_z];
-						if (_z < m_mapSize) block[5] = m_map[_i + 1][_z + 1];
-					}
-
-					if (_z > 0) block[2] = m_map[_i][_z - 1];
-					if (_z < m_mapSize) block[6] = m_map[_i][_z + 1];
-
-
-					//  [ 1 ] [ 2 ] [ 3 ]
-					// 
-					//  [ 8 ] [ 0 ] [ 4 ]
-					// 
-					//  [ 7 ] [ 6 ] [ 5 ]
-
-					k_min = 0;
-					min = block[k_min];
-
-					for (int k = 1; k < 9; k++)
-					{
-						if (block[k] < block[k_min])
-						{
-							k_min = k;
-							min = block[k];
-						}
-					}
-				}
-
-
-
-			}
-		}
-	}
-}
-
-
-
-
-
-
-
-
-void Map::miniMap(sf::RenderTarget& _target)
-{
-	int k;
-	int index;
-
-	int offsetX = 0;
-	int offsetY = 30;
-
-	int posX, posY;
-
-	sf::Color color;
-
-
-	// populate the vertex array, with two triangles per tile
-
-		// resize the vertex array to fit the level size
-		m_vertices2.setPrimitiveType(sf::Triangles);
-		m_vertices2.resize((m_mapSize) * (m_mapSize) * 6);
-
-		for (int i = 0; i < m_mapSize; ++i)
-		{
-			for (int z = 0; z < m_mapSize; ++z)
-			{
-
-
-				if (i > 0 && i < m_mapSize && z > 0 && z < m_mapSize)
-					k = m_mapTile[i][z];
-				else k = -1000;
-
-
-				// get a pointer to the triangles' vertices of the current tile
-				sf::Vertex* triangles = &m_vertices2[(i + z * m_mapSize) * 6];
-
-				posX = i + offsetX;
-				posY = z + offsetY;
-
-
-				triangles[0].position = sf::Vector2f(posX, posY);
-				triangles[1].position = sf::Vector2f(posX + 2, posY);
-				triangles[2].position = sf::Vector2f(posX, posY + 2);
-				triangles[3].position = sf::Vector2f(posX, posY + 2);
-				triangles[4].position = sf::Vector2f(posX + 2, posY);
-				triangles[5].position = sf::Vector2f(posX + 2, posY + 2);
-
-				index = 0;
-				color = (sf::Color::Transparent);
-
-				if (k != -1000)
-				{
-
-					//if (tileNumber == k)index = findTile(iX, iY);
-					//else index = 0;
-					index = 0;
-
-					//this is where we would select the different tiles from the tileset
-					//but we are just changing the colors so we dont have to draw everyting yet
-					if (k == 0) { color = (sf::Color(G_dkblue_x, G_dkblue_y, G_dkblue_z)); }
-					else if (k == 1) { color = (sf::Color(G_blue_x, G_blue_y, G_blue_z)); }
-					else if (k == 2) { color = (sf::Color(G_ltblue_x, G_ltblue_y, G_ltblue_z)); }
-					else if (k == 3) { color = (sf::Color(G_tan_x, G_tan_y, G_tan_z)); }
-					else if (k == 4) { color = (sf::Color(G_green_x, G_green_y, G_green_z)); }
-					else if (k == 5) { color = (sf::Color(G_dkgreen_x, G_dkgreen_y, G_dkgreen_z)); }
-					else if (k == 6) { color = (sf::Color(G_purple_x, G_purple_y, G_purple_z)); }
-					else { color = (sf::Color(G_dkpurple_x, G_dkpurple_y, G_dkpurple_z)); }
-
-					
-
-				}
-				for (int k = 0; k < 6; k += 1)
-				{
-					triangles[k].color = color;
-				}
-			}
-		}
-		_target.draw(m_vertices2); //Need to include the texture???
-}
-
-
-
-
-
-
-
-int Map::findTile(int _i, int _z)
-{
-	int index = m_mapTile[_i][_z];
-	int indexNew;
-
-	int _1 = true;
-	int _2 = true;
-	int _3 = true;
-	int _4 = true;
-	int _5 = true;
-	int _6 = true;
-	int _7 = true;
-	int _8 = true;
-
-
-	//  [ 1 ] [ 2 ] [ 3 ]
-	// 
-	//  [ 8 ] [ X ] [ 4 ]
-	// 
-	//  [ 7 ] [ 6 ] [ 5 ]
-
-
-	if (_i > 0)
-	{
-		if (_z > 0) _1 = (m_mapTile[_i - 1][_z - 1] == index);
-		_8 = (m_mapTile[_i - 1][_z] == index);
-		if (_z < m_mapSize) _7= (m_mapTile[_i - 1][_z + 1] == index);
-	}
-
-	if (_i < m_mapSize)
-	{
-		if (_z > 0) _3 = (m_mapTile[_i + 1][_z - 1] == index);
-		_4 = (m_mapTile[_i + 1][_z] == index);
-		if (_z < m_mapSize) _5 = (m_mapTile[_i + 1][_z + 1] == index);
-	}
-
-	if(_z > 0) _2 = (m_mapTile[_i][_z - 1] == index);
-	if (_z < m_mapSize) _6 = (m_mapTile[_i][_z + 1] == index);
-
-
-	if (!_1 && _2 && _3 && _4 && _5 && _6 && !_7 && !_8) indexNew = 1;
-	//  X 0 0
-	//  X * 0
-	//  X 0 0
-
-	else if (_1 && _2 && _3 && _4 && !_5 && !_6 && !_7 && _8) indexNew = 2;
-	//  0 0 0
-	//  0 * 0
-	//  X X X
-
-	else if (_2 && _3 && _4 && !_6 && !_7 && !_8) indexNew = 3;
-	//    0 0
-	//  X * 0
-	//  X X  
-
-	else if (_2 && _3 && _4 && _6 && !_7 && _8) indexNew = 4;
-	//    0 0
-	//  0 * 0
-	//  X 0 
-
-	else if (_2 && !_4 && !_6 && !_8) indexNew = 5;
-	//    0  
-	//  X * X
-	//    X  
-
-	else if (_2 && !_4 && _6 && !_8) indexNew = 6;
-	//    0  
-	//  X * X
-	//    0  
-
-	else if (!_2 && _4 && !_6 && _8) indexNew = 7;
-	//    X  
-	//  0 * 0
-	//    X  
-
-	else if (!_2 && _4 && !_6 && !_8) indexNew = 8;
-	//    X 
-	//  X * 0
-	//    X  
-
-	else if (!_1 && _2 && !_3 && _4 && !_5 && _6 && !_7 && _8) indexNew = 9;
-	//  X 0 X
-	//  0 * 0
-	//  X 0 X
-
-	else if (!_1 && _2 && !_3 && _4 && !_6 && _8) indexNew = 10;
-	//  X 0 X
-	//  0 * 0
-	//    X  
-
-	else if (!_2 && _4 && !_5 && _6 && !_7 && _8) indexNew = 11;
-	//    X  
-	//  0 * 0
-	//  X 0 X
-
-	else if (!_2 && _4 && !_5 && _6 && !_8) indexNew = 12;
-	//    X  
-	//  X * 0
-	//    0 X
-
-	else if (!_2 && !_4 && _6 && !_7 && _8) indexNew = 13;
-	//    X  
-	//  0 * X
-	//  X 0  
-
-	else if (_2 && !_3 && _4 && !_6 && !_8) indexNew = 14;
-	//    0 X
-	//  X * 0
-	//    X  
-
-	else if (!_2 && !_4 && !_6 && _8) indexNew = 15;
-	//    X  
-	//  0 * X
-	//    X  
-
-	else if (!_2 && !_4 && _6 && !_8) indexNew = 16;
-	//    X  
-	//  X * X
-	//    0  
-
-	else if (!_2 && !_4 && _6 && !_7 && _8) indexNew = 17;
-	//    X  
-	//  0 * X
-	//  X 0  
-
-	else if (_1 && _2 && _3 && _4 && !_5 && _6 && !_7 && _8) indexNew = 18;
-	//  0 0 0
-	//  0 * 0
-	//  X 0 X
-
-	else if (!_1 && _2 && _3 && _4 && _5 && _6 && !_7 && _8) indexNew = 19;
-	//  X 0 0
-	//  0 * 0
-	//  X 0 0
-	else indexNew = 0;
-
-
-	return indexNew;
-}
 
 
 
@@ -599,22 +362,22 @@ int Map::getIndex(int _x, int _y, int _quad)
 
 	bool c1 = 1, c2 = 1, c3 = 1, c4 = 1, c5 = 1, c6 = 1, c7 = 1, c8 = 1;
 
-	if (_x > 0)
+	if (_x > 1)
 	{
-		if (_y > 0) c1 = (index <= m_mapTile[_x - 1][_y - 1]);
+		if (_y > 1) c1 = (index <= m_mapTile[_x - 1][_y - 1]);
 		c8 = (index <= m_mapTile[_x - 1][_y]);
-		if (_y < m_mapSize) c7 = (index <= m_mapTile[_x - 1][_y + 1]);
+		if (_y < m_mapSize-1) c7 = (index <= m_mapTile[_x - 1][_y + 1]);
 	}
 
-	if (_x < m_mapSize)
+	if (_x < m_mapSize-1)
 	{
-		if (_y > 0) c3 = (index <= m_mapTile[_x + 1][_y - 1]);
+		if (_y > 1) c3 = (index <= m_mapTile[_x + 1][_y - 1]);
 		c4 = (index <= m_mapTile[_x + 1][_y]);
-		if (_y < m_mapSize) c5 = (index <= m_mapTile[_x + 1][_y + 1]);
+		if (_y < m_mapSize-1) c5 = (index <= m_mapTile[_x + 1][_y + 1]);
 	}
 
-	if (_y > 0) c2 = (index <= m_mapTile[_x][_y - 1]);
-	if (_y < m_mapSize) c6 = (index <= m_mapTile[_x][_y + 1]);
+	if (_y > 1) c2 = (index <= m_mapTile[_x][_y - 1]);
+	if (_y < m_mapSize-1) c6 = (index <= m_mapTile[_x][_y + 1]);
 
 
 	// 1 | 3
@@ -736,9 +499,6 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 				{					
 					if (tileNumber >= k)
 					{
-						//if (tileNumber == k)index = findTile(iX, iY);
-						//else index = 0;
-						index = 0;
 
 						//this is where we would select the different tiles from the tileset
 						//but we are just changing the colors so we dont have to draw everyting yet
@@ -751,15 +511,6 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 						else if (k == 6) { color = (sf::Color(G_purple_x, G_purple_y, G_purple_z)); }
 						else { color = (sf::Color(G_dkpurple_x, G_dkpurple_y, G_dkpurple_z)); }
 
-					}
-					//else if (k == 3)
-					//{
-					//	index = 21;
-					//	color = sf::Color(G_blue_x, G_blue_y, G_blue_z, 150);
-					//}
-					else
-					{
-						color = (sf::Color::Transparent);
 					}
 
 				}
@@ -778,7 +529,42 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 				{
 					for (int j = 0; j < 4; j++)
 					{
-						index = getIndex(iX, iY, j);
+						if (k == tileNumber) index = getIndex(iX, iY, j);
+						else
+						{
+							switch (j) {
+							case 0:
+								index = 2;
+								break;
+							case 1:
+								index = 0;
+								break;
+							case 2:
+								index = 3;
+								break;
+							case 3:
+								index = 1;
+								break;
+							}
+						}
+
+
+						tu = 32 * (index % (m_tileset.getSize().x / 32));
+						tv = 32 * (index / (m_tileset.getSize().x / 32));
+
+						// define the 6 matching texture coordinates
+						triangles[(j * 6)].texCoords = sf::Vector2f(tu + 0, tv + 0);
+						triangles[(j * 6) + 1].texCoords = sf::Vector2f(tu + 32, tv + 0);
+						triangles[(j * 6) + 2].texCoords = sf::Vector2f(tu + 0, tv + 32);
+						triangles[(j * 6) + 3].texCoords = sf::Vector2f(tu + 0, tv + 32);
+						triangles[(j * 6) + 4].texCoords = sf::Vector2f(tu + 32, tv + 0);
+						triangles[(j * 6) + 5].texCoords = sf::Vector2f(tu + 32, tv + 32);
+					}
+				}
+				else
+				{
+					for (int j = 0; j < 4; j++)
+					{
 						tu = 32 * (index % (m_tileset.getSize().x / 32));
 						tv = 32 * (index / (m_tileset.getSize().x / 32));
 
