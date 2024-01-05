@@ -597,6 +597,86 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 
 
 
+bool Map::drawMiniMap(sf::RenderTarget& _target, int _gridSize, sf::Vector2i _pos)
+{
+
+	int tileNumber;
+
+	int posX;
+	int posY;
+
+	int s = 1;
+
+	int xOffset = _target.getSize().x - _gridSize * s;
+	int yOffset = _target.getSize().y - _gridSize * s;
+
+	sf::Color color;
+
+
+		// resize the vertex array to fit the level size
+		m_mapVertices.setPrimitiveType(sf::Triangles);
+		m_mapVertices.resize((_gridSize) * (_gridSize) * 6);
+
+		for (int z = 0; z < _gridSize; ++z)
+		{
+			for (int i = 0; i < _gridSize; ++i)
+			{
+				tileNumber = m_mapTile[i][z];
+
+				// get a pointer to the triangles' vertices of the current tile
+				sf::Vertex* triangles = &m_mapVertices[(i + z * _gridSize) * 6];
+
+				posX = xOffset + i * s;
+				posY = yOffset + z * s;
+
+				triangles[0].position = sf::Vector2f(posX, posY);
+				triangles[1].position = sf::Vector2f(posX + s, posY);
+				triangles[2].position = sf::Vector2f(posX, posY + s);
+				triangles[3].position = sf::Vector2f(posX, posY + s);
+				triangles[4].position = sf::Vector2f(posX + s, posY);
+				triangles[5].position = sf::Vector2f(posX + s, posY + s);
+
+
+				if (tileNumber != -1000)
+				{
+
+					//this is where we would select the different tiles from the tileset
+					//but we are just changing the colors so we dont have to draw everyting yet
+					if (tileNumber == 0) { color = (sf::Color(G_dkblue_x, G_dkblue_y, G_dkblue_z)); }
+					else if (tileNumber == 1) { color = (sf::Color(G_blue_x, G_blue_y, G_blue_z)); }
+					else if (tileNumber == 2) { color = (sf::Color(G_ltblue_x, G_ltblue_y, G_ltblue_z)); }
+					else if (tileNumber == 3) { color = (sf::Color(G_tan_x, G_tan_y, G_tan_z)); }
+					else if (tileNumber == 4) { color = (sf::Color(G_green_x, G_green_y, G_green_z)); }
+					else if (tileNumber == 5) { color = (sf::Color(G_dkgreen_x, G_dkgreen_y, G_dkgreen_z)); }
+					else if (tileNumber == 6) { color = (sf::Color(G_purple_x, G_purple_y, G_purple_z)); }
+					else { color = (sf::Color(G_dkpurple_x, G_dkpurple_y, G_dkpurple_z)); }
+				}
+
+
+				if (i == _pos.x && z == _pos.y) color = sf::Color::White;
+
+				for (int k = 0; k < 6; k += 1)
+				{
+					triangles[k].color = color;
+				}
+			}
+		}
+	
+
+
+	_target.draw(m_mapVertices); //Need to include the texture???
+
+
+	return true;
+}
+
+
+
+
+
+
+
+
 //-----SORT ARRAY LARGE TO SMALL ------
 void Map::sortMapValue()
 {

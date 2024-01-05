@@ -50,6 +50,7 @@ public:
 	bool drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2i _pos, sf::Vector2i _gridSize, const std::string& _tileset = "NULL");
 
 
+	bool drawMiniMap(sf::RenderTarget& _target, int _gridSize, sf::Vector2i _pos);
 
 
 	//----SORT MAP VALUES-----
@@ -61,5 +62,6 @@ private:
 
 	int m_mapSize;
 	sf::VertexArray m_vertices[8];
+	sf::VertexArray m_mapVertices;
 	sf::Texture m_tileset;
 };

@@ -45,7 +45,7 @@ int main() {
 
     //container for the height and width of the window
     sf::Vector2i resPixels;
-    resPixels = windowSetup(window, view, 200, false,30);
+    resPixels = windowSetup(window, view, 300, false,30);
 
     //how many grids can fit on the screen
     sf::Vector2i resTiles;
@@ -176,6 +176,7 @@ int main() {
         bufferMap.clear(sf::Color(G_black_x, G_black_y, G_black_z));
         //draw the map with vertex array
         ds.drawMap(bufferMap, tileSize, viewPos, resTiles, "../sprites/testTileset.png");
+        ds.drawMiniMap(bufferMap, mapSize,sf::Vector2i(gridX,gridY));
 
 
 
