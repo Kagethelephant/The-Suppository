@@ -31,7 +31,7 @@ int main() {
     //Create the diamond square object and run function to generate map
     Map ds(mapSize);
     ds.newMap();
-    //ds.sortMapValue();
+    ds.sortMapValue();
 
 
 
@@ -45,7 +45,7 @@ int main() {
 
     //container for the height and width of the window
     sf::Vector2i resPixels;
-    resPixels = windowSetup(window, view, 300, false,30);
+    resPixels = windowSetup(window, view, 200, false,30);
 
     //how many grids can fit on the screen
     sf::Vector2i resTiles;
@@ -136,8 +136,11 @@ int main() {
         //----UPDATE----
 
         // regenerate the map when the enter button is pressed
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) ds.newMap();
-
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
+        {
+            ds.newMap();
+            //ds.sortMapValue();
+        }
 
         //move the map around and update the graphics
         viewPos.x += sf::Keyboard::isKeyPressed(sf::Keyboard::Right) - sf::Keyboard::isKeyPressed(sf::Keyboard::Left);

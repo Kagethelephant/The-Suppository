@@ -36,11 +36,15 @@ public:
 	//----ARRAYS----
 	short int*** m_mapSort = new short int** [G_mapAlloc];
 	short int** m_mapTile = new short int* [G_mapAlloc];
+	float** m_moisture = new float* [G_mapAlloc];
 	float** m_map = new float* [G_mapAlloc];
 
 
 	//----CREATE THE MAP----
 	void newMap( float _roughness = 30, float _change = 1);
+
+
+	void mapErode(int _n);
 
 
 	//----GET INDEX----
