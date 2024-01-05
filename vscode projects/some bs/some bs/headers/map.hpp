@@ -40,7 +40,7 @@ public:
 
 
 	//----CREATE THE MAP----
-	void newMap( float _roughness = 20, float _change = 1.5);
+	void newMap( float _roughness = 30, float _change = 1);
 
 
 	//----GET INDEX----

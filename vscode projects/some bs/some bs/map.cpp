@@ -80,7 +80,7 @@ Map::~Map()
 
 void Map::newMap( float _roughness, float _change)
 {
-
+	float change2 = 1.2;
 	//---INITIALIZE VARIABLES----
 	int div;
 
@@ -90,13 +90,13 @@ void Map::newMap( float _roughness, float _change)
 	int step1 = -25;
 	int step2 = -15;
 	int step3 = -5;
-	int step4 = 0;
-	int step5 = 10;
-	int step6 = 20;
-	int step7 = 30;
+	int step4 = 5;
+	int step5 = 15;
+	int step6 = 25;
+	int step7 = 35;
 
 
-
+	std::cout << _change << "  " << change2 << std::endl;
 
 
 	//create a chunk the size of the grid that will be halfed every itteration
@@ -116,6 +116,7 @@ void Map::newMap( float _roughness, float _change)
 		for (int i = 0; i <= m_mapSize; ++i)
 		{
 			m_map[i][z] = empty;
+			m_mapTile[i][z] = empty;
 		}
 	}
 
@@ -260,6 +261,7 @@ void Map::newMap( float _roughness, float _change)
 
 		//reduce the amount of change each iteration (higher value is smoother because its reducing the change faster)
 		_roughness /= _change;
+		_change *= change2;
 
 	}
 

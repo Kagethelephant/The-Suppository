@@ -31,7 +31,7 @@ int main() {
     //Create the diamond square object and run function to generate map
     Map ds(mapSize);
     ds.newMap();
-    ds.sortMapValue();
+    //ds.sortMapValue();
 
 
 
@@ -136,7 +136,7 @@ int main() {
         //----UPDATE----
 
         // regenerate the map when the enter button is pressed
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) ds.newMap(mapSize);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) ds.newMap();
 
 
         //move the map around and update the graphics
