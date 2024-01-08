@@ -45,7 +45,7 @@ int main() {
 
     //container for the height and width of the window
     sf::Vector2i resPixels;
-    resPixels = windowSetup(window, view, 200, false,30);
+    resPixels = windowSetup(window, view, 500, true,30);
 
     //how many grids can fit on the screen
     sf::Vector2i resTiles;
@@ -60,8 +60,6 @@ int main() {
     bufferMap.create(resPixels.x, resPixels.y);
     bufferGUI.create(resPixels.x, resPixels.y);
 
-    sf::Sprite bufferSpriteMap(bufferMap.getTexture());
-    sf::Sprite bufferSpriteGUI(bufferGUI.getTexture());
 
 
 
@@ -147,7 +145,7 @@ int main() {
         viewPos.y += sf::Keyboard::isKeyPressed(sf::Keyboard::Down) - sf::Keyboard::isKeyPressed(sf::Keyboard::Up);
 
 
-
+      
 
 
         //----UPDATE MAKE CALCULATIONS-----     
@@ -183,9 +181,6 @@ int main() {
 
 
 
-
-
-
         //----DRAW UPDATE-----
       
         //clear the view transparent so it doesnt cover up the main buffer!
@@ -216,11 +211,11 @@ int main() {
         //display the buffer on to the window and draw the sprite 
         //on to the window (not really sure how this works honestly)
         bufferMap.display(); 
-        window.draw(bufferSpriteMap);
+        window.draw(sf::Sprite(bufferMap.getTexture()));
 
         //do the same as above but for the GUI
         bufferGUI.display(); 
-        window.draw(bufferSpriteGUI);
+        window.draw(sf::Sprite(bufferGUI.getTexture()));
 
         // Display the window to the screen
         window.display();
@@ -232,7 +227,6 @@ int main() {
     //----DEBUGGING OUTPUTS----
 
     std::cout << "*****GAME TERMINATED***** " << std::endl;
-    std::cout << "Window Resolution:  " << resPixels.x << " X " << resPixels.y << std::endl;
 
 
     return 0;

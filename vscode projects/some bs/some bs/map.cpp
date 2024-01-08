@@ -45,7 +45,7 @@ Map::Map(const int _size)
 
 	for (int i = 0; i <= m_mapSize; i++)
 	{
-		m_mapTile[i] = new short int[m_mapSize + 1];
+		m_moisture[i] = new float[m_mapSize + 1];
 		for (int j = 0; j < m_mapSize + 1; j++)
 		{
 			m_moisture[i][j] = -1000;
@@ -86,10 +86,15 @@ Map::~Map()
 
 
 
+
+
 //------DIAMOND SQUARE------
 
 void Map::newMap( float _roughness, float _change)
 {
+
+	std::cout << "MAP GENERATING ";
+
 	float change2 = 1.2;
 	//---INITIALIZE VARIABLES----
 	int div;
@@ -104,9 +109,6 @@ void Map::newMap( float _roughness, float _change)
 	int step5 = 15;
 	int step6 = 25;
 	int step7 = 35;
-
-
-	std::cout << _change << "  " << change2 << std::endl;
 
 
 	//create a chunk the size of the grid that will be halfed every itteration
@@ -143,6 +145,8 @@ void Map::newMap( float _roughness, float _change)
 
 	while (chunk > 1)
 	{
+		std::cout << ". ";
+	
 		for (float z = 0; z < m_mapSize; z += chunk)
 		{
 			for (float i = 0; i < m_mapSize; i += chunk)
@@ -189,6 +193,7 @@ void Map::newMap( float _roughness, float _change)
 		}
 
 
+		std::cout << ". ";
 
 		//----DIAMOND----
 
@@ -276,8 +281,16 @@ void Map::newMap( float _roughness, float _change)
 		_change *= change2;
 
 	}
-
+	std::cout << std::endl << std::endl;
 }
+
+
+
+
+
+
+
+
 
 void Map::mapErode(int _n)
 {
@@ -336,7 +349,7 @@ void Map::mapErode(int _n)
 								temp[k][z][0] = m_map[offsetX][offsetY];
 								temp[k][z][1] = m_moisture[offsetX][offsetY];
 								temp[k][z][2] = m_map[offsetX][offsetY]+m_moisture[offsetX][offsetY];
-								if()
+								//if()
 							}
 
 
@@ -349,8 +362,6 @@ void Map::mapErode(int _n)
 		}
 	}	
 }
-
-
 
 
 
@@ -431,6 +442,9 @@ int Map::getIndex(int _x, int _y, int _quad)
 
 	return newIndex;
 }
+
+
+
 
 
 
@@ -603,6 +617,7 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 
 
 
+
 bool Map::drawMiniMap(sf::RenderTarget& _target, int _gridSize, sf::Vector2i _pos)
 {
 
@@ -683,9 +698,11 @@ bool Map::drawMiniMap(sf::RenderTarget& _target, int _gridSize, sf::Vector2i _po
 
 
 
+
 //-----SORT ARRAY LARGE TO SMALL ------
 void Map::sortMapValue()
 {
+	std::cout << "SORTING MAP ";
 
 	int next;
 	int iIndex;
@@ -707,6 +724,8 @@ void Map::sortMapValue()
 
 	for (int i = 0; i < m_mapSize; ++i)
 	{	
+		if(i % 10 == 0)std::cout << ". ";
+
 		for (int z = 0; z < m_mapSize; ++z)
 		{
 			next = z + 1;
@@ -737,7 +756,11 @@ void Map::sortMapValue()
 			}
 		}
 	}
+
+	std::cout << std::endl << std::endl;
 }
+
+
 
 
 

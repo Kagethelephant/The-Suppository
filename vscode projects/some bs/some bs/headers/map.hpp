@@ -67,5 +67,6 @@ private:
 	int m_mapSize;
 	sf::VertexArray m_vertices[8];
 	sf::VertexArray m_mapVertices;
+	sf::Texture m_mapTexture;
 	sf::Texture m_tileset;
 };
