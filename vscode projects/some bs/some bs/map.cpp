@@ -10,6 +10,12 @@ Map::Map(const int _size)
 {
 	m_mapSize = _size;
 
+	m_layers = 8;
+	m_tileRes.x = 32;
+	m_tileRes.y = 32;
+	m_tileBaseRes.x = 32;
+	m_tileBaseRes.y = 16;
+	m_layerJump = 16;
 
 
 	for (int i = 0; i <= m_mapSize; i++)

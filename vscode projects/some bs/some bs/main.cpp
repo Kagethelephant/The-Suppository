@@ -34,7 +34,10 @@ int main() {
     ds.sortMapValue();
 
 
+    sf::RenderTexture textTest;
 
+    sf::Texture texture = textTest.getTexture();
+    
 
 
     //----VIEW SETUP/SFML----
@@ -45,7 +48,7 @@ int main() {
 
     //container for the height and width of the window
     sf::Vector2i resPixels;
-    resPixels = windowSetup(window, view, 500, true,30);
+    resPixels = windowSetup(window, view, 200, false,30);
 
     //how many grids can fit on the screen
     sf::Vector2i resTiles;

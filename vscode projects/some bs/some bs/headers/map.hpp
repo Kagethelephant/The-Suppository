@@ -65,6 +65,12 @@ private:
 	virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 
 	int m_mapSize;
+
+	int m_layers;
+	int m_layerJump;
+	sf::Vector2i m_tileRes;
+	sf::Vector2i m_tileBaseRes;
+
 	sf::VertexArray m_vertices[8];
 	sf::VertexArray m_mapVertices;
 	sf::Texture m_mapTexture;
