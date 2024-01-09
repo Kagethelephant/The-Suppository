@@ -102,7 +102,6 @@ void Map::newMap( float _roughness, float _change)
 	std::cout << "MAP GENERATING ";
 
 	float change2 = 1.2;
-	//---INITIALIZE VARIABLES----
 	int div;
 
 	//points to extrapolate from for square step

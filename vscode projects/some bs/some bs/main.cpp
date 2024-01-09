@@ -100,7 +100,23 @@ int main() {
     //----DRAW STATIC----
 
 
+    sf::RenderTexture rendTest;
+    rendTest.create(200, 200);
 
+    rendTest.clear(sf::Color::Transparent);
+    rendTest.draw(selectionS);
+    rendTest.display();
+
+    sf::Texture texture1 = rendTest.getTexture();
+
+    rendTest.clear(sf::Color::Transparent);
+    rendTest.draw(textSmall);
+    rendTest.display();
+
+    sf::Texture texture2 = rendTest.getTexture();
+
+    bufferGUI.draw(sf::Sprite(texture1));
+    bufferGUI.draw(sf::Sprite(texture2));
 
 
     //----MAIN LOOP----
