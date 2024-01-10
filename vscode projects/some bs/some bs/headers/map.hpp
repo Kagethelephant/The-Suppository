@@ -70,6 +70,7 @@ private:
 	int m_layerJump;
 	sf::Vector2i m_tileRes;
 	sf::Vector2i m_tileBaseRes;
+	sf::Vector2i m_textureRes;
 
 	sf::VertexArray m_vertices[8];
 	sf::VertexArray m_mapVertices;

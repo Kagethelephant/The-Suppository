@@ -48,7 +48,7 @@ int main() {
 
     //container for the height and width of the window
     sf::Vector2i resPixels;
-    resPixels = windowSetup(window, view, 200, false,30);
+    resPixels = windowSetup(window, view, 500, true,30);
 
     //how many grids can fit on the screen
     sf::Vector2i resTiles;
@@ -114,6 +114,9 @@ int main() {
     rendTest.display();
 
     sf::Texture texture2 = rendTest.getTexture();
+
+
+    rendTest.clear(sf::Color::Transparent);
 
     bufferGUI.draw(sf::Sprite(texture1));
     bufferGUI.draw(sf::Sprite(texture2));
@@ -203,24 +206,24 @@ int main() {
         //----DRAW UPDATE-----
       
         //clear the view transparent so it doesnt cover up the main buffer!
-        bufferGUI.clear(sf::Color::Transparent);
+        //bufferGUI.clear(sf::Color::Transparent);
 
         //Draw the coord of the mouse on the screen for debugging
         textSmall.setPosition(5, 5);
         //textSmall.setString("Mouse Position (" + std::to_string(gridX) + ", " + std::to_string(gridY) + ") : " + std::to_string(ds.m_map[ds.m_mapSort[gridX][gridY][0]][ds.m_mapSort[gridX][gridY][1]]) + ", " + std::to_string(ds.m_mapSort[gridX][gridY][0]) + ", " + std::to_string(ds.m_mapSort[gridX][gridY][1]));
         textSmall.setString("Mouse Position (" + std::to_string(gridX) + ", " + std::to_string(gridY) + ") : " + std::to_string(ds.m_map[gridX][gridY]));
-        bufferGUI.draw(textSmall);
+        //bufferGUI.draw(textSmall);
         textSmall.setPosition(5, 15);
         textSmall.setString("View Position (" + std::to_string(viewPos.x) + ", " + std::to_string(viewPos.y) + ")");
-        bufferGUI.draw(textSmall);
+        //bufferGUI.draw(textSmall);
 
 
         //Move the rectangle to the correct position before drawing
         rectCursor.setPosition(mousePos.x, mousePos.y);
-        bufferGUI.draw(rectCursor);
+        //bufferGUI.draw(rectCursor);
 
         selectionS.setPosition(winX, winY);
-        bufferGUI.draw(selectionS);
+        //bufferGUI.draw(selectionS);
         
 
 

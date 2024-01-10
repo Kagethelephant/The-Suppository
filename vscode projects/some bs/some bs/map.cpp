@@ -11,11 +11,20 @@ Map::Map(const int _size)
 	m_mapSize = _size;
 
 	m_layers = 8;
+	m_layerJump = 16;
+
 	m_tileRes.x = 32;
 	m_tileRes.y = 32;
+
 	m_tileBaseRes.x = 32;
 	m_tileBaseRes.y = 16;
-	m_layerJump = 16;
+	
+	m_textureRes.x = _size * m_tileBaseRes.y + _size * 10;
+	m_textureRes.y = _size * m_tileBaseRes.x + _size * 10;
+
+	m_mapTexture.create(m_textureRes.x, m_textureRes.y);
+
+
 
 
 	for (int i = 0; i <= m_mapSize; i++)
@@ -474,6 +483,8 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 	int tu, tv;
 
 
+
+
 	sf::Color color;
 
 
@@ -482,11 +493,11 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 	{
 		// resize the vertex array to fit the level size
 		m_vertices[k].setPrimitiveType(sf::Triangles);
-		m_vertices[k].resize((_gridSize.x) * (_gridSize.y) * 24);
+		m_vertices[k].resize((m_mapSize) * (m_mapSize) * 24);
 
-		for (int z = 0; z < _gridSize.y; ++z)
+		for (int z = 0; z < m_mapSize; ++z)
 		{
-			for (int i = 0; i < _gridSize.x; ++i)
+			for (int i = 0; i < m_mapSize; ++i)
 			{
 
 
