@@ -28,6 +28,8 @@ class Map : public sf::Drawable, public sf::Transformable
 
 public:
 
+	bool m_update;
+
 	//----CONSTRUCTOR and DESTRUCTOR----
 	Map(const int _size);
 	~Map();
@@ -64,6 +66,8 @@ private:
 	
 	virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 
+	
+
 	int m_mapSize;
 
 	int m_zLevels;
@@ -75,6 +79,9 @@ private:
 
 	sf::VertexArray m_vertices[8];
 	sf::VertexArray m_mapVertices;
-	sf::Texture m_mapTexture;
 	sf::Texture m_tileset;
+
+	sf::Sprite m_mapSprite;
+	sf::Texture m_mapTexture;
+	sf::RenderTexture m_mapBuffer;
 };

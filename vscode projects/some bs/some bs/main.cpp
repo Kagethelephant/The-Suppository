@@ -31,7 +31,7 @@ int main() {
     //Create the diamond square object and run function to generate map
     Map ds(mapSize);
     ds.newMap();
-    ds.sortMapValue();
+    //ds.sortMapValue();
 
 
     sf::RenderTexture textTest;
