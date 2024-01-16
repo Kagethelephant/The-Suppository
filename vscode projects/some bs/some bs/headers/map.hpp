@@ -66,10 +66,11 @@ private:
 
 	int m_mapSize;
 
-	int m_layers;
-	int m_layerJump;
+	int m_zLevels;
+	int m_zHeight;
+
 	sf::Vector2i m_tileRes;
-	sf::Vector2i m_tileBaseRes;
+	sf::Vector2i m_tileSize;
 	sf::Vector2i m_textureRes;
 
 	sf::VertexArray m_vertices[8];

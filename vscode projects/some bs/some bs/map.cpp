@@ -10,17 +10,19 @@ Map::Map(const int _size)
 {
 	m_mapSize = _size;
 
-	m_layers = 8;
-	m_layerJump = 16;
+	m_zLevels = 8;
+	m_zHeight = 16; 
 
 	m_tileRes.x = 32;
 	m_tileRes.y = 32;
 
-	m_tileBaseRes.x = 32;
-	m_tileBaseRes.y = 16;
+	m_tileSize.x = 32;
+	m_tileSize.y = 16;
 	
-	m_textureRes.x = _size * m_tileBaseRes.y + _size * 10;
-	m_textureRes.y = _size * m_tileBaseRes.x + _size * 10;
+
+	// add 10 for deadspace outside of map bounds
+	m_textureRes.x = (_size + 10) * m_tileSize.y;
+	m_textureRes.y = (_size + 10+ m_zLevels) * m_tileSize.x;
 
 	m_mapTexture.create(m_textureRes.x, m_textureRes.y);
 
