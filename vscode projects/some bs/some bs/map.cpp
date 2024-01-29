@@ -25,8 +25,8 @@ Map::Map(const int _size)
 	
 
 	// add 10 for deadspace outside of map bounds
-	m_textureRes.x = (_size + 10) * m_tileSize.y;
-	m_textureRes.y = (_size + 10+ m_zLevels) * m_tileSize.x;
+	m_textureRes.x = (_size + 10) * m_tileSize.x;
+	m_textureRes.y = (_size + 10 + m_zLevels) * m_tileSize.y;
 
 	m_mapTexture.create(m_textureRes.x, m_textureRes.y);
 
@@ -816,10 +816,9 @@ void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	states.texture = &m_tileset;
 
 	// draw the vertex array
-	for (int i = 0; i < 8; i++)
-	{
-		target.draw(m_vertices[i], states);
-	}
+
+	target.draw(m_vertices[], states);
+
 
 }
 
