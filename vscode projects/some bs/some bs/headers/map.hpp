@@ -22,7 +22,7 @@
 #include "constants.hpp"
 
 
-class Map : public sf::Drawable, public sf::Transformable
+class Map
 {
 
 
@@ -53,7 +53,7 @@ public:
 	int getIndex(int _x, int _y, int _quad);
 
 	//---DRAW WITH VERTICES---
-	bool drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2i _pos, sf::Vector2i _gridSize, const std::string& _tileset = "NULL");
+	bool drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2i _pos, const std::string& _tileset = "NULL");
 
 
 	bool drawMiniMap(sf::RenderTarget& _target, int _gridSize, sf::Vector2i _pos);
@@ -62,10 +62,8 @@ public:
 	//----SORT MAP VALUES-----
 	void sortMapValue();
 
-private:
-	
-	virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 
+private:
 	
 
 	int m_mapSize;

@@ -28,11 +28,9 @@ Map::Map(const int _size)
 	m_textureRes.x = (_size + 10) * m_tileSize.x;
 	m_textureRes.y = (_size + 10 + m_zLevels) * m_tileSize.y;
 
-	m_mapTexture.create(m_textureRes.x, m_textureRes.y);
-
 	m_tileset.loadFromFile("../sprites/testTileset.png");
 	
-
+	m_mapBuffer.create(m_textureRes.x, m_textureRes.y);
 
 	for (int i = 0; i <= m_mapSize; i++)
 	{
@@ -473,14 +471,11 @@ int Map::getIndex(int _x, int _y, int _quad)
 
 
 
-bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2i _position, sf::Vector2i _gridSize, const std::string& _tileset)
+bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2i _position, const std::string& _tileset)
 {
 
 	if (m_update)
 	{
-		_gridSize.x += 2;
-		_gridSize.y += 18;
-		_position.y -= 2;
 
 		int tileNumber;
 		int index;
@@ -520,7 +515,7 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 
 
 					// get a pointer to the triangles' vertices of the current tile
-					sf::Vertex* triangles = &m_vertices[k][(i + z * _gridSize.x) * 24];
+					sf::Vertex* triangles = &m_vertices[k][(i + z * m_mapSize) * 24];
 
 					posX = (((i)*_tileSize.x) + ((z % 2) * _tileSize.x) / 2) - _tileSize.x;
 					posY = (((z)*_tileSize.y) / 2) - _tileSize.y;
@@ -628,22 +623,30 @@ bool Map::drawMap(sf::RenderTarget& _target, sf::Vector2i _tileSize, sf::Vector2
 			}
 		}
 
+		sf::RectangleShape rectCursor;
+		rectCursor.setSize(sf::Vector2f(3, 3));
+		rectCursor.setFillColor(sf::Color(G_white_x, G_white_y, G_white_z));
+		rectCursor.setOutlineColor(sf::Color::Transparent);
+		rectCursor.setOutlineThickness(2);
+		rectCursor.setOrigin(1, 1);
+		rectCursor.setPosition(30, 30);
+
+		m_mapBuffer.clear(sf::Color::Transparent);
+
 		for (int i = 0; i < 8; i++)
 		{
-			m_mapBuffer.clear(sf::Color::Transparent);
 			m_mapBuffer.draw(m_vertices[i], &m_tileset); //Need to include the texture???
-			m_mapBuffer.display();
-
-			m_mapTexture = m_mapBuffer.getTexture();
-			m_mapSprite.setTexture(m_mapTexture);
-
-			//m_mapSprite.setTextureRect(sf::IntRect(0, 0, m_textureRes.x, m_textureRes.y));
+			m_mapBuffer.draw(rectCursor);
 		}
+		m_mapBuffer.display();
+
+		m_mapTexture = m_mapBuffer.getTexture();
+		m_mapSprite.setTexture(m_mapTexture);
 	}
 	
 	m_update = false;
 
-
+	m_mapSprite.setTextureRect(sf::IntRect(_position.x, _position.y, 400, 400));
 	_target.draw(m_mapSprite); //Need to include the texture???
 
 
@@ -667,8 +670,15 @@ bool Map::drawMiniMap(sf::RenderTarget& _target, int _gridSize, sf::Vector2i _po
 
 	int s = 1;
 
-	int xOffset = _target.getSize().x - _gridSize * s;
-	int yOffset = _target.getSize().y - _gridSize * s;
+	//int xOffset = _target.getSize().x - _gridSize * s;
+	//int yOffset = _target.getSize().y - _gridSize * s;
+
+	int xOffset = 0;
+	int yOffset = 0;
+
+	//sf::RenderTexture rendTest;
+	//rendTest.create(200, 200);
+
 
 	sf::Color color;
 
@@ -721,10 +731,16 @@ bool Map::drawMiniMap(sf::RenderTarget& _target, int _gridSize, sf::Vector2i _po
 				}
 			}
 		}
-	
+
+	m_mapBuffer.clear(sf::Color::Transparent);
+	m_mapBuffer.draw(m_mapVertices);
+	m_mapBuffer.display();
+
+	sf::Texture texture1 = m_mapBuffer.getTexture();
 
 
-	_target.draw(m_mapVertices); //Need to include the texture???
+	_target.draw(sf::Sprite(texture1));
+
 
 
 	return true;
@@ -803,23 +819,5 @@ void Map::sortMapValue()
 
 
 
-
-
-//------DRAW VERTICE ARRAY-------
-
-void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
-{
-	// apply the transform
-	states.transform *= getTransform();
-
-	// apply the tileset texture
-	states.texture = &m_tileset;
-
-	// draw the vertex array
-
-	target.draw(m_vertices[], states);
-
-
-}
 
 

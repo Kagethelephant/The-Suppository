@@ -3,10 +3,74 @@
 #include "display.hpp"
 
 
+Canvas::Canvas(int _w, int _h)
+{
+	m_canvasSize.x = _w;
+	m_canvasSize.y = _h;
+
+	for (int i = 0; i < m_n; i++)
+	{
+		m_renderer.clear(sf::Color::Transparent);
+		m_renderer.display();
+		m_layers[i] = m_renderer.getTexture();
+	}
+
+}
+
+
+Canvas::~Canvas()
+{
+	delete[] m_layers;
+}
+
+
+
+void Canvas::draw(sf::Drawable& _sprite, int _layer)
+{
+	m_renderer.clear(sf::Color::Transparent);
+	m_renderer.draw(sf::Sprite(m_layers[_layer]));
+	m_renderer.draw(_sprite);
+	m_renderer.display(); 
+	m_layers[_layer] = m_renderer.getTexture();
+}
+
+
+
+void Canvas::clearLayer(int _layer, sf::Color _clear)
+{
+	m_renderer.clear(_clear);
+	m_renderer.display();
+	m_layers[_layer] = m_renderer.getTexture();
+}
+
+
+
+void Canvas::display(sf::RenderWindow& _window)
+{
+	m_renderer.clear(sf::Color::Transparent);
+	for(int i = 0; i < m_n; i++)
+	{
+		m_renderer.draw(sf::Sprite(m_layers[i]));
+	}
+	m_renderer.display();
+	_window.draw(sf::Sprite(m_renderer.getTexture()));
+
+	// Display the window to the screen
+	_window.display();
+}
+
+
+
+
+
+
+
 //----INITIALIZE VIEW----
 
-sf::Vector2i windowSetup(sf::RenderWindow& m_window, sf::View& m_view, int m_height, bool m_fullscreen = true, int m_fps = 60)
+sf::Vector2i windowSetup(sf::RenderWindow& m_window, int m_height, bool m_fullscreen = true, int m_fps = 60)
 {
+	
+
 	//get the display dimmensions and calculate the aspect ratio
 	float displayWidth = GetSystemMetrics(SM_CXSCREEN);
 	float DisplayHeight = GetSystemMetrics(SM_CYSCREEN);
@@ -28,13 +92,15 @@ sf::Vector2i windowSetup(sf::RenderWindow& m_window, sf::View& m_view, int m_hei
 	m_window.setMouseCursorVisible(false);
 
 	//set the size and position of the view
-	m_view.setCenter(sf::Vector2f(bufferX, bufferY));
-	m_view.setSize(sf::Vector2f(bufferW, bufferH));
+	sf::View view;
+	view.setCenter(sf::Vector2f(bufferX, bufferY));
+	view.setSize(sf::Vector2f(bufferW, bufferH));
 
 	//asign the view to the window
-	m_window.setView(m_view);
+	m_window.setView(view);
 
 	//return the calculated width and height of the window in pixels
 	return sf::Vector2i(bufferW, bufferH);
 }
+
 
