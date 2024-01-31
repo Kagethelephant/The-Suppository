@@ -8,11 +8,14 @@ Canvas::Canvas(int _w, int _h)
 	m_canvasSize.x = _w;
 	m_canvasSize.y = _h;
 
+	m_renderer.create(m_canvasSize.x, m_canvasSize.y);
+
 	for (int i = 0; i < m_n; i++)
 	{
 		m_renderer.clear(sf::Color::Transparent);
 		m_renderer.display();
 		m_layers[i] = m_renderer.getTexture();
+		m_reset[i] = true;
 	}
 
 }
@@ -25,17 +28,17 @@ Canvas::~Canvas()
 
 
 
-void Canvas::draw(sf::Drawable& _sprite, int _layer)
+void Canvas::draw(sf::Drawable& _sprite, int _layer, bool _reset)
 {
 	m_renderer.clear(sf::Color::Transparent);
 	m_renderer.draw(sf::Sprite(m_layers[_layer]));
 	m_renderer.draw(_sprite);
-	m_renderer.display(); 
+	m_renderer.display();
 	m_layers[_layer] = m_renderer.getTexture();
 }
 
 
-
+                                                                       
 void Canvas::clearLayer(int _layer, sf::Color _clear)
 {
 	m_renderer.clear(_clear);
@@ -57,6 +60,12 @@ void Canvas::display(sf::RenderWindow& _window)
 
 	// Display the window to the screen
 	_window.display();
+
+	m_renderer.clear(sf::Color::Transparent);
+	for (int i = 0; i < m_n; i++)
+	{
+		if(m_reset[i] = true) m_layers[i] = m_renderer.getTexture();
+	}
 }
 
 

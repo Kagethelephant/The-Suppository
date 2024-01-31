@@ -91,8 +91,21 @@ int main() {
 
     //----DRAW STATIC----
 
+    sf::RectangleShape testRect;
+    testRect.setSize(sf::Vector2f(10, 10));
+    testRect.setFillColor(sf::Color(G_white_x, G_white_y, G_white_z));
+    testRect.setOutlineColor(sf::Color::Transparent);
+    testRect.setOutlineThickness(2);
+    testRect.setOrigin(5, 5);
+    testRect.setPosition(20, 20);
 
-
+    sf::RectangleShape testRect2;
+    testRect2.setSize(sf::Vector2f(10, 10));
+    testRect2.setFillColor(sf::Color(G_black_x, G_black_y, G_black_z));
+    testRect2.setOutlineColor(sf::Color::Transparent);
+    testRect2.setOutlineThickness(2);
+    testRect2.setOrigin(5, 5);
+    testRect2.setPosition(25, 25);
 
 
     //----MAIN LOOP----
@@ -196,10 +209,9 @@ int main() {
         selectionS.setPosition(winX, winY);
         //bufferGUI.draw(selectionS);
         
-        canvas.draw(rectCursor,0);
-        canvas.draw(selectionS,0);
 
-        bufferGUI.draw(sf::Sprite(canvas.m_layers[0]));
+        canvas.draw(rectCursor, 0);
+        canvas.draw(selectionS, 1);
         //----DISPLAY THE STUFF----
         
         //display the buffer on to the window and draw the sprite 
@@ -207,9 +219,12 @@ int main() {
         bufferMap.display(); 
         window.draw(sf::Sprite(bufferMap.getTexture()));
 
+
+       
         ////do the same as above but for the GUI
         bufferGUI.display(); 
         window.draw(sf::Sprite(bufferGUI.getTexture()));
+
 
         //// Display the window to the screen
         //window.display();

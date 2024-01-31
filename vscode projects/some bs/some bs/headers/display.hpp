@@ -31,16 +31,21 @@ public:
 	//layers or textures to be used to draw (10 max)
 	int const m_n = 10;
 	sf::Texture* m_layers = new sf::Texture [m_n];
+	bool* m_reset = new bool[m_n];
 
 	sf::Texture layer;
 
 
-	void draw(sf::Drawable& _sprite, int _layer);
+	void draw(sf::Drawable& _sprite, int _layer, bool _reset = true);
 
 
 	void clearLayer(int _layer, sf::Color _clear = sf::Color::Transparent);
 
+
 	void display(sf::RenderWindow& _window);
+
+
+	void dig(sf::RenderWindow& _window, sf::RenderTexture& _ren, sf::Texture& _text);
 };
 
 //sets up window with a pixel scale and returns the dimmensions of the window
